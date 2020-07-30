@@ -1,0 +1,262 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction:}
+The system consists of 4 dams, fuel generators, a battery and a demand which is deterministic and no controllable. The first three dams are connected with the one between, considered a pass dam. We will analyse different configurations of this system.\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.3]{1.png}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Disconnected + No Battery}
+Here we do not include the battery. We will consider all the dams disconnected, and the pass dam will not have any inflow. Also here we will use an only fuel generator.\\
+We will do a convergence test using 5 simulations ($i=[1:5]$) using $2^{2+i}$ discretizations in space and $2^{3+i}$ discretizations in time. All the results are from the latest and most expensive simulation when $i=5$ (256 time steps).\\
+We solve the HJB equation backward in time, then we are looking for the solution at $t=1$ ($t\in\{1,2,\dots,T\}$). We call it \textbf{the solution at the initial time}.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Demand}
+We choose the historical Uruguayan demand from the first of January 2017. To make it more demanding for our system we add the next function $0.15\sin(4\pi t)$. The following plot shows the demand that we will use:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{F12-eps-converted-to.pdf}}
+\caption{The normalization is over a maximum of $\SI{2000}{MW}$.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Convergence Test}
+To ensure the stability of our algorithm we run a convergence test, increasing the number of discretization in a factor of 2 during each simulation.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.35]{F10-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.35]{F11-eps-converted-to.pdf}}
+\caption{We use $2^{2+i}$ discretization in each space direction and $2^{3+i}$ in the time direction. The most expensive simulation lasted 315540 seconds to finish using 12 cores.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Spatial Derivatives}
+Here we can see the spatial derivatives of the cost function, at the initial time:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F4-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.33]{F5-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.33]{F7-eps-converted-to.pdf}}
+\caption{When the dams have less water, the effect of the derivative becomes stronger. Always to have more water, decreases the final cost. For all the plots, we fix the volume of the third spatial dimension in the real initial amount.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Admissible Solution}
+As all dams are disconnected, then to a solution to be admissible implies that it obeys the power balance:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F13.eps}}
+\subfigure{\includegraphics[scale=.33]{F14.eps}}
+\caption{We can see as Baygorria never turbines because it does not have inflow. From the right plot, we can conclude that the most expensive power comes from the Fuel Station, after from Salto Grande and finally from Bonete and Palmar.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Levels of Water}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F17.eps}}
+\subfigure{\includegraphics[scale=.33]{F15.eps}}
+\subfigure{\includegraphics[scale=.33]{F18.eps}}
+\caption{We can see how the volume of Bonete does not change too much during the day. This implies that we must use a smaller interval where we discretize or also assume its volume constant and remove a state. For the other dams, also we would we able to use a better discretization (better definition of the limits).}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Solution of the HJB equation}
+Here we show the solution at time $t=1$:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F8-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.33]{F6-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.33]{F9-eps-converted-to.pdf}}
+\caption{In each plot, we show the dependence w.r.t. two dams. Each plot has three layers; each one corresponds to different initial values of the dam which is not in the domain. We use both extreme cases and the real initial value for the third dam in each case. We can see how Salto Grande is the most important dam in the disconnected system system.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Accumulated Cost and Energy}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F16.eps}}
+\subfigure{\includegraphics[scale=.33]{F21.eps}}
+\subfigure{\includegraphics[scale=.33]{F20.eps}}
+\caption{In the first plot, we can see how the cost increases faster when we have to use fuel. Also, we see that the solution of the HJB at the initial cost matches well the accumulated cost with a relative error of 3\%. On the pie plots we can observe that even when the $88\%$ of the energy came from the water, $97\%$ of the cost was generated by the fuel.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Second configuration: Connected + No Battery}
+We use the same demand than in the first configuration, but now the first three dams are connected. We use $8$ discretizations in space and $32$ in time.\\
+The idea of this test is to iterate over the Lagrangian multiplier to find the ones that maximize the cost. We will call $\lambda^*(t)$ to the optimal Lagrangian multiplier and $\hat{\lambda}(t)$ to our approximation.\\
+We do an approximation using simple functions, increasing gradually the number of simple functions in each iteration (from 1 to 4 iterations).
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.4]{Dams.pdf}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Second configuration: Energy and Water Value}
+We check the value of the water, to compare with the value of the Lagrangian multiplier. The next table shows what we are using:
+\begin{table}[]
+\begin{tabular}{lcccl}
+\toprule
+Dam & Energy Value ($\SI{}{USD/MWh}$) & Water Value ($\SI{}{USD/hm^3}$) \\ \midrule
+Bonete & 0.3 & $\SI{17.2}{}$ \\
+Baygorria & 0 & 0 \\
+Palmar & 0.3 & $\SI{13.9}{}$ \\
+Salto Grande & 0.3 & $\SI{17.2}{}$ \\ \bottomrule
+\end{tabular}
+\caption{We compute these values assuming that the dams are working at their nominal conditions. We can use as input to our system the energy value or the water value. The system uses these values plus the spatial derivatives (and eventually plus the value of the Lagrange multipliers) during the optimization.}
+\end{table}
+For the fuel, we are using $\SI{13}{USD/MWh}$.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Second configuration: Approximation of $\lambda^*(t)$}
+We approximate the optimal Lagrange multiplayers connecting the dams and maximizing the cost function.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.33]{F24.eps}}
+\caption{$\hat{\lambda}_{2,1}(t)$ and $\hat{\lambda}_{3,2}(t)$. We can see that $\hat{\lambda}_{2,1}(t)$ is more influence in the behavior of the system.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Second configuration: Admissible Solution}
+We satisfy the power balance and the water conservation between the dams:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.32]{F34.eps}}
+\subfigure{\includegraphics[scale=.32]{F27.eps}}
+\subfigure{\includegraphics[scale=.32]{F25.eps}}
+\caption{In the first plot, we can see the values that the Hamiltonian optimizes in each step; it is clear the influence of the Lagrangian multipliers. In the second and third plots, we can observe how Bonete uses its spillage to supply more water to Baygorria during the use of fuel.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Levels of Water}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.32]{F28.eps}}
+\subfigure{\includegraphics[scale=.32]{F29.eps}}
+\subfigure{\includegraphics[scale=.32]{F30.eps}}
+\caption{We can observe the use of spillage by Bonete. Also, we can observe the moment when all that water reaches Palmar. The volume of Salto Grande becomes more static while it is not turbining at its maximum power.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{First configuration: Accumulated Cost and Energy}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.32]{F26.eps}}
+\subfigure{\includegraphics[scale=.32]{F32.eps}}
+\subfigure{\includegraphics[scale=.32]{F31.eps}}
+\caption{In the first plot, we can see how the cost increases faster when we have to use fuel. Also, we see that the solution of the HJB at the initial cost matches well the accumulated cost with a relative error of 8\%. On the pie plots we can observe that even when the $91\%$ of the energy came from the water, $98\%$ of the cost was generated by the fuel.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Third configuration: Connected + Battery}
+Finally, we add the battery, and we use the connected system. We ensure the monotonicity of the scheme in each spatial-tempo point, also ensure the CFL condition with is limited by the battery.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.3]{Tesla.jpg}}
+\caption{Approximate size of a $\SI{140}{MWh}$ battery.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Third configuration: Demand and Controls}
+Here we introduce a battery of $\SI{140}{MWh}$ and we connect the system using $\hat{\lambda}_{2,1}(t)=\hat{\lambda}_{3,2}(t)=0$ for all $t$. The demand used and the limits of the battery's control can be seen in the next plots:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.35]{F22-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.32]{F23-eps-converted-to.pdf}}
+\caption{We choose a more demanding demand (it has higher derivatives than before), and for the limits of the controls, we choose the smooth function that we can see in the plot.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Third configuration: Convergence Test}
+We do a convergence test, the results can be seen in the next plots:
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.325]{F1-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.325]{F2-eps-converted-to.pdf}}
+\subfigure{\includegraphics[scale=.325]{F3-eps-converted-to.pdf}}
+\caption{We use $2^{i}$ discretizations for the dams, $2^{i-1}$ for the battery and $2^{i+4}$ for the time. We can see that the relative error is small even using a small number of discretizations. For the given demand, the inclusion of the battery generates a reduction of 3.5\% in the initial cost.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Next Steps:}
+\begin{enumerate}
+\item[1.] To verify the values of $\hat{\lambda}_{2,1}(t)$ and $\hat{\lambda}_{3,2}(t)$ fixing different $\epsilon_{2,1}$ and $\epsilon_{3,2}$, and optimizing for that epsilons.
+\item[2.] To compute $\hat{\lambda}_{2,1}(t)$ and $\hat{\lambda}_{3,2}(t)$ for the system with the battery using Bundle methods to find them in an efficient way. The idea is to introduce the gradient of a penalization function during the iteration; then the optimizer knows in which direction to search for the next point.
+\item[3.] To analyze the admissible solution for the connected system with battery.
+\item[4.] To check the error of setting $\hat{\lambda}_{2,1}(t)=\hat{\lambda}_{3,2}(t)=0$ for all $t$.
+\end{enumerate}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Next Steps:}
+\begin{enumerate}
+\item[5.] To do MC realizations of the wind and compute the cost function for each one, using now $P_{Generated}(t)\geq D(t)$ instead of $P_{Generated}(t)=D(t)$. Here I will use $\hat{\lambda}_{2,1}(t)=\hat{\lambda}_{3,2}(t)=0$ or Pontryagin's maximum principle to accelerate the computation.
+\item[6.] To find the optimal CFL condition using Lagrangian multipliers.
+\item[7.] To make the system more real (w.r.t. the fuel generators and natural inputs to the dams).
+\item[7.] To verify the stop conditions of both optimizers (Hamiltonian and $\hat{\lambda}(t)$).
+\end{enumerate}
+\end{frame}
+
+\end{document}

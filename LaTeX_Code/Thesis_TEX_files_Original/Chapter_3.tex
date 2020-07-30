@@ -1,0 +1,662 @@
+\chapter{Mathematical Model of the System} \label{Chapter_3}
+
+In this chapter, we explain and motivate the mathematical models used in our system. We construct models that are valid for a daily simulation, but also can be extended to other periods (i.e., a week or a month). For simplicity, we will assume $t_0=0$.
+
+\section{Power Generation}
+
+One of the most important actors in our model are the power generators. They produce electric energy to satisfy demand and exports. Uruguay has fossil fuel stations (FFSs), hydropower (dams), wind farms, solar farms, and biomass stations. In the next subsections, we are going to detail their mathematical models.
+
+\subsection{Controllable Sources}
+
+The fossil fuel stations and the dams are controllable, i.e., we can control totally or partially their power over time.
+
+\subsubsection{Fuel Power Stations Model}
+
+Uruguay has a total of four fuel power stations: \textit{Motores Batlle}, \textit{PTA}, \textit{PTB} and \textit{CTR}, each one with different ratio cost per unit of power and different maximum available power. Both cost and maximum power can change weekly or daily but are considered constant during at least one entire day. We consider them generators without a state but with a control which is their power. Let for the $i$-th station define
+\begin{enumerate}
+
+\item[$\overline{P}^{(i)}_F$] its maximum available power,
+
+\item[$\hat{\phi}^{(i)}_F(t)$] its normalized control ($\hat{\phi}^{(i)}_F(t)\in[0,1]$) over time and,
+
+\item[$K_F^{(i)}$] the cost associated to the generated power.
+
+\end{enumerate}
+The power over the time for the $i$-th station is linear with the control and is given by
+\begin{equation*}
+P_F^{(i)}(\hat{\phi}^{(i)}_F(t))=\overline{P}^{(i)}_F\hat{\phi}^{(i)}_F(t)
+\end{equation*}
+and the total cost at time $t_1$ by
+\begin{equation}
+C_F^{(i)}(t_1)=K_F^{(i)}\int_0^{t_1}P_F^{(i)}(t)dt=t_1K_F^{(i)}\overline{P}^{(i)}_F\int_0^{1}\hat{\phi}^{(i)}_F(t)dt.
+\label{Fuel_Cost_Function}
+\end{equation}
+In this thesis, we ignore the starting times and the minimum stable capacity (we assume both are zero). Otherwise, we would need to include discrete variables. However, that is kept for future works.
+
+\subsubsection{Dams Model} \label{Subsection_Dams_Model}
+
+Uruguay has a total of four dams, three of them are in tandem over the same river (\textit{Bonete}, \textit{Baygorria} and \textit{Palmar}, in that order), while the fourth (\textit{Salto Grande}) is a binational joint project with Argentina. The main state variable of the hydroelectric dam is the volume of water in its reservoir. In the controls, we have the flow through the turbines and how much water is spilled. The general dynamics for the $i$-th dam are governed by the SDE
+\begin{equation}
+dv^{(i)}(t)=\underbrace{\left(I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)\right)}_{f_v^{(i)}\left(t,\phi_T^{(i)},\phi_S^{(i)}\right)}dt+\sigma_v^{(i)}dB,
+\label{Volume}
+\end{equation}
+where:
+\begin{enumerate}
+
+\item[$v^{(i)}(t)$] represent the volume of water in its reservoir,
+
+\item[$I^{(i)}(t)$] represents natural and deterministic inflow of water to the reservoir, it is the combination of water from rivers and rain,
+
+\item[$\phi_T^{(i)}(t)$] represents flow through the turbines and it is one of the controls,
+
+\item[$\phi_S^{(i)}(t)$] represents spilled water, it is the second control, and
+
+\item[$\sigma_v^{(i)}$] represents the diffusion coefficient of the dam, associated with the uncertainty in the natural input of water and the measurement of the total volume (recall the interpretation in subsection \ref{Subsection_SDE}).
+
+\end{enumerate}
+We can approximate the relation between the volume and the water level (we call $H^{(i)}$ to the water level upstream, and it is relative to the sea level) in each reservoir by a second order polynomial, i.e.
+\begin{equation*}
+H^{(i)}(v^{(i)})=b^{(i)}_2{v^{(i)}}^2+b^{(i)}_1{v^{(i)}}+b^{(i)}_0.
+\end{equation*}
+where the coefficients are determined from official data (see Fig. (\ref{Plot_AppC_1}) in the appendix).\\
+The level of water downstream (we call it $h_0^{(i)}$) plays an essential role in power production. In a first approximation, we can consider the power generated linear with the flow in the turbines, and the difference of water upstream and downstream (i.e. $H^{(i)}-h_0^{(i)}$). However, the spilled water and the water through the turbine ($\phi_T^{(i)}(t)+\phi_S^{(i)}(t)$) increases the level slightly downstream, then the effective difference of water $\Delta H^{(i)}$ is given by
+\begin{equation*}
+\Delta H^{(i)}\left(\phi_T^{(i)},\phi_S^{(i)}\right)=H^{(i)}-h_0^{(i)}-d^{(i)}\left(\phi_T^{(i)}+\phi_S^{(i)}\right),
+\end{equation*}
+where we consider $d^{(i)}$ is a positive constant (we find this constant for each dam in \cite{ADME}).\\
+Given the definitions in this section, we can introduce the equation of the power (or hydropower), which is
+\begin{equation}
+P_H^{(i)}\left(\phi_T^{(i)},\phi_S^{(i)}\right)=\eta\phi_T^{(i)}\Delta H^{(i)}\left(\phi_T^{(i)},\phi_S^{(i)}\right)=\eta\phi_T^{(i)}\left(H^{(i)}-h_0^{(i)}-d^{(i)}\left(\phi_T^{(i)}+\phi_S^{(i)}\right)\right),
+\label{HP}
+\end{equation}
+where $\eta$ is a positive constant common for all the dams, this constant is approximated using the data presented in Fig. (\ref{Plot_AppC_2}) in the Appendix. As we can see in Eq. (\ref{HP}), to use water spillage reduces the power generated for a fixed flow in the turbines, due to the increment of the level downstream.\\
+It is necessary to mention some limitations: By construction, each reservoir must have its volume between a minimum and a maximum values ($v^{(i)}\in[\underline{v}^{(i)},\overline{v}^{(i)}]$), this applies also for the level ($H^{(i)}\in\left[\underline{H}^{(i)},\overline{H}^{(i)}\right]$). Moreover, the maximum water through the turbines and the water spillage are limited by a maximum value ($\phi_T^{(i)}\in\left[0,\overline{\phi}_T^{(i)}\right]$, $\phi_S^{(i)}\in\left[0,\overline{\phi}_S^{(i)}\right]$), which depends on the volume in the reservoir ($\overline{\phi}_T^{(i)}=\overline{\phi}_T^{(i)}(v^{(i)})$).\\
+Even when the water comes from rivers and rain, it is necessary to assign it a fictional value in a way to be able to make decisions about which dam to use and when. These values usually are the output of long-term optimizations, and we consider them as inputs in our system. We call $K^{(i)}_H$ the cost of the water for the $i$-th dam. Then the cost associated to the use of the $i$-th dam at time $t_1$ is given by
+\begin{equation}
+C_H^{(i)}(t_1)=K^{(i)}_H\int_0^{t_1}\left(\phi_T^{(i)}(t)+\phi_S^{(i)}(t)\right)dt.
+\label{Water_Cost_Function}
+\end{equation}
+
+\subsubsection{Particular case: Run-over-river Dam} \label{ROR_Dam}
+
+A run-over-river (ROR) dam is a particular case where we have a constraint: It uses instantly all the water it receives. As a consequence, its volume of water remains constant, and equation (\ref{Volume}) becomes
+\begin{equation}
+I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)=0,
+\label{ROR_Condition}
+\end{equation}
+where we are setting the stochastic component to zero. The power (\ref{HP}) and cost (\ref{Water_Cost_Function}) are not affected.
+
+\subsection{No-Controllable Sources} \label{Subsection_NoControllable}
+
+The solar and wind power are not controllable as they depend totally on weather conditions, i.e., the power they produce only depends on the time and their state, and they do not have an associated control.\\
+In Uruguay, also the biomass is considered non-controllable, as it is the residual of cellulose factories that is being burned.
+
+\subsubsection{Wind Farms Model}\label{Wind_Model}
+
+For this model, we will follow the MS thesis \cite{elkantassi2017probabilistic} where the author uses Maximum likelihood estimation in real Uruguayan data, to find the parameters of the SDE (\ref{Wind_SDE}).\\
+The wind is not controllable and has one state, which is wind power at time $t$. %We use the word \textit{available} since even when the wind itself is not controllable, it is possible to limit the generated wind power in case of overproduction. To avoid confusions, we prefer to use the term wind power instead of available wind power, and we do not limit its power.\\
+The normalized wind power is modeled by the following SDE for $t\in[t_0,t_1]$:
+\begin{equation}
+\begin{cases}
+\begin{split}
+d\hat{w}(t)&=\underbrace{\left[\frac{\partial p}{\partial t}(t)-\theta(t)(\hat{w}(t)-p(t))\right]}_{f_{\hat{w}}(t,\hat{w})}dt\\
+&+\underbrace{\sqrt{2\alpha(t)\theta(t)p(t)(1-p(t))\hat{w}(t)(1-\hat{w}(t))}}_{\sigma_{\hat{w}}(t,\hat{w})}dB
+\end{split}\\
+\hat{w}(t_0)=\hat{w}_0,
+\label{Wind_SDE}
+\end{cases}
+\end{equation}
+where
+\begin{enumerate}
+
+\item[$\hat{w}(t)$]: normalized wind power,
+
+\item[$\hat{w}_0$] is the normalized wind power at time $t=t_0$,
+
+\item[$p(t)$] is the wind power forecast,
+
+\item[$\theta(t)$] is a parameter of our model and
+
+\item[$\alpha(t)$] is another parameter of our model.
+
+\end{enumerate}
+The factors $\hat{w}(t)(1-\hat{w}(t))$ and $p(t)(1-p(t))$ ensures that the diffusion dissipates when the solution of (\ref{Wind_SDE}) or the forecast reaches zero or one. In this way, it never scapes outside the box $[0,1]$.\\
+We assume that wind power has not cost associated to it. The real wind power is linear with the normalized wind power and is given by
+\begin{equation*}
+P_W(\hat{w}(t))=\overline{P}_W\hat{w}(t),
+\label{Wind_Power}
+\end{equation*}
+with $\overline{P}_W$ the installed capacity.
+
+\subsubsection{Solar Farms Model}
+
+Solar power is similar to wind power. It is not controllable and has one state. However, its behavior is strongly dependent on time. At night the production is zero, while during the day it is positive. Its normalized value is governed by the SDE (\ref{SolarPower}) for $t\in[t_0,t_1]$, where we assume that $[t_0,t_1]$ represents a one day period with $[t_0',t_1']$ the tie interval where the sun is up. Then we have
+\begin{equation}
+\begin{cases}
+d\hat{y}(t)=\underbrace{-\theta(t)(\hat{y}(t)-\beta\epsilon(t))}_{f_{\hat{y}}(t,\hat{y})}dt+\underbrace{\sqrt{2\theta(t)\alpha(t)\hat{y}(t)(\epsilon(t)-\hat{y}(t))\beta\epsilon(t)(1-\beta\epsilon(t))}}_{\sigma_{\hat{y}}(t,\hat{y})}dB\\
+\hat{y}(t_0')=\hat{y}_0,\ \text{for}\ t\in[t_0',t_1']\\
+\hat{y}(t)=0,\ \text{for}\ t\in[t_0,t_1]-(t_0',t_1'),
+\label{SolarPower}
+\end{cases}
+\end{equation}
+where
+\begin{enumerate}
+
+\item[$\hat{y}(t)$] is the normalized solar power,
+
+\item[$\hat{y}_0$] is the normalized solar power at time $t=t_0'$,
+
+\item[$\epsilon(t)$] is the maximum theoretical production for that day,
+
+\item[$\beta$] is an attenuation parameter,
+
+\item[$\theta(t)$] is a parameter of our model and
+
+\item[$\alpha(t)$] is another parameter of our model.
+
+\end{enumerate}
+To include the cloudiness effect, the function $\epsilon(t)$ is a jump process with state-space $S=\{\text{Clear sky},\text{Half cloudy},\text{Cloudy},\text{Complete cloudy},\text{Obstructed}\}$. We assume that the solar power has no associated cost and its power is given by
+\begin{equation*}
+P_Y(\hat{y}(t))=\overline{P}_Y\hat{y}(t),
+\end{equation*}
+with $\overline{P}_Y$ the installed capacity from solar power.
+
+\subsubsection{Biofuel Stations Model}
+
+In Uruguay, biofuel stations use cellulosic biomass from pulp plants. As the energy comes from burning the residue of the pulp plants, we assume this source of energy is free, deterministic, and non-controllable. In other words, the power is given by $P_B(t)$, a deterministic input for our system.
+
+\section{Energy Demand and Exports}
+
+Historically, daily Uruguayan demand of energy has been considered deterministic as it has a strong dependency on the season and the weather. This effect can be seen in Fig. (\ref{Uy_Demand}). 
+ \begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Demand.eps}
+\caption{Historical Uruguayan demand of 2017. We see spring, summer, fall, and winter in green, red, yellow and cyan, respectively.}
+\label{Uy_Demand}
+\end{figure}
+On the other hand, the energy exports are strongly dependent on the Uruguayan, Argentinian and Brazilian spot price of electricity, which has high uncertainty and variability.\\
+In short term optimization (one day), it is reasonable to consider $D(t)$ deterministic. The exports $E(t)$ have high uncertainty. However, we assume both deterministic inputs in this thesis and let the model for the exports as future work.
+
+\subsection{Effective Demand} \label{Subsection_ED}
+
+We will combine the demand, exports, and non-controllable sources in a singe expression. We define the \textit{effective demand}
+\begin{equation}
+D_E(t,\hat{w}(t),\hat{y}(t))=D(t)+E(t)-P_B(t)-P_Y(\hat{y}(t))-P_W(\hat{w}(t)),
+\end{equation}
+which is the demand that we must supply after adding the exports and subtracting the power from the no-controllable sources. In other words, it is the value we must satisfy when we optimize the optimal dispatch of controllable sources.
+
+%\section{Storage and Controllability of the Demand}
+\section{Storage Capacity}
+
+%We want to explore the effect of adding to our system storage capacity or to be able to control the demand partially. The motivation is that adding extra controls to our system would allow as to reduce the total cost.\\
+%In the next two subsections, we will see the proposed models.
+%
+%\subsection{Storage Capacity}
+
+There are many ways to add storage, one can be the inclusion of a large battery with capacity in the order of $\SI{}{\mega\watt\hour}$ or, we can add distributed energy storage, i.e., a small battery of some (e.g., 10) $\SI{}{\kilo\watt\hour}$ in each house.\\
+In this thesis, we will add a single large battery which is totally controllable, and its state is its capacity. Also, we will assume that it does not have any loss of energy when used, and there is not associated operational cost. Then, the dynamics are governed by
+\begin{equation}
+da(t)=-P_A(t)dt
+\label{Battery_Dynamics}
+\end{equation}
+where
+\begin{enumerate}
+
+\item[$a(t)$] is the capacity state at time $t$ and
+
+\item[$P_A(t)$] is the power which the battery is supplying to the system at time $t$.
+
+\end{enumerate}
+As the battery can be charged and discharged, we define the extremes of $P_A(t)$, $\underline{P}_A$ and $\overline{P}_A$, such that $P_A(t)\in[\underline{P}_A,\overline{P}_A]$ $\forall t\in[t_0,t_1]$. Notice that $\underline{P}_A\in\R^-$ and, in general, $|\underline{P}_A|<|\overline{P}_A|$, which implies that the battery can supply more power than absorb from the grid.\\
+ \begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{Figures/Battery_Control.eps}
+\caption{Maximum and minimum values of the battery control.}
+\label{Batt_Control}
+\end{figure}
+Finally we define the normalized control $\hat{\phi}_A(t)\in[-0.35,1]$ such that $P_A(t)=\overline{P}_A\hat{\phi}_A(t)$ (we are assuming that $|\underline{P}_A|=0.35|\overline{P}_A|$), then we can rewrite the Eq. (\ref{Battery_Dynamics}) as
+\begin{equation}
+d\hat{a}(t)=-\frac{\overline{P}_A}{\overline{a}}\hat{\phi}_A(t)dt,
+\label{Dynamics_Battery}
+\end{equation}
+where $\overline{a}$ is the maximum battery capacity. We limit the battery control near the extremes (when $\hat{a}\approx1$ or $\hat{a}\approx0$). In Fig. (\ref{Batt_Control}) we can see the limitation used. In this way, when we are solving forward in time, we avoid the capacity to scape from the box $[0,1]$.\\
+In a more general setup (considering loss of power and uncertainty in the level of charge), we can mode the dynamics as
+\begin{equation*}
+d\hat{a}(t)=-\frac{\overline{P}_A}{\overline{a}}\hat{\phi}_A(t)\left(1-\delta_A\mathbbm{1}_{\{\hat{\phi}_A(t)<0\}}\right)dt+\frac{a(t)\sigma_A}{\overline{a}}dW
+\label{Hard_Battery}
+\end{equation*}
+where
+\begin{enumerate}
+
+\item[$\delta_A$] is a loss factor, and
+
+\item[$\sigma_A$] is the diffusion coefficient of the battery, associated with the uncertainty in the real capacity.
+
+\end{enumerate}
+We avoid using (\ref{Hard_Battery}) as a model to simplify the minimization of the Hamiltonian. However, we consider as a future work the formulation of a more realistic battery.
+
+%\subsection{Controllability of Demand}
+%
+%We say that the total demand $D(t)$ is the sum of an inflexible (no-controllable) demand $D_1(t)$ and a flexible (partially controllable) demand $D_2(t)$. The proportion between $D(t)$, $D_1(t)$ and $D_2(t)$ is governed by energy, i.e.,
+%\begin{equation*}
+%\int_0^TD_2(t)dt=\delta_F\int_0^TD(t)dt
+%\end{equation*}
+%where we are assuming that a proportion $\delta_F$ of the total energy, corresponds to the flexible energy.
+
+\section{System Links}
+
+We are assuming that most of the generators, demand, and exportation are independent, i.e., solar production is not correlated with wind production, or with the demand. We know that this assumption does not hold, as most of the generators of our system are correlated through the weather conditions (cloudiness, wind, and rain). However, given that we have forecasts for each non-controllable production, the assumption becomes more reasonable and we can separate their dynamics.
+
+\subsection{Link between the Dams}\label{Subsection_LinkDams}
+
+As we said before, Uruguay has four dams. Three of them along the same river (see Fig. \ref{Dams}). Bonete, when its reservoir is full of water, is able to provide energy continuously for more than 5 months. Baygorria can provide continuously for less than 2 days and Palmar for 2 weeks.\\
+Due to the geography of Uruguay, the level downstream of Bonete is not the same as the upstream of Baygorria (the same happens between Baygorria and Palmar). This difference varies with over the days and is an input to our system.\\
+Due to the relatively small amount of water that Baygorria can hold, it can be considered a ROR dam. This assumption reduces in one dimension the state space because we consider its volume fixed, but adds the constraint (\ref{ROR_Condition}).
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/Dams.pdf}
+\caption{Representation of the linked dams, with their flows and natural inputs.}
+\label{Dams}
+\end{figure}\\
+During this Thesis, we explore and compare the two models for Baygorria, i.e., as a ROR dam and as a dam with variable volume. We will see that the influence if the continuous-time Lagrangian Multiplier is stronger when Baygorria is a ROR dam.
+
+\section{System Examples}
+
+We would like to include all the challenges in a single simulation. However, given the high difficulty presented in optimizing all the system at once, we will study different subproblems presented in different subsections.
+
+\subsection{One Dam and One FFS} \label{First_Subproblem}
+
+\textbf{Objective}: To understand the change in the optimal controls, Hamiltonian, and cost function over time.\\
+
+The numerical formulation and results can be seen in Subsection \ref{First_Subproblem_Num} and \ref{First_Subproblem_Results} respectively.\\
+
+This is the simplest version of the system, where we have to satisfy a demand $D(t)$ using a single dam and a fossil fuel station (FFS). We remove the spillage from the dam and suppose the maximum turbine flow independent of the volume. This is the only Subproblem where we do not use dimensionless units.\\
+
+The characteristics of the system are:
+
+\begin{enumerate}
+
+\item[$\bullet$] For the dam: A single dam with state $v^{(1)}$ and characteristics in the tables (\ref{Table_Dams}) and (\ref{Table_Dams_2}) where the natural inflow is constant in time and the turbine flow is zero when $v^{(1)}=\overline{v}^{(1)}$.
+
+\item[$\bullet$] For the FFS: A single FFS with no state but with a control. Its characteristics can be seen in the Table (\ref{Table_FFSs_Real}).
+
+\item[$\bullet$] For the demand: In this simple Subproblem we assume the demand constant $D(t)=\SI{1500}{MW}$ for all time.
+
+\end{enumerate}
+Then we want to find the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=K_H^{(1)}\int_{t_0}^{t_1}\phi_T^{(1)}(t)dt+K_F^{(1)}\int_{t_0}^{t_1}P_F^{(1)}(t)dt\\
+&=K_H^{(1)}\overline{\phi}_T^{(1)}t_1\int_{0}^{1}\hat{\phi}_T^{(1)}(t)dt+K_F^{(1)}\overline{P}_F^{(1)}t_1\int_{0}^{1}\hat{\phi}_F^{(1)}(t)dt
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) the hydropower dynamics)
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(1)}(t)=\frac{t_1}{\overline{v}^{(1)}}\left(I^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\right)dt\\
+\hat{v}^{(1)}(t_0)=\hat{v}_0^{(1)}.
+\end{cases}
+\end{equation}
+Then, the HJB equation associated to this Subproblem is given by
+\begin{equation}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\hat{v}^{(1)},DV)=0\\
+u(1,\hat{v}^{(1)})=0,\hat{v}^{(1)}\in[0,1]
+\end{cases}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{v}^{(1)},DV)=\\
+\min\ t_1\left[\underbrace{\frac{I^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)}{\overline{v}^{(1)}}\frac{\partial V}{\partial \hat{v}^{(1)}}}_{\text{Dynamics}}+K_H^{(1)}\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)+K_F^{(1)}\overline{\phi}_F^{(1)}\hat{\phi}_F^{(1)}(t)\right]
+\label{Hamiltonian_1}
+\end{multline}
+subject to
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(1)}_T\leq1\\
+0\leq\hat{\phi}^{(1)}_F\leq1\\
+D(t)=P_H^{(1)}(t)+P_F^{(1)}(t).
+\end{cases}
+\end{equation}
+
+\subsection{Two Dams and One FFS} \label{Second_Subproblem}
+
+The numerical formulation and results can be seen in Subsection \ref{Second_Subproblem_Num} and \ref{First_Subproblem_Results} respectively.\\
+
+Here we have to satisfy a demand $D(t)$ using two independent dams and a FFS. We again remove the spillage from the dams and assume that the maximum turbine flow is independent of the volume of water in their reservoirs. The objective is to see how the controls, Hamiltonian and cost function depend on the initial state.\\
+The characteristics of the system are:
+
+\begin{enumerate}
+
+\item[$\bullet$] For the dams: Two dams with state $V^{(1)}$ and $V^{(2)}$, and characteristics  that can be seen in the tables (\ref{Table_Dams_2}) and (\ref{Table_Dams_2}). For both dams the natural inflow is constant and they cannot turbine when their volumes reach their lower limits.
+
+\item[$\bullet$] For the FFS: A single FFS with no state but with a control. Its characteristics can be seen in the Table 
+
+\item[$\bullet$] For the demand: In this Subproblem we use
+\begin{equation}
+D(t)=D_{MAX}\left(\frac{1+\sin(8\pi t)}{2}\right)
+\label{Demand_SSP}
+\end{equation}
+with $D_{MAX}=\SI{2000}{MW}$ and $t\in[0,1]$. We choose this demand to force the system to deal with a function with high variability.
+
+\end{enumerate}
+Then we want to find the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=\sum_{i=1}^2\left[K_H^{(i)}\int_{t_0}^{t_1}\phi_T^{(i)}(t)dt\right]+K_F^{(1)}\int_{t_0}^{t_1}P_F^{(1)}(t)dt\\
+&=\sum_{i=1}^2\left[K_H^{(i)}\overline{\phi}_T^{(i)}t_1\int_{0}^{1}\hat{\phi}_T^{(i)}(t)dt\right]+K_F^{(1)}\overline{P}_F^{(1)}t_1\int_{0}^{1}\hat{\phi}_F^{(1)}(t)dt
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) the hydropower dynamics)
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(1)}(t)=\frac{t_1}{\overline{v}^{(1)}}\left(I^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\right)dt\\
+\hat{v}^{(1)}(t_0)=\hat{v}_0^{(1)}\\
+d\hat{v}^{(2)}(t)=\frac{t_1}{\overline{v}^{(2)}}\left(I^{(2)}(t)-\overline{\phi}_T^{(2)}\hat{\phi}_T^{(2)}(t)\right)dt\\
+\hat{v}^{(2)}(t_0)=\hat{v}_0^{(2)}.
+\end{cases}
+\end{equation}
+Then, the HJB PDE associated to this subproblem is given by
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+H(t,\hat{\bm{v}},Du)=0\\
+u(1,\hat{\bm{v}})=0,\hat{v}^{(1)}\in[0,1],\hat{v}^{(2)}\in[0,1]
+\end{cases}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{\bm{v}},Du)=\\
+\min\ t_1\left[\sum_{i=1}^2\left(\underbrace{\frac{I^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)}{\overline{v}^{(i)}}}_{\text{Dynamics}}\frac{\partial u}{\partial \hat{v}^{(i)}}+K_H^{(i)}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)+K_F^{(1)}\overline{\phi}_F^{(1)}\hat{\phi}_F^{(1)}(t)\right]
+\label{Hamiltonian_2}
+\end{multline}
+subject to
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(i)}_T\leq1,i\in\{1,2\}\\
+0\leq\hat{\phi}^{(1)}_F\leq1\\
+D(t)=\sum_{i=1}^2P_H^{(i)}(t)+P_F^{(1)}(t).
+\end{cases}
+\end{equation}
+
+\subsection{Stochastic Wind power} \label{Third_Subproblem}
+
+\textbf{Objective}: To study the effects and behavior of the Lagrangian Relaxation in a system with low complexity.\\
+
+The numerical formulation and results can be seen in Subsection \ref{Third_Subproblem_Num} and \ref{Third_Subproblem_Results} respectively.\\
+
+This is the only Subproblem with a stochastic component. Here we include stochastic wind power to the previous sub-problem (two independent dams and one FFS).\\
+The characteristics of the dams and the FFS are the same as in subsection \ref{Second_Subproblem}. However, for the wind power and the demand we have changes:
+
+\begin{enumerate}
+
+\item[$\bullet$] Wind Power: We follow the SDE described in Subsection $\ref{Wind_Model}$. We use the parameters from table (\ref{Table_Wind_Power}) where $\theta(t)=\theta_0e^{-\theta_1t}$. As forecast, we use the one in Fig. (\ref{Wind_Forecast}).
+
+\item[$\bullet$] For the demand: In this Subproblem we use
+\begin{equation}
+D(t)=D_{MAX}\left(\frac{8+3\sin(3\pi t)}{10}\right)
+\label{Demand_3SP}
+\end{equation}
+with $D_{MAX}=\SI{2000}{MW}$ and $t\in[t_0,t_1]$.
+
+\end{enumerate}
+
+Recall Subsection \ref{Subsecion_CTSOC} where we explain the formulation for continuous-time stochastic optimal control.\\
+
+We want to find the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=\E\left\{\sum_{i=1}^2\left[K_H^{(i)}\int_{t_0}^{t_1}\phi_T^{(i)}(t)dt\right]+K_F^{(1)}\int_{t_0}^{t_1}P_F^{(1)}(t)dt\right\}\\
+&=\E\left\{\sum_{i=1}^2\left[K_H^{(i)}\overline{\phi}_T^{(i)}t_1\int_{0}^{1}\hat{\phi}_T^{(i)}(t)dt\right]+K_F^{(1)}\overline{P}_F^{(1)}t_1\int_{0}^{1}\hat{\phi}_F^{(1)}(t)dt\right\}
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) and (\ref{Wind_SDE}) the hydropower and wind power dynamics)
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(1)}(t)=\frac{t_1}{\overline{v}^{(1)}}\left(I^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\right)dt\\
+\hat{v}^{(1)}(t_0)=\hat{v}_0^{(1)}\\
+d\hat{v}^{(2)}(t)=\frac{t_1}{\overline{v}^{(2)}}\left(I^{(2)}(t)-\overline{\phi}_T^{(2)}\hat{\phi}_T^{(2)}(t)\right)dt\\
+\hat{v}^{(2)}(t_0)=\hat{v}_0^{(2)}\\
+d\hat{w}(t)=f_{\hat{w}}(t,\hat{w})dt+\sigma_{\hat{w}}(t,\hat{w})dB\\
+\hat{w}(t_0)=\hat{w}_0.
+\end{cases}
+\end{equation}
+Then, the HJB PDE associated to this Subproblem is given by
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+H(t,\hat{\bm{v}},\hat{w},Du,D^2u)=0\\
+u(1,\hat{\bm{v}},\hat{w})=0,\hat{v}^{(1)}\in[0,1],\hat{v}^{(2)}\in[0,1],\hat{w}\in[0,1]
+\end{cases}
+\label{HJB_Subproblem_3}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{\bm{v}},\hat{w},Du,D^2u)=\\
+\min\ t_1\left[\sum_{i=1}^2\left(\frac{I^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)}{\overline{v}^{(i)}}\frac{\partial u}{\partial \hat{v}^{(i)}}+K_H^{(i)}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)+K_F^{(1)}\overline{\phi}_F^{(1)}\hat{\phi}_F^{(1)}(t)\right]+\\
+f_{\hat{w}}(t,\hat{w})\frac{\partial u}{\partial\hat{w}}+\frac{\sigma^2_{\hat{w}}}{2}\frac{\partial^2 u}{\partial\hat{w}^2}
+\label{Hamiltonian_3}
+\end{multline}
+subject to
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(i)}_T\leq1,i\in\{1,2\}\\
+0\leq\hat{\phi}^{(1)}_F\leq1\\
+D_E(t,\hat{w})=\sum_{i=1}^2P_H^{(i)}(t)+P_F^{(1)}(t).
+\end{cases}
+\end{equation}
+Recall the definition of Effective Demand $D_E(t,\cdot)$ in Subsection \ref{Subsection_ED}.
+
+\subsection{Simple Linked System} \label{Fourth_Subproblem}
+
+\textbf{Objective}: To study the effects and behavior of the Lagrangian Relaxation in a system with low complexity and test the smoothness of the dual function.\\
+
+The numerical formulation and results can be seen in Subsection \ref{Fourth_Subproblem_Num} and \ref{Fourth_Subproblem_Results} respectively.\\
+
+This Subproblem is a modification of the Second Subproblem in Subsection \ref{Second_Subproblem}. The change consists in a connection in the dams, introducing a non-Markovian effect in the system.\\
+To model the connection, the  first dam receives all the water turbined by the second dam after 8 hours (i.e., $\tau=\SI{8}{\hour}$ in the description about continuous-time Lagrangian Relaxation in Subsection \ref{CTLR}).\\
+Then we want to find the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=\sum_{i=1}^2\left[K_H^{(i)}\int_{t_0}^{t_1}\phi_T^{(i)}(t)dt\right]+K_F^{(1)}\int_{t_0}^{t_1}P_F^{(1)}(t)dt\\
+&=\sum_{i=1}^2\left[K_H^{(i)}\overline{\phi}_T^{(i)}t_1\int_{0}^{1}\hat{\phi}_T^{(i)}(t)dt\right]+K_F^{(1)}\overline{P}_F^{(1)}t_1\int_{0}^{1}\hat{\phi}_F^{(1)}(t)dt
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) the hydropower dynamics)
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(1)}(t)=\frac{t_1}{\overline{v}^{(1)}}\left(I^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\right)dt\\
+\hat{v}^{(1)}(t_0)=\hat{v}_0^{(1)}\\
+d\hat{v}^{(2)}(t)=\frac{t_1}{\overline{v}^{(2)}}\left(I^{(2)}(t)+\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t-\tau)-\overline{\phi}_T^{(2)}\hat{\phi}_T^{(2)}(t)\right)dt\\
+\hat{v}^{(2)}(t_0)=\hat{v}_0^{(2)}.
+\end{cases}
+\label{Dynamics_Fourth_SP}
+\end{equation}
+Notice that the reservoir of the second dam is receiving the water used by the first one after $\tau$ time. As we explained in Section \ref{Section_DP}, we cannot apply DP to a non-Markovian system. However, we can use the relaxation explained in Subsection \ref{CTLR}: We define the virtual control $\psi(t)$ with the constraint
+\begin{equation}
+\psi(t)=\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t-\tau).
+\label{New_Constraint}
+\end{equation}
+Using the previous definition we can write the dynamics of the second dam using this definition as
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(2)}(t)=\frac{t_1}{\overline{v}^{(2)}}\left(I^{(2)}(t)+\psi(t)-\overline{\phi}_T^{(2)}\hat{\phi}_T^{(2)}(t)\right)dt\\
+\hat{v}^{(2)}(t_0)=\hat{v}_0^{(2)}.
+\end{cases}
+\end{equation}
+As we want to solve this minimization problem using DP, we have to relax the constraint (\ref{New_Constraint}). We define $\lambda(t)$ as the time-continuous Lagrangian multiplier associated to the constraint (\ref{New_Constraint}). Then, the now Markovian dual problem is given by
+\begin{equation}
+\min_{\lambda}-\theta(\lambda)
+\end{equation}
+where the dual function is
+\begin{equation}
+\theta(\lambda)=\min_{\bm{\phi},\psi}C(t_1,\bm{\phi})+\langle\lambda,\psi(t)-\phi^{(1)}(t-\tau)\rangle.
+\end{equation}
+We are under the conditions of DP to find the minimum of the Lagrangian function given $\lambda$. The HJB PDE associated to the minimization of the Lagrangian function is
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+H(t,\hat{\bm{v}},\lambda,Du)=0\\
+u(t_1,\hat{\bm{v}})=0,\hat{v}^{(1)}\in[0,1],\hat{v}^{(2)}\in[0,1]
+\end{cases}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{\bm{v}},\lambda,Du)=\\
+\min\ t_1\Bigg[\sum_{i=1}^2\left(\frac{I^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}}{\overline{v}^{(i)}}\frac{\partial u}{\partial \hat{v}^{(i)}}+K_H^{(i)}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}\right)+K_F^{(1)}\overline{\phi}_F^{(1)}\hat{\phi}_F^{(1)}(t)+\\
+\lambda(t)\overline{\phi}^{(1)}_T\psi-\lambda(t+\tau)\overline{\phi}^{(1)}_T\hat{\phi}^{(1)}_T\Bigg]
+\label{Hamiltonian_4}
+\end{multline}
+subject to
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(i)}_T\leq1,i\in\{1,2\}\\
+0\leq\hat{\phi}^{(1)}_F\leq1\\
+0\leq\hat{\psi}\leq1\\
+D(t)=\sum_{i=1}^2P_H^{(i)}(t)+P_F^{(1)}(t).
+\end{cases}
+\end{equation}
+
+\subsection{Four Dams, a FFS and a Battery} \label{Fifth_Subproblem}
+
+The numerical formulation and results can be seen in Subsection \ref{Fifth_Subproblem_Num} and \ref{Fifth_Subproblem_Results} respectively.\\
+
+This is an approximation to the complete system. We have four independent dams, a FFS and a battery.
+
+\begin{enumerate}
+
+\item[$\bullet$] For the dams: A total of four dams with state $v^{(i)}$, $i\in\{1,2,3,4\}$, and constant parameters  that can be seen in the tables (\ref{Table_Dams}) and (\ref{Table_Dams_2}). From here, we will use a more real model where the maximum turbine flow depends on the volume but we still do not include the spillage. Also, we will use real data as natural inflow and value of the water.
+
+\item[$\bullet$] For the FFS: We repeat the characteristics given in the previous Subproblems. They can be seen in Table (\ref{Table_FFSs_Real}).
+
+\item[$\bullet$] For the battery: We add storage capacity to the system with dynamics described by Eq. (\ref{Dynamics_Battery}) and parameters in Table (\ref{Table_Battery}).
+
+\item[$\bullet$] For the demand: We use historical demand data from Uruguay.
+
+\end{enumerate}
+The increment of complexity with respect to the Second Subproblem (Subsection \ref{Second_Subproblem}) consists of the inclusion of the battery. Even when the dynamics are not complicated, the quick changes in the capacity of the battery makes more difficult the numerical solution.\\
+Then we want to find the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=\sum_{i=1}^4\left[K_H^{(i)}\int_{t_0}^{t_1}\phi_T^{(i)}(t)dt\right]+K_F^{(1)}\int_{t_0}^{t_1}P_F^{(1)}(t)dt\\
+&=\sum_{i=1}^4\left[K_H^{(i)}\overline{\phi}_T^{(i)}t_1\int_{0}^{1}\hat{\phi}_T^{(i)}(t)dt\right]+K_F^{(1)}\overline{P}_F^{(1)}t_1\int_{0}^{1}\hat{\phi}_F^{(1)}(t)dt
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) and (\ref{Battery_Dynamics}) the hydropower and battery dynamics respectively) for $i=\{1,2,3,4\}$
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(i)}(t)=\frac{t_1}{\overline{v}^{(i)}}\left(I^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)dt\\
+\hat{v}^{(i)}(t_0)=\hat{v}_0^{(i)}\\
+d\hat{a}(t)=-\frac{\overline{P}_A}{\overline{A}}\hat{\phi}_A(t)dt\\
+\hat{a}(t_0)=\hat{a}_0.
+\end{cases}
+\end{equation}
+Then, the HJB PDE associated to this Subproblem is given by
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+H(t,\hat{\bm{v}},\hat{a},DV)=0\\
+V(1,\hat{\bm{v}},\hat{a})=0,\hat{v}^{(i)}\in[0,1]\ \text{for}\ i\in\{1,2,3,4\},\hat{a}\in[0,1]
+\end{cases}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{\bm{v}},\hat{a},Du)=\\
+\min\ t_1\left[\sum_{i=1}^4\left(\underbrace{\frac{I^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)}{\overline{v}^{(i)}}}_{f_v^{(i)}\left(t,\phi_T^{(i)}(t)\right)}\frac{\partial u}{\partial \hat{v}^{(i)}}+K_H^{(i)}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)+K_F^{(1)}\overline{\phi}_F^{(1)}\hat{\phi}_F^{(1)}(t)\underbrace{-\frac{\overline{P}_A\hat{\phi}_A}{\overline{A}}}_{f_a(t,\hat{\phi}_A)}\frac{\partial u}{\partial\hat{a}}\right]
+\label{Hamiltonian_5}
+\end{multline}
+subject to
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(i)}_T\leq1,i\in\{1,2,3,4\}\\
+0\leq\hat{\phi}^{(1)}_F\leq1\\
+0\leq\hat{\phi}_A\leq1\\
+D(t)=\sum_{i=1}^4P_H^{(i)}(t)+P_F^{(1)}(t)+P_A(t).
+\end{cases}
+\end{equation}
+
+\subsection{Complete Linked System (no Battery)} \label{Sixth_Subproblem}
+
+\textbf{Objective}: To study the behavior of our Oracle and understand the role of the continuous-time Lagrangian Multipliers in the system.\\
+
+The numerical formulation and results can be seen in Subsection \ref{Sixth_Subproblem_Num} and \ref{Sixth_Subproblem_Results} respectively.\\
+
+This is maybe the closest approximation to the real Uruguayan electric system. We have four dams with their corresponding real connections and four FFSs.
+
+\begin{enumerate}
+
+\item[$\bullet$] For the dams: A total of four dams with state $v^{(i)}$, $i\in\{1,2,3,4\}$, and constant parameters  that can be seen in the tables (\ref{Table_Dams}) and (\ref{Table_Dams_2}), and links as we explained in Subsection \ref{Subsection_LinkDams}. We will also assume that Baygorria, the second dam, is a ROR dam (as we explained in Subsection \ref{ROR_Dam}).\\
+From here, we will use a more realistic model where the maximum turbine flow depends on the volume, and we add the possibility of using spillage. Also, we will use real data as natural inflow and the value of the water.
+
+\item[$\bullet$] For the FFS: We use data from real FFSs in Uruguay. They can be seen in Table (\ref{Table_FFSs_Real}).
+
+\item[$\bullet$] For the demand: We use historical demand data from Uruguay.
+
+\end{enumerate}
+Similar to what we did to make the Fourth Subproblem in Section \ref{Fourth_Subproblem} Markovian, here we will use a continuous-time Lagrangian Relaxation (as explained in Subsection \ref{CTLR}) but over two different constraints. The primal problem consists in finding the optimal controls $\bm{\phi}^*$ that minimizes the cost function (recall (\ref{Fuel_Cost_Function}) and (\ref{Water_Cost_Function}) the fuel and hydropower cost function respectively)
+\begin{equation}
+\begin{split}
+C(t_1,\bm{\phi})&=\sum_{i=1}^4\left[K_H^{(i)}\int_{t_0}^{t_1}\left(\phi_T^{(i)}(t,\hat{\bm{v}}(t))+\phi_S^{(i)}(t,\hat{\bm{v}}(t))\right)dt+K_F^{(i)}\int_{t_0}^{t_1}P_F^{(i)}(t)dt\right]\\
+&=\sum_{i=1}^4\Bigg[K_H^{(i)}t_1\left(\int_{0}^{1}\overline{\phi}_T^{(i)}(\hat{\bm{v}}(t))\hat{\phi}_T^{(i)}(t)dt+\int_{0}^{1}\overline{\phi}_S^{(i)}(\hat{\bm{v}}(t))\hat{\phi}_S^{(i)}(t)dt\right)\\
+&+K_F^{(i)}\overline{P}_F^{(i)}t_1\int_{0}^{1}\hat{\phi}_F^{(i)}(t)dt\Bigg]
+\end{split}
+\end{equation}
+with the normalized dynamics (recall (\ref{Volume}) the hydropower dynamics)
+\begin{equation}
+\begin{cases}
+d\hat{v}^{(1)}(t)=\frac{t_1}{\overline{v}^{(1)}}\left(I^{(1)}(t)-\phi_T^{(1)}(t)-\phi_S^{(1)}(t)\right)dt\\
+d\hat{v}^{(2)}(t)=\frac{t_1}{\overline{v}^{(2)}}\left(I^{(2)}(t)+\phi_T^{(1)}(t-\tau_{21})+\phi_S^{(1)}(t-\tau_{21})-\phi_T^{(2)}(t)-\phi_S^{(2)}(t)\right)dt=0\\
+d\hat{v}^{(3)}(t)=\frac{t_1}{\overline{v}^{(3)}}\left(I^{(3)}(t)+\phi_T^{(2)}(t-\tau_{32})+\phi_S^{(2)}(t-\tau_{32})-\phi_T^{(3)}(t)-\phi_S^{(3)}(t)\right)dt\\
+d\hat{v}^{(4)}(t)=\frac{t_1}{\overline{v}^{(4)}}\left(I^{(4)}(t)-\phi_T^{(4)}(t)-\phi_S^{(4)}(t)\right)dt\\
+\hat{v}^{(i)}(t_0)=\hat{v}_0^{(i)}\quad\text{for}\quad i\in\{1,2,3,4\}.
+\end{cases}
+\label{Dynamics_Sixth_SP}
+\end{equation}
+Notice that we have used the ROR condition (\ref{ROR_Condition}) which fixes $d\hat{v}^{(2)}=0$. Now we can define the virtual controls $\psi^{(2)}(t)$ and $\psi^{(3)}(t)$ with the constraints
+\begin{equation}
+\psi^{(2)}(t)=\phi^{(1)}_T(t-\tau_{21})+\phi^{(1)}_S(t-\tau_{21})
+\label{Const_1}
+\end{equation}
+and
+\begin{equation}
+\psi^{(3)}(t)=\phi^{(2)}_T(t-\tau_{32})+\phi^{(2)}_S(t-\tau_{32}),
+\label{Const_2}
+\end{equation}
+and the continuous-time Lagrangian Multipliers $\lambda_{21},\lambda_{32}\in L^2$ with $\lambda_{21}:[\tau_{21},t_1]\to\R$ and $\lambda_{32}:[\tau_{32},t_1]\to\R$ associated to the constraints (\ref{Const_1}) and (\ref{Const_2}) respectively. Then, the now Markovian dual problem is given by
+\begin{equation}
+\min_{\lambda_{21},\lambda_{32}}-\theta(\lambda_{21},\lambda_{32})
+\end{equation}
+where the dual function is
+\begin{multline}
+\theta(\lambda)=\min_{\bm{\phi},\psi^{(2)},\psi^{(3)}}C(t_1,\bm{\phi})+\int_{\tau_{21}}^{t_1}\lambda_{21}(t)\left(\psi^{(2)}(t)-\phi^{(1)}_T(t-\tau_{21})-\phi^{(1)}_S(t-\tau_{21})\right)dt\\
++\int_{\tau_{32}}^{t_1}\lambda_{32}\left(\psi^{(3)}(t)-\phi^{(2)}_T(t-\tau_{32})-\phi^{(2)}_S(t-\tau_{32})\right)dt.
+\label{Dual_Function_Sixth}
+\end{multline}
+We are under the conditions of DP to find the minimum of the Lagrangian function given $\lambda_{21}$ and $\lambda_{32}$. The HJB PDE associated to the minimization of the Lagrangian function is
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+H(t,\hat{\bm{v}},Du)=0\\
+u(1,\hat{\bm{v}})=0,\hat{v}^{(1)}\in[0,1],\hat{v}^{(2)}\in[0,1]
+\end{cases}
+\end{equation}
+where
+\begin{multline}
+H(t,\hat{\bm{v}},Du)=\\
+\min\ t_1\Bigg[\sum_{i=1}^4\left(\frac{I^{(i)}(t)-\overline{\phi}_T^{(i)}(\hat{\bm{v}})\hat{\phi}_T^{(i)}}{\overline{v}^{(i)}}\frac{\partial u}{\partial \hat{v}^{(i)}}+K_H^{(i)}\overline{\phi}_T^{(i)}(\hat{v}^{(i)})\hat{\phi}_T^{(i)}+K_F^{(i)}\overline{\phi}_F^{(i)}\hat{\phi}_F^{(i)}(t)\right)\\
++\lambda_{21}(t)\overline{\psi}^{(2)}\hat{\psi}^{(2)}-\lambda_{21}(t+\tau_{21})\overline{\phi}^{(1)}_T(\hat{\bm{v}})\hat{\phi}^{(1)}_T-\lambda_{21}(t+\tau_{21})\overline{\phi}^{(1)}_S(\hat{\bm{v}})\hat{\phi}^{(1)}_S\\
++\lambda_{32}(t)\overline{\psi}^{(3)}\hat{\psi}^{(3)}-\lambda_{32}(t+\tau_{32})\overline{\phi}^{(2)}_T(\hat{\bm{v}})\hat{\phi}^{(2)}_T-\lambda_{32}(t+\tau_{32})\overline{\phi}^{(2)}_S(\hat{\bm{v}})\hat{\phi}^{(2)}_S\Bigg]
+\label{Hamiltonian_6}
+\end{multline}
+subject to ($i\in\{1,2,3,4\}$, $j\in\{2,3\}$)
+\begin{equation}
+\begin{cases}
+0\leq\hat{\phi}^{(i)}_T\leq1\\
+0\leq\hat{\phi}^{(i)}_S\leq1\\
+0\leq\hat{\phi}^{(i)}_F\leq1\\
+0\leq\hat{\psi}^{(j)}\leq1\\
+D(t)=\sum_{i=1}^4\left[P_H^{(i)}(\hat{\phi}_T^{(i)},\hat{\phi}_S^{(i)})+P_F^{(i)}(\hat{\phi}_F^{(i)})\right].
+\end{cases}
+\end{equation}
+
+\subsection{Complete Linked System with Battery} \label{Seventh_Subproblem}
+
+The numerical formulation and results can be seen in Subsection \ref{Seventh_Subproblem_Num} and \ref{Seventh_Subproblem_Results} respectively.\\
+
+Similar to the previous one, but including a battery and assuming Baygorria, the second dam, as a normal dam (not a ROR dam). This is the most complex model we will solve in this thesis.\\
+We follow the relaxation explained in the Sixth Subproblem defined in Subsection \ref{Sixth_Subproblem} and the battery afftects the system in the same way as we described in the Fifth Subproblem in Subsection \ref{Fifth_Subproblem}.

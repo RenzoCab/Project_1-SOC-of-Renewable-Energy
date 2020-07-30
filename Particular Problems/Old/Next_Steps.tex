@@ -1,0 +1,109 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Summary next steps}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\section{Steps:}
+
+\begin{enumerate}
+
+\item Solve the bi-level relaxed problem. Plot $\tilde{\phi}^{(4)}_T(t,v^{(1)},v^{(4)})$ (virtual control) and $\hat{\phi}^{(1)}_T(t-Z_{4,1},v^{(1)},v^{(4)})$ (optimal turbined flow from Bonete at time $t-Z_{4,1}$). Also compute
+\begin{equation*}
+\int_{Z_{4,1}}^T\int_{\underline{V}^{(1)}}^{\overline{V}^{(1)}}\int_{\underline{V}^{(4)}}^{\overline{V}^{(4)}}\left(\tilde{\phi}^{(4)}_T(t,v^{(1)},v^{(4)})-\hat{\phi}^{(1)}_T(t-Z_{4,1},v^{(1)},v^{(4)})\right)^2dtdv^{(1)}dv^{(4)}.
+\end{equation*}
+
+\item Find a primal feasible solution using \textbf{Augmented Lagrangian method}. Here we consider our optimal Lagrange multilayer $\lambda^*(t)$ and we add a penalization function to the cost
+\begin{equation*}
+\mathcal{L}(\Phi,\bm{V},\lambda^*)+\rho||g(\Phi)(t)||^2_{L^2([0,T]\subset\R)}
+\end{equation*}
+with
+\begin{equation*}
+g(\Phi(t))=\begin{cases}
+0\ &\text{if}\ t\in[0,Z_{4,1})\\
+\left(\tilde{\phi}^{(4)}_T(t)-\hat{\phi}^{(1)}_T(t-Z_{4,1})\right)\ &\text{if}\ t\in[Z_{4,1},T].
+\end{cases}
+\end{equation*}
+Then (we simplify the notation of the norm $||\cdot||_{L^2([0,T]\subset\R)}\to||\cdot||_2$)
+\begin{equation*}
+\rho||g(\Phi)(t)||^2_2=\begin{cases}
+0\ &\text{if}\ t\in[0,Z_{4,1})\\
+\rho\left(||\tilde{\phi}^{(4)}_T||^2_2+||\hat{\phi}^{(1)}_T||^2_2-2\left(\tilde{\phi}^{(4)}_T,\hat{\phi}^{(1)}_T\right)_2\right)\ &\text{if}\ t\in[Z_{4,1},T].
+\end{cases}
+\end{equation*}
+Then we do a Taylor expansion for the last therm over the solution in the iteration $K$
+\begin{equation*}
+\left(\tilde{\phi}^{(4)}_T,\hat{\phi}^{(1)}_T\right)_2\approx\left(\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_{T_K}\right)_2+\left(\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_T-\hat{\phi}^{(1)}_{T_K}\right)_2+\left(\tilde{\phi}^{(4)}_T-\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_{T_K}\right)_2.
+\end{equation*}
+
+\item Compute the duality gap.
+
+\item Couple all the dams without wind.
+
+\item Add all the dams.
+
+\item Coupled dam system with wind,
+
+\item Add battery and flexible demand.
+
+\end{enumerate}
+
+\section{Questions and remarks:}
+
+\begin{enumerate}
+\item[Q:] What about monotonicity? How does it change when we add the relaxation?
+
+\item[Q:] What about duality gap with concatenated and NO concatenated systems?
+
+\item[Q:] Which is the intuitive value of $\lambda(t)$?
+
+\item[Q:] What about regularity?
+
+\item[R:] I need to parallelize all.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Report's ReadMe}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+The idea of this run in Ibex was to find possible differences between the cost-to-go and the value function. Most days were OK. However, some of them are wrong, or the simulation never finished.\\
+To study the results, I will simulate (modify) the original outputs, but only the plots. The partial derivatives will not be changed.\\
+Changes:
+\begin{enumerate}
+
+\item I will add a small value to the water during the post-processing. Then, the system will not waste water (lines 410-414).\\
+\textbf{The system waste because all has value 0, and it is enough to satisfy the demand, then, also $u_V=0$, and the opportunity cost is always 0.}\\
+\textbf{{\color{red} I also need to do this in the real code}.}\\
+The minimums are $(1.1,1.2,1.3,1.4)\ \SI{}{USD/\mega\watt\hour}$ for the dams (enumerated in the usual way). We choose different values always to have a unique solution.\\
+When we solve the dual problem (during the iterations), we use the real cost of the water. We can do this because the subgradient only depends on the flows of Bonete and Baygorrya, and the virtual flows of Baygorrya and Palmar. All these flows have opportunity cost non-zero because of the Lagrange multiplier, and they will give the correct subgradient even when all the water values are zero.
+
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,1567 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{bbm}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\supp}{supp}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\interior}[1]{{\kern0pt#1}^{\mathrm{o}}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Thesis.}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Model}
+
+Here we have Salto Grande and one fuel generator. Also, the demand is deterministic. In our system, we use time in seconds, power in kW, money in U\$S, distance in meters and volume in $m^3$. Also, we normalize the variables in the equations; we use the hat (i.e., $\hat{V}$) to refer to the moralized one.
+
+\subsection{Hydraulic power}
+
+The dynamics of the system are given by
+\begin{equation*}
+\begin{cases}
+d\hat{V}(t)=\frac{\overline{T}}{\overline{V}}(I_T(t)-\overline{\phi}_T\hat{\phi}_T(t))dt\\
+\hat{V}_0=\hat{V}(0)=0.9\\
+\hat{V}(t)\in[0.6,1],\ V(t)=\overline{V}\hat{V}(t)\\
+\hat{\phi}_T(t)\in[0,1],\ \phi_T(t)=\overline{\phi}_T\hat{\phi}_T(t)\\
+\overline{V}=5*10^9\ m^3,\ \overline{\phi}_T=4200\ m^3/s,\ \overline{T}=86400\ s
+\end{cases}
+\end{equation*}
+the power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_H(t)=\eta\phi_T(t)h(t)=\eta\overline{\phi}_T\hat{\phi}_T(t)\Big[H(\hat{V}(t))-d(\hat{\phi}_T(t))-h_0\Big]\\
+H(\hat{V})=(-19.8)\hat{V}^2+(51.5)\hat{V}+3.79\\
+d(\hat{\phi}_T)=c_d\hat{\phi}_T\\
+h_0=5.1,\ c_d=5.3
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_H(t)=K_H\overline{T}\overline{\phi}_T\int_0^t\hat{\phi}_T(s)ds.
+\end{equation*}
+%$\num{20000000}$
+We set $I_T(t)=\SI{2.2e3}{\m^3/\s}$, corresponding to half of the maximum turbined flow.
+
+\subsection{Fossil fuel power station}
+
+The power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_F(t)=\phi_F(t)=\overline{\phi}_F\hat{\phi}_F(t)\\
+\hat{\phi}_F(t)\in[0,1],\ \overline{\phi}_F=2*10^6\ kW
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_F(t)=\frac{K_F}{\num{3.6e6}}\int_0^tP_F(s)ds=\frac{K_F\overline{T}\overline{\phi}_F}{\num{3.6e6}}\int_0^t\hat{\phi}_F(s)ds.
+\end{equation*}
+$K_F=130$ is in U\$S/MWh, we divide over $3.6*10^6$ to pass to U\$S/kW.
+
+\subsection{Demand}
+
+Deterministic and only depending on time $D(t)$, we will assume that never can be greater than $\overline{D}=2000$ MW and use the normalized one $\hat{D}(t)\in[0,1]$ such that $D(t)=\overline{D}\hat{D}(t)$. For the simulations we will use $\hat{D}(t)=\frac{2}{3}+\frac{1}{3}\sin\big(4\pi t\big)$ (see Figure (\ref{D_1})) and $\hat{D}(t)=0.5$. If we only use fuel, we would spend $4.2*10^6$ U\$S and  $3.1*10^6$ U\$S respectively.
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.5\textwidth]{Demand_01012017.eps}
+%\caption{Demand of 01/01/2017 (from \href{adme.com.uy}{adme.com.uy}).}
+%\label{Demand01012017}
+%\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{D_1.eps}
+\caption{Synthetic demand.}
+\label{D_1}
+\end{figure}
+
+\subsection{Constraint}
+
+We need at any moment to supply the demand, this is
+\begin{equation*}
+D(t)=P_H(t)+P_F(t).
+\end{equation*}
+
+\subsection{Objective function}
+
+We want to minimize
+\begin{equation*}
+\Theta(T)=\E\Big[C_H(T)+C_F(T)\Big]=K_H\overline{T}\overline{\phi}_T\int_0^T\hat{\phi}_H(s)ds+\frac{K_F\overline{T}\overline{\phi}_F}{\num{3.6e6}}\int_0^T\hat{\phi}_F(s)ds.
+\end{equation*}
+
+\section{Construction of the H-J-B equation}
+
+\subsection{Hamiltonian}
+
+Our Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(Du,t,V)=\\
+=\min_{\begin{cases}
+0\leq\hat{\phi}_T\leq1\\
+0\leq\hat{\phi}_F\leq1\\
+D(t)=P_H+P_F
+\end{cases}}\overline{T}\Bigg[\frac{(I_T(t)-\overline{\phi}_T\hat{\phi}_T)}{\overline{V}}\frac{\partial u}{\partial V}+\frac{K_F\overline{\phi}_F}{\num{3.6e6}}\hat{\phi}_F+K_H\overline{\phi}_T\hat{\phi}_T\Bigg]\\
+=\overline{T}\left[\min_{\begin{cases}
+0\leq\hat{\phi}_T\leq1\\
+0\leq\hat{\phi}_F\leq1\\
+D(t)=P_H+P_F
+\end{cases}}\underbrace{\Bigg[\Bigg(K_H\overline{\phi}_T-\frac{\overline{\phi}_T}{\overline{V}}\frac{\partial u}{\partial V}\Bigg)\hat{\phi}_T+\Bigg(\frac{K_F\overline{\phi}_F}{\num{3.6e6}}\Bigg)\hat{\phi}_F\Bigg]}_{C=\hat{K}_H\hat{\phi}_T+\hat{K}_F\hat{\phi}_F}\right]+\Bigg(\frac{\overline{T}I_T(t)}{\overline{V}}\Bigg)\frac{\partial u}{\partial V}.
+\end{multline*}
+%We have that $\underline{H}=30$ and $\overline{H}=35.5$, then $h(t)=(H(V(t))-5.1)\in[24.9,30.4]$ for all $t\geq0$. Now we compare the influence of $\phi_T$ and $\phi_F$, it is natural to assume $K_F>-\frac{\partial u}{\partial V}+K_H\eta(H(V)-5.1)$ which is correct if $\frac{\partial u}{\partial V}>K_H\eta(H(V)-5.1)-K_F(>-50.5)$.
+
+\subsection{H-J equation}
+
+The Hamilton-Jacobi equation is
+\begin{equation}
+\begin{cases}
+\frac{\partial u}{\partial t}+\mathbf{H}(Du,u,t,V)=0\\
+u(1,v)=0.
+\end{cases}
+\label{HJ}
+\end{equation}
+
+\section{Simulation}
+
+\subsection{Scheme and discretization}
+
+\subsubsection{Simulation 1}
+
+We use central finite differences and explicit Euler. For the volume $\hat{V}$, we simulate between 0.6 and 1 with $d\hat{V}=0.01$, and for the time, we simulate from 24:00 to 00:00 hs, this is $\hat{t}$ from 1 to 0. For the demand, we use the one defined before (see Figure (\ref{D_1})). The boundary conditions are $\frac{\partial^2 u}{\partial V^2}=0$ in both extremes.\\
+As we use central finite differences, we have that for any inner point of the grid $i$ associated to $v_i$
+\begin{equation*}
+\frac{\partial u}{\partial V}(v_i)\approx\frac{U_{i+1}-U_{i-1}}{2\Delta V},
+\end{equation*}
+the boundary conditions implies
+\begin{equation*}
+\frac{\partial^2u}{\partial V^2}(v_i)\approx\frac{U_{i+1}-2U_i+U_{i-1}}{{\Delta V}^2}.
+\end{equation*}
+Then in $i=1$ (in Matlab the arrays start in 1)
+\begin{equation*}
+\frac{U_2-2U_1+U_0}{{\Delta V}^2}=0\implies U_0=2U_1-U_2,
+\end{equation*}
+using this equality in our central finite differences scheme for the first derivative, we have that
+\begin{equation*}
+\frac{\partial u}{\partial V}(v_1)\approx\frac{U_2-U_1}{\Delta V}.
+\end{equation*}
+
+\subsubsection{Simulation 2}
+
+We use central finite differences and explicit Euler. For the volume, we simulate between $\hat{V}_{min}$ and $\hat{V}_{max}$, where they correspond to the minimum and maximum possible end volume respectively. To compute $\hat{V}_{min}$ we assume that $\hat{\phi}_T(t)=1\ \forall t$ and for $\hat{V}_{max}$, $\hat{\phi}_T(t)=0\ \forall t$, this is
+\begin{equation*}
+\begin{cases}
+\hat{V}_{min}=\hat{V}_0+\frac{\overline{T}}{\overline{V}}\big(\int_0^1I_T(s)ds-\overline{\phi}_T\big)\\
+\hat{V}_{max}=\hat{V}_0+\frac{\overline{T}}{\overline{V}}\big(\int_0^1I_T(s)ds\big).
+\end{cases}
+\end{equation*}
+For the time, we simulate from 24:00 to 00:00 hs, this is $\hat{t}$ from 1 to 0. For the demand, we use the one defined before (see Figure (\ref{D_1})). The boundary conditions are $\frac{\partial^2 u}{\partial V^2}=0$ in both extremes.
+
+\subsection{Results}
+
+The results are in the presentation.
+
+%\subsubsection{Case 1}
+%
+%Here we take $K_{HE}=0.3$ U\$S/MWh. As is it too much smaller than the price per energy of the fuel, the system try to use water always it can. The figures are from (\ref{Result_1}) to (\ref{D3000_1}).
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{Result_1.eps}
+%\caption{Optimal cost function.}
+%\label{Result_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{DU_1.eps}
+%\caption{Gradient function.}
+%\label{DU_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiT_1.eps}
+%\caption{Turbined flow.}
+%\label{PhiT_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiF_1.eps}
+%\caption{Fuel control.}
+%\label{PhiF_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D5000_1.eps}
+%\caption{Demand and all the powers with $V=5000\ hm^3$.}
+%\label{D5000_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D3000_1.eps}
+%\caption{Demand and all the powers with $V=3000\ hm^3$.}
+%\label{D3000_1}
+%\end{figure}
+%
+%\subsubsection{Case 2}
+%
+%Here we take $K_{HE}=130$ U\$S/MWh. Also the price is higher when the dam start to have less water, then the system changes between water and fuel. The figures are from (\ref{Result_2}) to (\ref{D3000_2}).
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{Result_2.eps}
+%\caption{Optimal cost function.}
+%\label{Result_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{DU_2.eps}
+%\caption{Gradient function.}
+%\label{DU_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiT_2.eps}
+%\caption{Turbined flow.}
+%\label{PhiT_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiF_2.eps}
+%\caption{Fuel control.}
+%\label{PhiF_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D5000_2.eps}
+%\caption{Demand and all the powers with $V=5000\ hm^3$.}
+%\label{D5000_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D3000_2.eps}
+%\caption{Demand and all the powers with $V=3000\ hm^3$.}
+%\label{D3000_2}
+%\end{figure}
+
+
+\section{Extra}
+
+Here we have some computations and assumptions.
+
+\subsection{Water's value}
+
+Our data can be the value of the water's energy, this is $K_{HE}$ in $\SI{}{USD/MWh}$, but we need the value per volume $K_H$ in $\SI{}{USD/m^3}$, then we need to do a conversion. Assuming we use the dam at its maximum power ($\hat{\phi}_T=1$), we want
+\begin{equation*}
+\frac{K_{HE}}{\num{3.6e6}}\int_0^TP_H(s)ds=K_H\int_0^T\phi_T(s)ds.
+\end{equation*}
+Now, we have
+\begin{equation*}
+\begin{cases}
+\frac{K_{HE}}{\num{3.6e6}}\int_0^TP_H(s)ds=\frac{K_{HE}}{\num{3.6e6}}\eta\overline{T}\overline{\phi}_T(H(\hat{V}_0)-d(1)-h_0)T\\
+K_H\int_0^T\phi_T(s)ds=K_H\overline{T}\overline{\phi}_TT
+\end{cases}
+\end{equation*}
+from where we deduce
+\begin{equation*}
+K_H(K_{HE},\hat{V}_0)=\frac{K_{HE}\eta(H(\hat{V}_0)-d(1)-h_0)}{\num{3.6e6}}.
+\end{equation*}
+Then $K_{HE}=\SI{0.3}{USD/MWh}\implies K_H=\SI{1.8e-5}{USD/m^3}$.
+
+\subsection{Minimum cost condition}\label{MCC}
+
+Given the nonlinearity in the cost of the turbine flow, we will find the optimal distribution of power. We will omit the time dependence.
+\begin{multline}
+P_H=\\
+=\eta\phi_T(H(\hat{V})-d(\hat{\phi}_T)-h_0)\\
+=\eta\hat{\phi}_T\overline{\phi}_T(H(\hat{V})-d(\hat{\phi}_T)-h_0)\\
+=\underbrace{[\eta\overline{\phi}_T(H(\hat{V})-h_0)]}_{=K_1}\hat{\phi}_T+\underbrace{[-c_d\eta\overline{\phi}_T]}_{=K_2\in\R^-}\hat{\phi}_T^2\\
+=K_1\hat{\phi}_T+K_2\hat{\phi}_T^2.
+\label{Eq2}
+\end{multline}
+Now we define $\overline{K}_2=-K_2\in\R^+$ and try to find $\hat{\phi}_T(P_H)$, then
+\begin{multline}
+P_H=-\overline{K}_2\hat{\phi}_T^2+K_1\hat{\phi}_T\implies0=-\overline{K}_2\hat{\phi}_T^2+K_1\hat{\phi}_T-P_H\implies\\
+\hat{\phi}_T=\frac{-K_1\pm\sqrt{K_1^2-4(-\overline{K}_2)(-P_H)}}{2(-\overline{K}_2)}\implies
+\hat{\phi}_T=\frac{K_1-\sqrt{K_1^2-4\overline{K}_2P_H}}{2\overline{K}_2}.
+\label{Eq3}
+\end{multline}
+For the last implication, we use that for zero power we have zero flow. Now we have $D=P_F+P_H=\phi_F+P_H$ and the cost of the Hamiltonian is $C=\hat{K}_F\hat{\phi}_F+\hat{K}_H\hat{\phi}_T$, then using $P_F=\overline{\phi}_F\hat{\phi}_F=D-P_H$ and using our expression for $\hat{\phi}_T(P_H)$ we have
+\begin{equation*}
+C(P_H)=\frac{\hat{K}_F}{\overline{\phi}_F}(D-P_H)+\frac{\hat{K}_H}{2\overline{K}_2}\Bigg(K_1-\sqrt{K_1^2-4\overline{K}_2P_H}\Bigg)
+\end{equation*}
+and
+\begin{equation*}
+\frac{\partial C}{\partial P_H}(P_H)=\frac{\hat{K}_H}{\sqrt{K_1^2-4\overline{K}_2P_H}}-\frac{\hat{K}_F}{\overline{\phi}_F}.
+\end{equation*}
+Then we want to know until which point $C(P_H)$ is a decreasing function, so we want $P_H^*$ such that $\frac{\partial C}{\partial P_H}(P_H^*)=0$, this is
+\begin{equation*}
+P_H^*=\frac{1}{4\overline{K}_2}\Bigg[K_1^2-\Bigg(\frac{\hat{K}_H\overline{\phi}_F}{\hat{K}_F}\Bigg)^2\Bigg].
+\end{equation*}
+Then the distribution of power is given by
+\begin{equation*}
+\begin{cases}
+P_H=0,P_F=D\ &\text{if}\ 0\geq P^*_H\\
+P_H=D,P_F=0\ &\text{if}\ D\leq P_H^*,D\leq\overline{P}_H\\
+P_H=\overline{P}_H,P_F=D-\overline{P}_H\ &\text{if}\ D\leq P_H^*,D>\overline{P}_H\\
+P_H=P_H^*,P_F=D-P_H^*\ &\text{if}\ D>P_H^*>0,D\leq\overline{P}_H\\
+P_H=P_H^*,P_F=D-P_H^*\ &\text{if}\ D>P_H^*>0,D>\overline{P}_H,P_H^*\leq\overline{P}_H\\
+P_H=\overline{P}_H,P_F=D-\overline{P}_H\ &\text{if}\ D>P_H^*,D>\overline{P}_H,P_H^*>\overline{P}_H
+\end{cases}
+\end{equation*}
+where $\overline{P}_H(\hat{V})=\eta\overline{\phi}_T(H(\hat{V})-d(1)-h_0)$.
+
+\subsection{Change of variables}
+
+({\color[rgb]{1,0,0} Doing this we move the boundary conditions next to $V_0$}) given the initial volume $V_0$, the maximum turbine flow $\overline{\phi}_T$ and the forecast input $I_T(t)$, we can predict the maximum and minimum possible final volumes $\overline{V}$ and $\underline{V}$. Then we want to solve the PDE (\ref{HJ}) in the cone of figure \ref{Cone}.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Cone.eps}
+\caption{Realistic domain of the PDE.}
+\label{Cone}
+\end{figure}
+What we need first is a continuous function $F(v,t)$ that maps the cone $C$ into the square $S$ (see figure \ref{Cone2Square}). We extend the point $V_0$ into the segment $[V_0-\delta,V_0+\delta]$ for avoiding singularities.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{Cone2Square.eps}
+\caption{Linear mapping from $C$ to $S$.}
+\label{Cone2Square}
+\end{figure}
+We start with the formulation of the limits of the cone
+\begin{equation}
+\begin{cases}
+\overline{V}'(t)=(V_0+\delta)+\frac{\overline{V}-(V_0+\delta)}{T}t\\
+\underline{V}'(t)=(V_0-\delta)+\frac{\underline{V}-(V_0-\delta)}{T}t
+\end{cases}
+\label{Sys1}
+\end{equation}
+where by the normalization $T=1$. Now we have that for every $t\in[0,1]$ and every $V'\in[\underline{V}'(t),\overline{V}'(t)]$
+\begin{equation}
+F(t,V')=\underline{V}+\frac{\overline{V}-\underline{V}}{\overline{V}'(t)-\underline{V}'(t)}(V'-\underline{V}'(t)).
+\label{Mapping}
+\end{equation}
+Basically for every $t\in[0,1]$, we are mapping continuously $[\underline{V}'(t),\overline{V}'(t)]$ into $[\underline{V},\overline{V}]$. Now using (\ref{Sys1}) in (\ref{Mapping}), we deduce
+\begin{equation}
+\begin{cases}
+F(t,V')=\underline{V}+\frac{\overline{V}-\underline{V}}{2\delta(1-t)+(\overline{V}-\underline{V})t}[V'-(V_0-\delta)-(\underline{V}-(V_0-\delta))t]\\
+V'\in[\underline{V}'(t),\overline{V}'(t)]
+\end{cases}
+\label{C2S}
+\end{equation}
+and if $v\in S$
+\begin{equation}
+F^{-1}(t,v)=\frac{(v-\underline{V})(2\delta(1-t)+(\overline{V}-\underline{V})t)}{\overline{V}-\underline{V}}+(V_0-\delta)+(\underline{V}-(V_0-\delta))t.
+\label{S2C}
+\end{equation}
+As a test we choose $\delta=0.01,\overline{V}=1,\underline{V}=0.7,V_0=0.8,\Delta t=0.1$ and 20 divisions of the domain. We start with the formulation of the cone and apply (\ref{C2S}), after we apply over the result (\ref{S2C}). The result can be seen in figure \ref{Results}.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Cone_Plot.eps}}
+\subfigure{\includegraphics[scale=.5]{Square_Plot.eps}}
+\caption{Test in MATLAB.}
+\label{Results}
+\end{figure}
+
+\subsubsection{Solving in the cone and the square}
+
+We have the continuous bijective mapping $F:C\to S$ and $u(t,v)$ a solution of (\ref{HJ}), we want to find $w(t,F(t,v))$ such that $u(t,v)=w(t,F(t,v))$ for all $(t,v)\in C$. Then $w(t,F)$ is a solution of
+\begin{equation*}
+\begin{cases}
+\frac{\partial w}{\partial t}+\frac{\partial w}{\partial F}\frac{\partial F}{\partial t}+\min_{\begin{cases}
+0\leq\hat{\phi}_H\leq1\\
+0\leq\hat{\phi}_F\leq1\\
+D(t)=P_H+P_F
+\end{cases}}\overline{T}\Bigg[\frac{(I_T(t)-\overline{\phi}_T\hat{\phi}_T)}{\overline{V}}\frac{\partial w}{\partial F}\frac{\partial F}{\partial v}(t)+\frac{K_F\overline{\phi}_F}{3.6*10^6}\hat{\phi}_F+K_H\overline{\phi}_T\hat{\phi}_T\Bigg]\\
+w(1,v)=0.
+\end{cases}
+\end{equation*}
+with ($\Delta V=\overline{V}-\underline{V}$)
+\begin{equation*}
+\frac{\partial F}{\partial v}(t)=\frac{\text{$\Delta $V}}{2 \delta  (1-t)+\text{$\Delta $V} t}
+\end{equation*}
+and
+\begin{equation*}
+\frac{\partial F}{\partial t}(t,v)=\frac{\text{$\Delta $V} \left(-\underline{V}-\delta +V_0\right)}{2 \delta  (1-t)+\text{$\Delta $V} t}-\frac{\text{$\Delta $V} (\text{$\Delta $V}-2 \delta ) \left(-t \left(\underline{V}+\delta -V_0\right)+\delta +v-V_0\right)}{(2 \delta  (1-t)+\text{$\Delta $V} t)^2},
+\end{equation*}
+where we have used Wolfram Mathematica 11.1.
+
+\subsubsection{New Hamiltonian}
+
+Our new Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(Dw,t,F)=\\
+\overline{T}\left[\min_{\begin{cases}
+0\leq\hat{\phi}_H\leq1\\
+0\leq\hat{\phi}_F\leq1\\
+D(t)=P_H+P_F
+\end{cases}}\underbrace{\Bigg[\Bigg(K_H\overline{\phi}_T-\frac{\overline{\phi}_T}{\overline{V}}\frac{\partial w}{\partial F}\frac{\partial F}{\partial v}(t)\Bigg)\hat{\phi}_H+\Bigg(\frac{K_F\overline{\phi}_F}{3.6*10^6}\Bigg)\hat{\phi}_F\Bigg]}_{C=\hat{W}_H\hat{\phi}_T+\hat{W}_F\hat{\phi}_F}\right]+\\+\Bigg(\frac{\overline{T}I_T(t)}{\overline{V}}\Bigg)\frac{\partial w}{\partial F}\frac{\partial F}{\partial v}(t).
+\end{multline*}
+We can apply what we did in section \ref{MCC}, but with our new definitions for $\hat{K}_H$ and $\hat{K}_F$ ($\hat{W}_H$ and $\hat{W}_F$).
+
+\section{Case with 2 dams}
+
+\subsection{Model}
+
+\subsubsection{Salto Grande (dam number 4)}
+
+\begin{equation*}
+\begin{cases}
+d\hat{V}^{(4)}(t)=\frac{\overline{T}}{\overline{V}^{(4)}}(I_T^{(4)}(t)-\overline{\phi}_T^{(4)}\hat{\phi}_T^{(4)}(t))dt\\
+\hat{V}_0^{(4)}=\hat{V}^{(4)}(0)=0.9\\
+\hat{V}^{(4)}(t)\in[0.6,1],\ V^{(4)}(t)=\overline{V}^{(4)}\hat{V}^{(4)}(t)\\
+\hat{\phi}_T^{(4)}(t)\in[0,1],\ \phi_T^{(4)}(t)=\overline{\phi}_T^{(4)}\hat{\phi}_T^{(4)}(t)\\
+\overline{V}^{(4)}=\SI{5e9}{\m^3},\ \overline{\phi}_T^{(4)}=\SI{4200}{\m^3/\s},\ \overline{T}=\SI{86400}{\s}
+\end{cases}
+\end{equation*}
+the power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_H^{(4)}(t)=\eta\phi_T^{(4)}(t)h^{(4)}(t)=\eta\overline{\phi}_T^{(4)}\hat{\phi}_T^{(4)}(t)\Big[H^{(4)}(\hat{V}^{(4)}(t))-d^{(4)}(\hat{\phi}_T(t))-h_0^{(4)}\Big]\\
+H^{(4)}(\hat{V}^{(4)})=(-19.8)(\hat{V}^{(4)})^2+(51.5)\hat{V}^{(4)}+3.79\\
+d^{(4)}(\hat{\phi}_T^{(4)})=c_d^{(4)}\hat{\phi}_T^{(4)}\\
+h_0^{(4)}=5.1,\ c_d^{(4)}=5.3
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_H^{(4)}(t)=K_H^{(4)}\overline{T}\overline{\phi}_T^{(4)}\int_0^t\hat{\phi}_T^{(4)}(s)ds.
+\end{equation*}
+We set $I_T^{(4)}(t)=\SI{2.2e3}{\m^3/\s}$, corresponding to half of the maximum turbined flow.
+
+\subsubsection{Bonete (dam number 1)}
+
+\begin{equation*}
+\begin{cases}
+d\hat{V}^{(1)}(t)=\frac{\overline{T}}{\overline{V}^{(1)}}(I_T^{(1)}(t)-\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t))dt\\
+\hat{V}_0^{(1)}=\hat{V}^{(1)}(0)=0.9\\
+\hat{V}^{(1)}(t)\in[0.2,1],\ V^{(1)}(t)=\overline{V}^{(1)}\hat{V}^{(1)}(t)\\
+\hat{\phi}_T^{(1)}(t)\in[0,1],\ \phi_T^{(1)}(t)=\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\\
+\overline{V}^{(1)}=\SI{9.5e9}{\m^3},\ \overline{\phi}_T^{(1)}=\SI{640}{\m^3/\s}
+\end{cases}
+\end{equation*}
+the power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_H^{(1)}(t)=\eta\phi_T^{(1)}(t)h^{(1)}(t)=\eta\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}(t)\Big[H^{(1)}(\hat{V}^{(1)}(t))-d^{(1)}(\hat{\phi}_T(t))-h_0^{(1)}\Big]\\
+H^{(1)}(\hat{V}^{(1)})=(-3.74)(\hat{V}^{(1)})^2+(16.7)\hat{V}^{(1)}+67.7\\
+d^{(1)}(\hat{\phi}_T^{(1)})=c_d^{(1)}\hat{\phi}_T^{(1)}\\
+h_0^{(1)}=54,\ c_d^{(1)}=1.0
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_H^{(1)}(t)=K_H^{(1)}\overline{T}\overline{\phi}_T^{(1)}\int_0^t\hat{\phi}_T^{(1)}(s)ds.
+\end{equation*}
+We set $I_T^{(1)}(t)=\SI{320}{\m^3/\s}$, corresponding to half of the maximum turbined flow.
+
+\subsubsection{Fossil fuel power station}
+
+The power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_F(t)=\phi_F(t)=\overline{\phi}_F\hat{\phi}_F(t)\\
+\hat{\phi}_F(t)\in[0,1],\ \overline{\phi}_F=\SI{2e6}{kW}
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_F(t)=\frac{K_F}{\num{3.6e6}}\int_0^tP_F(s)ds=\frac{K_F\overline{T}\overline{\phi}_F}{\num{3.6e6}}\int_0^t\hat{\phi}_F(s)ds.
+\end{equation*}
+$K_F=\SI{130}{US\$/MWh}$, we divide over $\SI{3.6e6}{\s}$ to pass to $\SI{}{US\$/kW}$.
+
+\subsubsection{Demand}
+
+Deterministic and only depending on time $D(t)$, we will assume that never can be greater than $\overline{D}=\SI{2000}{MW}$ and use the normalized one $\hat{D}(t)\in[0,1]$ such that $D(t)=\overline{D}\hat{D}(t)$. For the simulations we will use $\hat{D}(t)=\frac{2}{3}+\frac{1}{3}\sin\big(4\pi t\big)$ (see Figure (\ref{D_1ex})).
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{D_1.eps}
+\caption{Synthetic demand.}
+\label{D_1ex}
+\end{figure}
+
+\subsubsection{Constraint}
+
+We need at any moment to supply the demand, this is
+\begin{equation}
+D(t)=P_F(t)+P_H^{(1)}(t)+P_H^{(2)}(t).
+\label{Eq_Con}
+\end{equation}
+We can transform this equality into an inequality
+\begin{equation*}
+\overline{P}_F\geq D(t)-\sum_{i\in\{1,4\}}P_H^{(i)}\geq0
+\end{equation*}
+fixing for any time $P_F=D-\sum_{i\in\{1,4\}}P_H^{(i)}$.
+
+\subsubsection{Objective function}
+
+We want to minimize
+\begin{multline*}
+\Theta(T)=\E\Big[C_F(T)+C_H^{(1)}(T)+C_H^{(4)}(T)\Big]=\\
+=\frac{K_F\overline{T}\overline{\phi}_F}{\num{3.6e6}}\int_0^T\hat{\phi}_F(s)ds+K_H^{(1)}\overline{T}\overline{\phi}_T^{(1)}\int_0^T\hat{\phi}_T^{(1)}(s)ds+K_H^{(4)}\overline{T}\overline{\phi}_T^{(4)}\int_0^T\hat{\phi}_T^{(4)}(s)ds.
+\end{multline*}
+
+\subsection{Construction of the H-J-B equation}
+
+\subsubsection{Hamiltonian}
+
+Assuming a number $N$ of dams, our new Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(Du,t,\bm{\hat{V}})=\\
+\left[\min_{\begin{cases}
+0\leq\hat{\phi}_F\leq1\\
+0\leq\hat{\phi}_T^{(i)}\leq1\\
+i=\{1,\dots,N\}\\
+D(t)=P_F+\sum P_H^{(i)}
+\end{cases}}\Bigg[\underbrace{\sum\Bigg(K_H^{(i)}-\frac{\partial u}{\partial \hat{V}^{(i)}}\frac{1}{\overline{V}^{(i)}}\Bigg)\overline{T}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}+\Bigg(\frac{K_F\overline{\phi}_F}{\num{3.6e6}}\Bigg)\overline{T}\hat{\phi}_F}_{C=\sum\hat{K}_H^{(i)}\hat{\phi}_T^{(i)}+\hat{K}_F\hat{\phi}_F}\Bigg]\right]+\\+\sum\Bigg(\frac{\overline{T}I_T^{(i)}(t)}{\overline{V}^{(i)}}\Bigg)\frac{\partial u}{\partial \hat{V}^{(i)}}.
+\end{multline*}
+
+\subsubsection{H-J equation}
+
+The Hamilton-Jacobi equation is
+\begin{equation*}
+\begin{cases}
+\frac{\partial u}{\partial t}+\mathbf{H}(Du,u,t,\bm{\hat{V}})=0\\
+u(1,\hat{V})=0.
+\end{cases}
+\end{equation*}
+During the simulation we use $\frac{\partial^2u}{\partial(\hat{V}^{(i)})^2}=0$ in the boundaries.
+
+\subsubsection{Minimizing the Hamiltonian}
+
+We have
+\begin{equation*}
+\begin{cases}
+C=\hat{K}_F\hat{\phi}_F+\sum\hat{K}_H^{(i)}\hat{\phi}_H^{(i)}\\
+P_F=D-\sum P_H^{(i)}\\
+\hat{\phi}_F=\frac{P_F}{\overline{\phi}_F}
+\end{cases}
+\end{equation*}
+where $C$ is the function we want to minimize. Then we can write it as a function of the hydraulic powers and turbined flows
+\begin{equation}
+C=\frac{\hat{K}_F}{\overline{\phi}_F}\Big(D-\sum P_H^{(i)}\Big)+\sum\hat{K}_H^{(i)}\hat{\phi}_H^{(i)}.
+\label{Eq1}
+\end{equation}
+Combining (\ref{Eq1}) with (\ref{Eq2}) and (\ref{Eq3}), we have $C$ as a function of the hydraulic powers
+\begin{equation}
+C(\bm{P_H})=\frac{\hat{K}_F}{\overline{\phi}_F}\Big(D-\sum P_H^{(i)}\Big)+\sum\hat{K}_H^{(i)}\left[\frac{K_1^{(i)}-\sqrt{{K_1^{(i)}}^2-4\overline{K}_2^{(i)}P_H^{(i)}}}{2\overline{K}_2^{(i)}}\right].
+\label{Eq4}
+\end{equation}
+%We will analyze the partial derivatives of (\ref{Eq4}), we have
+%\begin{equation*}
+%\frac{\partial C}{\partial P_H^{(i)}}(\bm{P_H})=\frac{\partial C}{\partial P_H^{(i)}}(P_H^{(i)})=\frac{\hat{K}_H^{(i)}}{\sqrt{{K_1^{(i)}}^2-4\overline{K}_2^{(i)}P_H^{(i)}}}-\frac{\hat{K}_F}{\overline{\phi}_F}
+%\end{equation*}
+%then each partial derivative depends only of the variable we are deriving. We need to analyze two important points in the derivative, the root and the value in zero.
+%\begin{equation*}
+%\frac{\partial C}{\partial P_H^{(i)}}({P_H^{(i)}}^*)=0\iff{P_H^{(i)}}^*=\frac{1}{4\overline{K}_2^{(i)}}\left[{K_1^{(i)}}^2-\left(\frac{(\hat{K}_H^{(i)})^2\overline{\phi}_F}{\hat{K}_F}\right)^2\right]
+%\end{equation*}
+%and
+%\begin{equation*}
+%\frac{\partial C}{\partial P_H^{(i)}}(0)=\frac{\hat{K}_H^{(i)}}{K_1^{(i)}}-\frac{\hat{K}_F}{\overline{\phi}_F}.
+%\end{equation*}
+%In general we need
+%\begin{equation}
+%\frac{\partial C}{\partial P_H^{(i)}}(0)<0\ \text{and}\ {P_H^{(i)}}^*>0
+%\label{Cond1}
+%\end{equation}
+%to ensure the shape of the level sets, in the case where \ref{Cond1} is not true, we need a deeper analysis. Now coming back to the two dams, we have four scenarios, we will analyze each one of them:
+%\begin{enumerate}
+%
+%\item The first scenario is given by $D\leq\overline{P}_H^{(1)}$, here each one of the generators is able to supply the demand alone. We will analyze two different cases, depending of if the optimal point is in Zone 1 or Zone 2 (see figure \ref{SC1}):
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.6\textwidth]{Scenario_1.eps}
+%\caption{Scenario 1, we analyze the case where the optimal point is in the Zone 1 and in the Zone 2. The Zone 1 is made of all the combinations of $P_H^{(1)}$, $P_H^{(4)}$ and $P_F$ such that $D=P_H^{(1)}+P_H^{(4)}+P_F$ and all the controls are positives.}
+%\label{SC1}
+%\end{figure}
+%\begin{enumerate}
+%\item Zone 1: The optimal point is here if ${P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D$. Then
+%\begin{equation*}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D\implies\begin{cases}
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 2: From (\ref{Eq4}) we can deduce that the level sets of the cost function have the shape that we can see in figure \ref{SC1}. Then the admissible minimum must be over the line $D=P_H^{(1)}+P_H^{(4)}$. We can not work over the Zone 2 because there $\hat{\phi}_F<0$.\\
+%Then setting $\hat{\phi}_F=0$ and $P_H^{(1)}=D-P_H^{(4)}$ in (\ref{Eq4}) we deduce
+%\begin{multline*}
+%C(P_H^{(4)})=\hat{K}_H^{(4)}\left[\frac{K_1^{(4)}-\sqrt{{K_1^{(4)}}^2-4\overline{K}_2^{(4)}P_H^{(4)}}}{2\overline{K}_2^{(4)}}\right]+\\
+%+\hat{K}_H^{(1)}\left[\frac{K_1^{(1)}-\sqrt{{K_1^{(1)}}^2-4\overline{K}_2^{(1)}(D-P_H^{(4)})}}{2\overline{K}_2^{(1)}}\right]
+%\end{multline*}
+%deriving we have that
+%\begin{equation*}
+%\frac{\partial C}{\partial P_H^{(4)}}(P_H^{(4)})=\frac{\hat{K}_H^{(4)}}{\sqrt{{K_1^{(4)}}^2-4\overline{K}_2^{(4)}P_H^{(4)}}}-\frac{\hat{K}_H^{(1)}}{\sqrt{{K_1^{(1)}}^2-4\overline{K}_2^{(1)}(D-P_H^{(4)})}}
+%\end{equation*}
+%%with
+%%\begin{equation*}
+%%\frac{\partial C}{\partial P_H^{(4)}}(0)=\frac{\hat{K}_H^{(4)}}{{K_1^{(4)}}}-\frac{\hat{K}_H^{(1)}}{\sqrt{{K_1^{(1)}}^2-4\overline{K}_2^{(1)}D}},
+%%\end{equation*}
+%and now finding the root, we have
+%\begin{equation*}
+%{P_H^{(4)}}^{**}=\frac{4\overline{K}_2^{(1)}(\hat{K}_H^{(4)})^2D+{K_1^{(4)}}^2(\hat{K}_H^{(1)})^2-{K_1^{(1)}}^2(\hat{K}_H^{(4)})^2}{4(\overline{K}_2^{(4)}(\hat{K}_H^{(1)})^2+\overline{K}_2^{(1)}(\hat{K}_H^{(4)})^2)}.
+%\end{equation*}
+%Finally
+%\begin{equation*}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*> D\implies\begin{cases}
+%\text{If}\ {P_H^{(4)}}^{**}\leq0&\implies P_H^{(1)}=D\\
+%\text{If}\ {P_H^{(4)}}^{**}\in(0,D)&\implies\begin{cases}
+%P_H^{(4)}={P_H^{(4)}}^{**}\\
+%P_H^{(1)}=D-P_H^{(4)}
+%\end{cases}\\
+%\text{If}\ {P_H^{(4)}}^{**}\geq D&\implies P_H^{(4)}=D.
+%\end{cases}
+%\end{equation*}
+%\label{1b}
+%\end{enumerate}
+%
+%\item The second scenario is given by $D>\overline{P}_H^{(1)}$ and $D\leq\overline{P}_H^{(4)}$. We will separate the three cases where the optimal point is in Zone 1 or Zone 2 (see figure \ref{SC2}):
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.6\textwidth]{Scenario_2.eps}
+%\caption{Scenario 2, we analyze the case where the optimal point is in the Zone 1, Zone 2 or Zone 3.}
+%\label{SC2}
+%\end{figure}
+%\begin{enumerate}
+%\item Zone 1: The optimal point is here if ${P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D$ and ${P_H^{(1)}}^*\leq\overline{P}_H^{(1)}$. Then
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D\\
+%{P_H^{(1)}}^*\leq\overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 2: The optimal point is here if ${P_H^{(4)}}^*\leq D-\overline{P}_H^{(1)}$ and ${P_H^{(1)}}^*>\overline{P}_H^{(1)}$. By the geometry of the level sets, we conclude that the optimal point is in the position shown in the figure \ref{SC2}. Then
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*\leq D-\overline{P}_H^{(1)}\\
+%{P_H^{(1)}}^*>\overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}=\overline{P}_H^{(1)}\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\label{2b}
+%\item Zone 3: The optimal point is here if ${P_H^{(1)}}^*+{P_H^{(4)}}^*>D$ and ${P_H^{(4)}}^*>D-\overline{P}_H^{(1)}$. Like in the scenario \ref{1b}, we want to find the optimal point over the curve $D=P_H^{(1)}+P_H^{(4)}$, and then, over the same conditions than in \ref{1b} about $\frac{\partial C}{\partial P_H^{(4)}}$, we have that
+%\begin{multline*}
+%\begin{cases}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*> D\\
+%{P_H^{(4)}}^*>D-\overline{P}_H^{(1)}
+%\end{cases}\implies\\
+%\begin{cases}
+%\text{If}\ {P_H^{(4)}}^{**}\leq D-\overline{P}_H^{(1)}&\implies\begin{cases}
+%P_H^{(1)}=\overline{P}_H^{(1)}\\
+%P_H^{(4)}=D-P_H^{(1)}
+%\end{cases}\\
+%\text{If}\ {P_H^{(4)}}^{**}\in(D-\overline{P}_H^{(1)},D)&\implies\begin{cases}
+%P_H^{(4)}={P_H^{(4)}}^{**}\\
+%P_H^{(1)}=D-P_H^{(4)}
+%\end{cases}\\
+%\text{If}\ {P_H^{(4)}}^{**}\geq D&\implies P_H^{(4)}=D.
+%\end{cases}
+%\end{multline*}
+%\end{enumerate}
+%
+%\item The third scenario is given by $D>\overline{P}_H^{(1)}$, $D>\overline{P}_H^{(4)}$ and $D\leq\overline{P}_H^{(1)}+\overline{P}_H^{(4)}$. Now we have four cases, but all of them are analyzed in previous parts (see figure \ref{SC3}), then we will be less rigorous:
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.8\textwidth]{Scenario_3.eps}
+%\caption{Scenario 3, we analyze the case where the optimal point is in the Zone 1, Zone 2, Zone 3 or Zone 4.}
+%\label{SC3}
+%\end{figure}
+%\begin{enumerate}
+%\item Zone 1: The optimal point is here if ${P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D$, ${P_H^{(1)}}^*\leq\overline{P}_H^{(1)}$ and ${P_H^{(4)}}^*\leq\overline{P}_H^{(4)}$. Then
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*\leq D\\
+%{P_H^{(1)}}^*\leq\overline{P}_H^{(1)}\\
+%{P_H^{(4)}}^*\leq\overline{P}_H^{(4)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*} 
+%\item Zone 2: Exactly same conditions and results than \ref{2b}.
+%\item Zone 3: The optimal point is here if ${P_H^{(4)}}^*>\overline{P}_H^{(4)}$ and ${P_H^{(1)}}^*\leq D-\overline{P}_H^{(4)}$, then
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*>\overline{P}_H^{(4)}\\
+%{P_H^{(1)}}^*\leq D-\overline{P}_H^{(4)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_H^{(4)}=\overline{P}_H^{(4)}\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 4: The optimal point is here if ${P_H^{(1)}}^*+{P_H^{(4)}}^*>D$, ${P_H^{(4)}}^*>D-\overline{P}_H^{(1)}$ and ${P_H^{(1)}}^*>D-\overline{P}_H^{(4)}$. Then
+%\begin{multline*}
+%\begin{cases}
+%{P_H^{(1)}}^*+{P_H^{(4)}}^*>D\\
+%{P_H^{(4)}}^*>D-\overline{P}_H^{(1)}\\
+%{P_H^{(1)}}^*>D-\overline{P}_H^{(4)}
+%\end{cases}\implies\\
+%\begin{cases}
+%\text{If}\ {P_H^{(4)}}^{**}\leq D-\overline{P}_H^{(1)}&\implies\begin{cases}
+%P_H^{(1)}=\overline{P}_H^{(1)}\\
+%P_H^{(4)}=D-P_H^{(1)}
+%\end{cases}\\
+%\text{If}\ {P_H^{(4)}}^{**}\in(D-\overline{P}_H^{(1)},\overline{P}_H^{(4)})&\implies\begin{cases}
+%P_H^{(4)}={P_H^{(4)}}^{**}\\
+%P_H^{(1)}=D-P_H^{(4)}
+%\end{cases}\\
+%\text{If}\ {P_H^{(4)}}^{**}\geq\overline{P}_H^{(4)}&\implies\begin{cases}P_H^{(4)}=\overline{P}_H^{(4)}\\
+%P_H^{(1)}=D-P_H^{(4)}.
+%\end{cases}
+%\end{cases}
+%\end{multline*}
+%\end{enumerate}
+%
+%\item We are in the fourth and last scenario when $D>\overline{P}_H^{(1)}+\overline{P}_H^{(4)}$. As the level sets are convex in $P_H^{(1)}$ and $P_H^{(4)}$, it is the easier ti analyze. For all the cases, we can see the figure \ref{SC4}:
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.8\textwidth]{Scenario_4.eps}
+%\caption{Scenario 4, we analyze the case where the optimal point is in the Zone 1, Zone 2, Zone 3 or Zone 4.}
+%\label{SC4}
+%\end{figure}
+%\end{enumerate}
+%\begin{enumerate}
+%\item Zone 1:
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*\leq\overline{P}_H^{(4)}\\
+%{P_H^{(1)}}^*\leq \overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 2:
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*\leq\overline{P}_H^{(4)}\\
+%{P_H^{(1)}}^*>\overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(1)}=\overline{P}_H^{(1)}\\
+%P_H^{(4)}={P_H^{(4)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 3:
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*>\overline{P}_H^{(4)}\\
+%{P_H^{(1)}}^*\leq\overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(4)}=\overline{P}_H^{(4)}\\
+%P_H^{(1)}={P_H^{(1)}}^*\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\item Zone 4:
+%\begin{equation*}
+%\begin{cases}
+%{P_H^{(4)}}^*>\overline{P}_H^{(4)}\\
+%{P_H^{(1)}}^*>\overline{P}_H^{(1)}\end{cases}\implies\begin{cases}
+%P_H^{(4)}=\overline{P}_H^{(4)}\\
+%P_H^{(1)}=\overline{P}_H^{(1)}\\
+%P_F=D-P_H^{(1)}-P_H^{(4)}.
+%\end{cases}
+%\end{equation*}
+%\end{enumerate}
+To verify that out optimization is correct, every one thousand optimization we compare our result with the one of \textit{fmincon} of Matlab. What we do it to see if the absolute error is less than $\SI{1e-3}{}$, as \textit{fmincon} needs a initial condition that sometimes can converge to the incorrect point, we check with up to 10 random seeds before considering an error. Some results are:
+\begin{enumerate}
+\item We considered a real demand (real data from Uruguay) and a grid with 382508 points (between space and time). In this case we check all the points and the maximum error amount all the controls were $\SI{7.53e-7}{}$.
+\item Extreme case using a sinusoidal as demand that covers all the possible values from 0 to $\SI{2000}{MW}$, here we checked every $\SI{1000}{}$ points and the maximum error amount all the controls were $\SI{2.31e-4}{}$.
+\end{enumerate}
+
+\subsubsection{Lagrange multipliers}
+
+We have Karush-Kuhn-Tucker (KKT) constrains over the controls and a equality condition over the power (\ref{Eq_Con}). We want to have all the constrains over the controls, then the equality is
+\begin{multline*}
+D=\\
+=\sum P_H^{(i)}+P_F\\
+=\sum\Bigg(\underbrace{\eta\overline{\phi}_T^{(i)}\Big[H^{(i)}(\hat{V}^{(i)})-h_0^{(i)}\Big]}_{A^{(i)}}\hat{\phi}_T^{(i)}-\underbrace{\eta c_d^{(i)}\overline{\phi}_T^{(i)}}_{B^{(i)}}(\hat{\phi}_T^{(i)})^2\Bigg)+\overline{\phi}_F\hat{\phi}_F.
+\end{multline*}
+Then out minimization problem can be expressed as
+\begin{equation*}
+\min C=\min\sum\hat{K}_H^{(i)}\hat{\phi}_T^{(i)}+\hat{K}_F\hat{\phi}_F
+\end{equation*}
+with the contains
+\begin{equation*}
+\begin{cases}
+g_1=\hat{\phi}_T^{(1)}-1\\
+g_2=\hat{\phi}_T^{(2)}-1\\
+g_3=\hat{\phi}_F-1\\
+g_4=-\hat{\phi}_T^{(1)}\\
+g_5=-\hat{\phi}_T^{(2)}\\
+g_6=-\hat{\phi}_F\\
+h_1=\sum A^{(i)}\hat{\phi}_T^{(i)}-B^{(i)}(\hat{\phi}_T^{(i)})^2-D.
+\end{cases}
+\end{equation*}
+The Lagrange function associated is
+\begin{equation*}
+\mathcal{L}(\hat{\phi}_T^{(1)},\hat{\phi}_T^{(2)},\hat{\phi}_F)=C-\lambda(\sum(A^{(i)}\hat{\phi}_T-B^{(i)}(\hat{\phi}_T)^2)+\overline{\phi}_F\hat{\phi}_F-D)-\sum\mu_i(0-g_i).
+\end{equation*}
+We conclude that the value of $\lambda$ is always equal to the cost to increase the demand a $dD$. This costs is given by the cheapest option ({\color[rgb]{1,0,0} we need to add the computations}). They can be
+\begin{equation*}
+C^{(1)}=\frac{\hat{K}_H^{(1)}}{\frac{\partial P_H^{(1)}}{\partial\hat{\phi}_T^{(1)}}((\hat{\phi}_T^{(1)})^*)},\ C^{(4)}=\frac{\hat{K}_H^{(4)}}{\frac{\partial P_H^{(4)}}{\partial\hat{\phi}_T^{(4)}}((\hat{\phi}_T^{(4)})^*)}\ \text{and/or}\ C^{(F)}=\frac{\hat{K}_F}{\frac{\partial P_F}{\partial\hat{\phi}_F}(\hat{\phi}_F^*)}.
+\end{equation*}
+
+\subsection{Adding wind power}
+
+\subsubsection{Wind model}
+
+The wind follows the next SDE
+\begin{equation}
+\begin{cases}
+dY(t)=(\frac{\partial p_W}{\partial t}-\theta_W(t)\big(Y(t)-p_W(t)\big))dt+\sqrt{2\theta_W(t)\alpha_W Y(t)\big(1-Y(t)\big)}dW_W(t)\\
+Y(t_0)=Y_{t_0}\\
+t\in[t_0,T].
+\end{cases}
+\label{windSDE}
+\end{equation}
+The power is given by $P_W(t)=Y(t)G_W$. The parameters are in the table \ref{T1}.
+\begin{table}[h!]
+\begin{tabular}{|c|c|c|c|c|}
+\toprule
+$\theta_W(t)=\theta_{W_0}e^{-\theta_{W_1}t}$ & $\theta_{W_0}=0.20$ & $\theta_{W_1}=0.03$ & $\alpha_W=0.14$ & $G_W=\SI{1383}{MW}$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters of the wind model. This parameters are computed for time in hours.}
+\label{T1}
+\end{table}\\
+We can compute the k-moment of $V=Y-p_W$ (see \ref{windSDE}) following the recursion
+\begin{multline*}
+\frac{dE[V^k(t)]}{dt}=\\
+-(k\theta_W(t)+\frac{k(k-1)}{2}(2\alpha_W\theta_W(1-p_W)p_W))\\
++\frac{k(k-1)}{2}(2\alpha_W\theta_W(1-p_W)p_W(1-2p_W))E[V^{k-1}]\\
++\frac{k(k-1)}{2}(2\alpha_W\theta_W((1-p_W)p_W)^2))E[V^{k-2}].
+\end{multline*}
+Then when $k=1$ we have $E[V]=0$ and when $k=2$ we have the ODE
+\begin{equation*}
+\frac{\partial E[V^2]}{\partial t}=-(2\theta_W+2\alpha_W\theta_W(1-p_W)p_W)E[V^2]+(2\alpha_W\theta_W((1-p_W)p_W)^2),
+\end{equation*}
+which solving numerically with $\Delta t=\SI{1}{\hour}$.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Wind_with_SD.eps}
+\caption{Historical data of wind with the simuled standard deviation.}
+\label{windSD}
+\end{figure}
+
+\subsubsection{Hamiltonian}
+
+Our new Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(D^2u,Du,t,\bm{\hat{V}},Y)=\\
+\left[\min_{\begin{cases}
+0\leq\hat{\phi}_F\leq1\\
+0\leq\hat{\phi}_T^{(i)}\leq1\\
+i=\{1,\dots,N\}\\
+D'(t)=P_F+\sum P_H^{(i)}
+\end{cases}}\Bigg[\underbrace{\sum\Bigg(K_H^{(i)}-\frac{\partial u}{\partial \hat{V}^{(i)}}\frac{1}{\overline{V}^{(i)}}\Bigg)\overline{T}\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}+\Bigg(\frac{K_F\overline{\phi}_F}{\num{3.6e6}}\Bigg)\overline{T}\hat{\phi}_F}_{C=\sum\hat{K}_H^{(i)}\hat{\phi}_T^{(i)}+\hat{K}_F\hat{\phi}_F}\Bigg]\right]+\\
+\sum\Bigg(\frac{\overline{T}I_T^{(i)}(t)}{\overline{V}^{(i)}}\Bigg)\frac{\partial u}{\partial \hat{V}^{(i)}}+\underbrace{\left(\frac{\partial p_W}{\partial t}+\theta_W(t)(p_W(t)-Y(t))\right)\frac{\partial u}{\partial Y}+\theta_W(t)\alpha_WY(t)(1-Y(t))\frac{\partial^2u}{\partial Y^2}}_{\text{Wind part.}}
+\end{multline*}
+where $D'(t)=D(t)-P_W(t)$. We use as forecast ($p_W(t)$) the data from 01/01/2017 which can be seen in figure (\ref{wind}).
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Wind_Power_01012017.eps}
+\caption{Historical data of wind used during the simulation.}
+\label{wind}
+\end{figure}\\
+%Using Euler-Maruyama method we estimate $\mu_W(t)$ and $\sigma_W(t)$ and then, we solve for $Y^{(1)}=\mu_W-\sigma_W$, $Y^{(2)}=\mu_W$ and $Y^{(3)}=\mu_W+\sigma_W$. The way to introduce the wind power is subtracting its value from the demand, we have $D_W^{(i)}(t)=\max(0,D(t)-P_W^{(i)}(t))$.\\
+Now we do a change of variable $\hat{Y}=2\frac{Y-\mu_W(t)}{\sigma_W(t)}$ to work in $\hat{Y}\in[-2,2]$, we also have that $Y=\frac{\hat{Y}\sigma_W(t)}{2}+\mu_W(t)$. Then, if $w(t,\bm{\hat{V}},\hat{Y}(Y))=u(t,\bm{\hat{V}},Y)$ is our solution in the new domain, then $w$ solves
+\begin{multline*}
+\frac{\partial w}{\partial t}+\frac{\partial w}{\partial \hat{Y}}\frac{\partial\hat{Y}}{\partial t}+\dots+\left(\theta_W(p_W-Y)+\frac{\partial p_W}{\partial t}\right)\frac{\partial w}{\partial\hat{Y}}\frac{\partial\hat{Y}}{\partial Y}\\
++\theta_W\alpha_WY(1-Y)\left(\frac{\partial^2w}{\partial\hat{Y}^2}\left(\frac{\partial\hat{Y}}{\partial Y}\right)^2+\frac{\partial w}{\partial\hat{Y}}\frac{\partial^2\hat{Y}}{\partial Y^2}\right)=0.
+\end{multline*}
+Now using
+\begin{equation*}
+\begin{cases}
+\frac{\partial\hat{Y}}{\partial t}=2\frac{\dot{\sigma}_W(\mu_W-Y)-\dot{\mu}_W\sigma_W}{\sigma_W^2}\\
+\frac{\partial\hat{Y}}{\partial Y}=\frac{2}{\sigma}\\
+\frac{\partial\hat{Y}^2}{\partial Y^2}=0,
+\end{cases}
+\end{equation*}
+and the change of variable, we have that $w$ solves
+\begin{equation*}
+\frac{\partial w}{\partial t}+\dots+\left[-\hat{Y}\left(\theta_W+\frac{\dot{\sigma}_W}{\sigma_W}\right)\right]\frac{\partial w}{\partial\hat{Y}}+\left[\frac{4\theta_W\alpha_W}{\sigma^2}\left(\frac{\hat{Y}\sigma}{2}+p_W\right)\left(1-\frac{\hat{Y}\sigma_W}{2}-p_W\right)\right]\frac{\partial^2w}{\partial \hat{Y}^2}=0.
+\end{equation*}
+We approximate the cost function as a sixth order polynomial in the direction of the wind, then we have the anzats
+\begin{equation*}
+\begin{cases}
+u(t,\bm{\hat{V}},Y)=\sum_{i=0}^{i=6}c_i(t,\bm{\hat{V}})Y^i\\
+\frac{\partial u}{\partial Y}(t,\bm{\hat{V}},Y)=\sum_{i=1}^{i=6}ic_i(t,\bm{\hat{V}})Y^{i-1}\\
+\frac{\partial^2u}{\partial Y^2}(t,\bm{\hat{V}})=\sum_{i=2}^{i=6}i(i-1)c_i(t,\bm{\hat{V}})Y^{i-2}
+\end{cases}
+\end{equation*}
+and then we do now need a grid or finite differences in the direction of the wind. To choose the points of $\hat{Y}$ between $-2$ and $2$ and avoid oscillations, we use Runge criteria $-2\cos(\frac{j}{n}\pi)$ with $n=6$ and $j\in\{0\dots,6\}$. If the wind changes too much in every time step, we can use more separate points ($-3.5\cos(\frac{j}{n}\pi)$) to have more accuracy in the expressions $\frac{\partial w}{\partial \hat{Y}}$ and $\frac{\partial^2 w}{\partial \hat{Y}^2}$ in the important space ($\hat{Y}\in[-2,2]$), another solution is to reduce the time step.
+
+\section{Case with n dams}
+
+Since here we are going to work with only inequalities.
+
+\subsection{Optimizing the Hamiltonian}
+
+The vector of controls is given by $\bm{\Phi}=(\hat{\phi}_F,\hat{\phi}_T^{(1)},\dots,\hat{\phi}_T^{(n)})$ and the associated vector of powers by $\bm{P}(\bm{\Phi})=(P_F(\hat{\phi}_F),P_T^{(1)}(\hat{\phi}_T^{(1)}),\dots,P_T^{(n)}(\hat{\phi}_T^{(n)}))$. We have to find the minimum of $C(\bm{\Phi})=a\hat{\phi}_F+\sum b^{(i)}\hat{\phi}_T^{(i)}$ with the controls taking values between in $[0,1]$ and
+\begin{equation}
+\overline{P}_F\geq D-\sum P_H^{(i)}\geq0
+\label{D_Con}
+\end{equation}
+which implies $P_F=D-\sum P_H^{(i)}$ and $1\geq\hat{\phi}_F\geq0$. We will call $g_1^{(i)}$ and $g_0^{(i)}$ to the sets where we follow the equality restrictions over $\hat{\phi}_T^{(i)}$, and $g^{(D)}_1$ and $g^{(D)}_0$ to the set where the equalities of (\ref{D_Con}) hold. $\mathfrak{I}$ is the class of restricted sets, we have that $|\mathfrak{I}|=2(n+1)$.
+\begin{lemma}\label{Lemma1}
+$U\in\R^n$ domain (open and bounded), $f:U\to\R$ convex function, $\mathfrak{H}=\{h^{(i)}\}_{i=1}^m$ class of restricted inequalities sets in $\R^n$ with $\mathfrak{K}=\{k^{(i)}\}_{i=1}^{q}$ the associated class of restricted equalities and $\mathfrak{F}\subseteq U$ the set of points in $U$ that satisfy all the restrictions. Then:
+\begin{enumerate}
+
+\item[(i)] If
+\begin{equation*}
+\arg\min_{x\in\R^n}f(x)\in\mathfrak{F},
+\end{equation*}
+it is the minimum $x^*\in\mathfrak{F}$.
+
+\item[(ii)] If
+\begin{equation*}
+\arg\min_{x\in\R^n}f(x)\notin\mathfrak{F},
+\end{equation*}
+then the minimum $x^*$ over $\mathfrak{F}$ is in $\partial\mathfrak{F}$. Also
+\begin{equation*}
+\min_{x\in\R^n}f(x)\leq\min_{\begin{cases}
+x\in\cap_{i=1}^{q'}k^{(i)}\\
+q'<q
+\end{cases}}f(x)\leq\min_{x\in\cap_{i=1}^qk^{(i)}}f(x).
+\end{equation*}
+
+\end{enumerate}
+\end{lemma}
+We will call $\mathfrak{F}$ to the set of points that satisfy all the constrains. Our procedure is to gradually increase the number of equality constrains until we find a minimum in $\mathfrak{F}$, notice that in this analysis we will ignore the fixed costs and we will optimize over the controllable ones. Then we will analyze the cases adding the restrictions:
+\begin{enumerate}
+
+\item With no restrictions: We have $P_F=D-\sum P_H^{(i)}$ and then the cost function is given by
+\begin{equation*}
+C(\bm{P_H})=c\left(D-\sum P_H^{(i)}\right)-\sum d^{(i)}\sqrt{e^{(i)}-P_H^{(i)}},
+\end{equation*}
+then the partial derivatives are
+\begin{equation}
+\frac{\partial C}{\partial P_H^{(i)}}(P_H^{(i)})=\frac{d^{(i)}}{2\sqrt{e^{(i)}-P_H^{(i)}}}-c
+\label{PD}
+\end{equation}
+and the condition to make them zero is
+\begin{equation}
+{P_H^{(i)}}^*=e^{(i)}-\left(\frac{d^{(i)}}{2c}\right)^2.
+\label{Min}
+\end{equation}
+If $\bm{P^*}=\left\{D-\sum{P_H^{(i)}}^*,{P_H^{(1)}}^*,\dots,{P_H^{(n)}}^*\right\}\in\mathfrak{F}$, we have our optimal point $\bm{\Phi^*}(\bm{P^*})$. Otherwise we have to add some of the restrictions and do another parametrization.
+\label{P1}
+
+\item Equality condition $g^{(D)}_0$ (one restrictions): This means $D=\sum P_H^{(i)}$ (notice that $P_F=0$), then for some $j\in\{1\dots,n\}$ we deduce $P_H^{(j)}=D-\sum_{i\neq j}P_H^{(i)}$. Now the cost function is given by
+\begin{multline*}
+C(P_H^{(1)},\dots,P_H^{(j-1)},P_H^{(j+1)},\dots,P_H^{(n)})=\\
+-\sum_{i\neq j}d^{(i)}\sqrt{e^{(i)}-P_H^{(i)}}-d^{(j)}\sqrt{e^{(j)}-\left(D-\sum_{i\neq j}P_H^{(i)}\right)}
+\end{multline*}
+and the partial derivatives are (for $i\in\{1,\dots,j-1,j+1,\dots,n\}$)
+\begin{equation*}
+\frac{\partial C}{\partial P_H^{(i)}}=\frac{d^{(i)}}{2\sqrt{e^{(i)}-P_H^{(i)}}}-\frac{d^{(j)}}{2\sqrt{e^{(j)}-\left(D-\sum_{k\neq j}P_H^{(k)}\right)}}
+\end{equation*}
+from where we deduce that the minimum is in
+\begin{equation*}
+{P_H^{(i)}}^*=g^{(i)}+h^{(i)}s\ \text{with}\ s=\frac{D-\sum_{k\neq j}g^{(k)}}{1+\sum_{k\neq j}h^{(k)}}
+\end{equation*}
+and
+\begin{equation*}
+g^{(i)}=e^{(i)}-e^{(j)}(\frac{d^{(i)}}{d^{(j)}})^2,\ h^{(i)}=(\frac{d^{(i)}}{d^{(j)}})^2.
+\end{equation*}
+If $\bm{P^*}=\{0,{P_H^{(1)}}^*,\dots,{P_H^{(j-1)}}^*,D-\sum_{i\neq j}{P_H^{(i)}}^*,{P_H^{(j+1)}}^*,\dots,{P_H^{(n)}}^*\}\in\mathfrak{F}$, we have our optimal point $\bm{P^*}_{D0}$ over the condition $g_0^{(D)}$.
+\label{gD}
+
+\item Equality condition $g^{(D)}_1$ (one restrictions): This means $D'=D-\overline{P}_F=\sum P_H^{(i)}$ (notice that $P_F=\overline{P}_F$), then for some $j\in\{1\dots,n\}$ we deduce $P_H^{(j)}=D'-\sum_{i\neq j}P_H^{(i)}$. We solve like in \ref{gD}. If the optimal point is suitable, we call it $\bm{P^*}_{D1}$ and it is the optimal point over the condition $g^{(D)}_1$.
+
+\item Some $\{g_0^{(i)}\}$ or $\{g_1^{(i)}\}$ (one restrictions): Here we have that for some $j\in\{1,\dots,n\}$ and $l\in\{0,1\}$, $\phi_T^{(j)}=l$. Then we use $P_F=D-\sum P_H^{(i)}$ and the cost function is
+\begin{multline*}
+C(\bm{P_H})=C(P_H^{(1)},\dots,P_H^{(j-1)},P_H^{(j+1)},\dots,P_H^{(n)})=\\
+c(D-\sum P_H^{(i)})-\sum d^{(i)}\sqrt{e^{(i)}-P_H^{(i)}},
+\end{multline*}
+and for $i\neq j$, the partial derivatives are (\ref{PD}) with each of the minimums like in (\ref{Min}). We call $\bm{P^*}_{j,l}=\{D-\sum_{i\neq j}{P_H^{(i)}}^*-P_H^{(j)},{P_H^{(1)}}^*,\dots,{P_H^{(j-1)}}^*,{P_H^{(j)}},{P_H^{(j+1)}}^*,\dots,{P_H^{(n)}}^*\}$ with ${P_H^{(j)}}={P_H^{(j)}}(\hat{\phi}_T^{(j)}=l)$ to the minimum given $j$ and $l$. Then if $\{\bm{P^*}_{j,l}\}_{j,l}\cap\mathfrak{F}=\bm{P^*}_i\neq\emptyset$, we have a set of possible minimums.
+
+\end{enumerate}
+
+Now if the admissible set of minimums in not empty, we choose the minimum over that set and that is the global minimum in $\mathfrak{F}$. Otherwise we keep adding restrictions as follows:
+
+\begin{enumerate}
+
+\item $g^{(D)}_0$, some from $g_0^{(i)}$ and some from $g_1^{(i)}$ ($r$ restrictions): This means $D=\sum P_H^{(i)}$ and for $j\in J=\{j_1,\dots,j_{r-1}\}\subseteq\{1\dots,n\}$ with $|J|=r-1$, we have that $l_j=\{0,1\}$ and then $\hat{\phi}_{l_j}^{(j)}=\{0,1\}$. Then we deduce for $k\in\{1,\dots,n\}$, $k\notin J$ that $P_H^{(k)}=D-\sum_{i\neq k}P_H^{(i)}$ and then we have to find the minimum over every $i$ such that $i\in I=\{1,\dots,n\}-J-\{k\}$ with $|I|=n-r=m$. Finally, the cost function is
+\begin{multline*}
+C(\bm{P_H})=C\left(P_H^{(i_1)},\dots,P_H^{(i_m)}\right)=\\
+-\sum_{h\in I}d^{(h)}\sqrt{e^{(h)}-P_H^{(h)}}-d^{(k)}\sqrt{e^{(k)}-\left(D-\sum_{h\in I}P_H^{(h)}\right)}.
+\end{multline*}
+The next steps are equal than the ones in \ref{gD}.
+
+\item Some from $g_0^{(i)}$ and some from $g_1^{(i)}$ ($r$ restrictions): Then $P_F=D-\sum P_H^{(i)}$ and again we define $j\in J=\{j_1,\dots,j_r\}\subseteq\{1\dots,n\}$ with $|J|=r$, we have that $l_j=\{0,1\}$ and then $\hat{\phi}_{l_j}^{(j)}=\{0,1\}$. Then we have to find the minimum over every $i$ such that $i\in I=\{1,\dots,n\}-J$ with $|I|=n-r=m$. Finally, the cost function is
+\begin{multline*}
+C(\bm{P_H})=C\left(P_H^{(i_1)},\dots,P_H^{(i_m)}\right)=\\
+c(D-\sum P_H^{(i)})-\sum d^{(i)}\sqrt{e^{(i)}-P_H^{(i)}},
+\end{multline*}
+and the derivatives and optimal points for every $i\in I$ follows the equations in \ref{P1}.
+\label{22}
+
+\item $g^{(D)}_1$, some from $g_0^{(i)}$ and some from $g_1^{(i)}$ ($r$ restrictions): Like in \ref{22} but with $D'=D-\overline{P}_F$.
+
+\end{enumerate}
+
+\section{Lagrange multiplier}
+
+Given chained dams $i$ and $i-1$, we call $Z_{i,i-1}$ to the time that takes to the water from the dam $i-1$ to reach the reservoir of the dam $i$. Then the dynamics of the dam $i$ are
+\begin{equation*}
+\begin{split}
+d\hat{V}^{(i)}&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\phi_{T}^{(i-1)}(t-Z_{i,i-1})-\phi_T^{(i)}(t)\right)dt\\
+&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\overline{\phi}_{T}^{(i-1)}\hat{\phi}_{T}^{(i-1)}(t-Z_{i,i-1})-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)dt\\
+&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\overline{\phi}_{VT}^{(i)}\hat{\phi}_{VT}^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)dt,
+\end{split}
+\end{equation*}
+where we have defined $\phi_{VT}^{(i)}(t)=\phi_{T}^{(i-1)}(t-Z_{i,i-1})$ (we call to $\phi_{VT}^{(i)}(t)$ the virtual input flow of the dam $i$). 
+Using a Lagrangian Relaxation over the virtual controls, we have that for $\lambda:t\subset[0,1]\to\R^n$ with $n$ the number of chains between the dams ($|J|=n$), the relaxed cost function is
+\begin{equation*}
+C(T)=\left[C_F(T)+C_H(T)+\sum_{j\in J}\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\left(\hat{\phi}_{VT}^{(j)}(s)-\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})\right)ds\right],
+\end{equation*}
+expanding
+\begin{multline*}
+\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\left(\hat{\phi}_{VT}^{(j)}(s)-\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})\right)ds=\\
+=\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})ds\\
+=\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int_0^{T-Z_{j,j-1}}\{\lambda\}_j(y+Z_{j,j-1})\hat{\phi}_{T}^{(j-1)}(y)dy,
+\end{multline*}
+and defining $\lambda(t)=0$ for every $t\in(-\infty,Z_{j,j-1})\cup(T,+\infty)$, we have that
+\begin{multline*}
+C(T,\lambda)=\\
+\left[C_F(T)+C_H(T)+\sum_{j\in J}\left[\int\limits_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int\limits_0^{T-Z_{j,j-1}}\{\lambda\}_j(y+Z_{j,j-1})\hat{\phi}_{T}^{(j-1)}(y)dy\right]\right]
+\end{multline*}
+where is equivalent to define all the integrals from $0$ to $T$. Finally, the changes in the Hamiltonian are the ones in red
+\begin{multline*}
+H(\cdot)=\min_\Phi\left[\dots+\sum_{j\in J}\frac{\partial u}{\partial\hat{V}^{(j)}}\frac{\overline{T}}{\overline{V}^{(j)}}\left[I_T^{(j)}(t)\color{red}+\overline{\phi}_{VT}^{(j)}\hat{\phi}_{VT}^{(j)}\color{black}-\overline{\phi}_T^{(j)}\hat{\phi}_T^{(j)}\right]+\dots\right.\\
+\left.\color{red}+\sum_{j\in J}\{\lambda\}_j(t)\hat{\phi}_{VT}^{(j)}-\sum_{j\in J}\{{\lambda}\}_j(t+Z_{j,j-1})\hat{\phi}_T^{(j-1)}\color{black}\right]+\dots.
+\end{multline*}
+The control $\hat{\phi}_{VT}^{(j)}(t)$ from $t=0$ to $t=Z_{j,j-1}$ is a deterministic input to out system, in $(Z_{j,j-1},T]$ it is part of the optimization.
+
+\subsection{Particular case Bonere - Salto Grande}
+
+In the case with Bonete and Salto Grande and a fuel station, we generate a virtual connection from Bonete to Salto Grande with a delay of 8 hrs. Then we have the next modifications in the Hamiltonian
+\begin{multline*}
+H(\cdot)=\\
+\min_\Phi\left[\dots+\frac{\partial u}{\partial\hat{V}^{(4)}}\frac{\overline{T}}{\overline{V}^{(4)}}\left[I_T^{(4)}(t)\color{red}+\overline{\phi}_T^{(1)}\hat{\phi}_{VT}^{(4)}\color{black}-\overline{\phi}_T^{(4)}\hat{\phi}_T^{(4)}\right]\color{red}+\lambda(t)\hat{\phi}_{VT}^{(4)}-{\lambda}(t+Z_{4,1})\hat{\phi}_T^{(1)}\color{black}\right]+\dots.
+\end{multline*}
+Then the term in $\hat{\phi}^{(4)}_{TV}$ over the time is
+\begin{equation*}
+\color{red}\frac{\partial u}{\partial\hat{V}^{(4)}}\frac{\overline{T}\overline{\phi}^{(1)}_T}{\overline{V}^{(4)}}+\lambda(t)
+\end{equation*}
+and the new one in $\hat{\phi}_T^{(1)}$ over the time is
+\begin{equation*}
+\overline{T}\overline{\phi}_T^{(1)}\left(K_H^{(1)}-\frac{\partial u}{\partial\hat{V}^{(1)}}\frac{1}{\overline{V}^{(1)}}\right)\color{red}-{\lambda}(t+Z_{4,1})\color{black}.
+\end{equation*}
+The reduction in the cost function is due to the increse in the efficiency of Salto Grande when its reservoir has more volume of water.\\
+From the mathematical and physical point of view, if we consider $\epsilon(t)=\phi_{VT}^{(4)}(t)-\phi_{T}^{(1)}(t-Z_{4,1})$, and for
+\begin{equation*}
+\psi=\min_{\Phi(t)}C(T),
+\end{equation*}
+we have that
+\begin{equation*}
+\frac{\partial\psi}{\partial\epsilon(t)}=\lambda(t)\leq0
+\end{equation*}
+because, at any time, both to increase a bit $\phi_{VT}^{(4)}(t)$ or to reduce a bit $\phi_{T}^{(1)}(t-Z_{4,1})$, reduce the final cost.
+
+\section{Steps:}
+
+\begin{enumerate}
+
+\item Solve the bi-level relaxed problem. Plot $\tilde{\phi}^{(4)}_T(t,v^{(1)},v^{(4)})$ (virtual control) and $\hat{\phi}^{(1)}_T(t-Z_{4,1},v^{(1)},v^{(4)})$ (optimal turbined flow from Bonete at time $t-Z_{4,1}$). Also compute
+\begin{equation*}
+\int_{Z_{4,1}}^T\int_{\underline{V}^{(1)}}^{\overline{V}^{(1)}}\int_{\underline{V}^{(4)}}^{\overline{V}^{(4)}}\left(\tilde{\phi}^{(4)}_T(t,v^{(1)},v^{(4)})-\hat{\phi}^{(1)}_T(t-Z_{4,1},v^{(1)},v^{(4)})\right)^2dtdv^{(1)}dv^{(4)}.
+\end{equation*}
+
+\item Find a primal feasible solution using one of the both next methods:
+
+\begin{enumerate}
+\item Using \textbf{Augmented Lagrangian method}. Here we consider our optimal Lagrange multilayer $\lambda^*(t)$ and we add a penalization function to the cost
+\begin{equation*}
+\mathcal{L}(\Phi,\bm{V},\lambda^*)+\rho||g(\Phi)(t)||^2_{L^2([0,T]\subset\R)}
+\end{equation*}
+with
+\begin{equation*}
+g(\Phi(t))=\begin{cases}
+0\ &\text{if}\ t\in[0,Z_{4,1})\\
+\left(\tilde{\phi}^{(4)}_T(t)-\hat{\phi}^{(1)}_T(t-Z_{4,1})\right)\ &\text{if}\ t\in[Z_{4,1},T].
+\end{cases}
+\end{equation*}
+Then (we simplify the notation of the norm $||\cdot||_{L^2([0,T]\subset\R)}\to||\cdot||_2$)
+\begin{equation*}
+\rho||g(\Phi)(t)||^2_2=\begin{cases}
+0\ &\text{if}\ t\in[0,Z_{4,1})\\
+\rho\left(||\tilde{\phi}^{(4)}_T||^2_2+||\hat{\phi}^{(1)}_T||^2_2-2\left(\tilde{\phi}^{(4)}_T,\hat{\phi}^{(1)}_T\right)_2\right)\ &\text{if}\ t\in[Z_{4,1},T].
+\end{cases}
+\end{equation*}
+Then we do a Taylor expansion for the last therm over the solution in the iteration $K$
+\begin{equation*}
+\left(\tilde{\phi}^{(4)}_T,\hat{\phi}^{(1)}_T\right)_2\approx\left(\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_{T_K}\right)_2+\left(\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_T-\hat{\phi}^{(1)}_{T_K}\right)_2+\left(\tilde{\phi}^{(4)}_T-\tilde{\phi}^{(4)}_{T_K},\hat{\phi}^{(1)}_{T_K}\right)_2.
+\end{equation*}
+
+\item Finding the optimum $\lambda^*$ and using it for choose the optimal path forward in time.
+
+\end{enumerate}
+
+\item Compute the duality gap.
+
+\item Couple all the dams without wind.
+
+\item Add all the dams.
+
+\item Coupled dam system with wind,
+
+\item Add battery and flexible demand.
+
+\end{enumerate}
+
+\section{Questions and remarks:}
+
+\begin{enumerate}
+\item[Q:] What about monotonicity? How does it change when we add the relaxation?
+
+\item[Q:] Sensitivity of Optimum Solution to Problem Parameters during optimization.
+
+\item[Q:] What about duality gap with concatenated and NO concatenated systems?
+
+\item[Q:] Which is the intuitive value of $\lambda(t)$?
+
+\item[Q:] What about regularity?
+
+\item[R:] I need to parallelize all.
+
+\item[Q:] In \ref{Alg-Sec}, which is the condition to be a minimum and no a maximum?
+
+\item[Q:] What is a good cost model for the water?
+\end{enumerate}
+
+\section{Characteristics of each dam}
+
+\subsection{Rinc\'on del Bonete}
+
+Also called Gabriel Terra, is the dam with the larger reservoir of the system. In a one day optimization, its water's level is almost constant. We consider that $\overline{\phi}_T$.
+
+\subsection{Baygorria}
+
+We model it as a pass dam, this means that it turbines all the water it receives.
+
+\subsection{Palmar}
+
+Also called Constituci\'on, is the dam with the higher power in R\'io Negro. As it reservoir is not so large, its power is so affected by its water's level. In particular we have that $\overline{\phi}_T=\overline{\phi}_T(V)$.
+
+\section{Complete dam system}
+
+Using a Lagrangian relaxation between Bonete and Baygorria, and between Baygorrya and Palmar, we have the next cost function ($T\in[0,\overline{T}]$)
+\begin{multline*}
+C(T)=C_F\int_0^T\phi_F(s)ds+\sum_{i\in\{1,3,4\}}C_H^{(i)}\int_0^T\left(\phi_T^{(i)}(s)+\phi_S^{(i)}(s)\right)ds\\
++\int_{\tau_{2,1}}^T\lambda_{2,1}(s)\left(\phi_
+V^{(2)}(s)-\phi_T^{(1)}(s-\tau_{2,1})-\phi_S^{(1)}(s-\tau_{2,1})\right)ds\\
++\int_{\tau_{3,2}}^T\lambda_{3,2}(s)\left(\phi_
+V^{(3)}(s)-\phi_T^{(2)}(s-\tau_{3,2})-\phi_S^{(2)}(s-\tau_{3,2})\right)ds,
+\end{multline*}
+Where the Lagrangian multipliers follow $\supp(\lambda_{2,1})\subseteq[\tau_{2,1},T]$ and $\supp(\lambda_{3,2})\subseteq[\tau_{3,2},T]$. The conservation law for all the dams are
+\begin{equation*}
+\begin{cases}
+d\hat{V}^{(1)}=\frac{\overline{T}}{\overline{V}^{(1)}}\left(I_R^{(1)}(t)-\phi_T^{(1)}(t)-\phi_S^{(1)}(t)\right)dt\\
+d\hat{V}^{(2)}=0\implies I_R^{(2)}(t)+\phi_V^{(2)}(t)-\phi_T^{(2)}(t)-\phi_S^{(2)}(t)=0\\
+d\hat{V}^{(3)}=\frac{\overline{T}}{\overline{V}^{(3)}}\left(I_R^{(3)}(t)+\phi_V^{(3)}(t)-\phi_T^{(3)}(t)-\phi_S^{(3)}(t)\right)dt\\
+d\hat{V}^{(4)}=\frac{\overline{T}}{\overline{V}^{(4)}}\left(I_R^{(4)}(t)-\phi_T^{(4)}(t)-\phi_S^{(4)}(t)\right)dt.
+\end{cases}
+\end{equation*}
+Then the Hamiltonian is
+\begin{multline*}
+H(\cdot,t)=\min_{\bm{\Phi},\bm{D},d\hat{V}^{(2)}=0}\overline{T}\left[C_F\overline{\phi}_F\hat{\phi}_F+\sum_{i\in\{1,3,4\}}\left(C_T^{(i)}\hat{\phi}_T^{(i)}+C_S^{(i)}\hat{\phi}_S^{(i)}\right)+\lambda_{2,1}(t)\overline{\phi}_V^{(2)}\hat{\phi}_V^{(2)}\right.\\
+-\lambda_{2,1}(t+\tau_{2,1})\left(\overline{\phi}_T^{(1)}\hat{\phi}_T^{(1)}+\overline{\phi}_S^{(1)}\hat{\phi}_S^{(1)}\right)+\lambda_{3,2}(t)\overline{\phi}_V^{(3)}\hat{\phi}_V^{(3)}-\lambda_{3,2}(t+\tau_{3,2})\left(\overline{\phi}_T^{(2)}\hat{\phi}_T^{(2)}+\overline{\phi}_S^{(2)}\hat{\phi}_S^{(2)}\right)\\
+\left.-\sum_{i\in\{1,3,4\}}\left(\frac{1}{\overline{V}^{(i)}}\frac{\partial u}{\partial\hat{V}^{(i)}}\left(\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}+\overline{\phi}_S^{(i)}\hat{\phi}_S^{(i)}\right)\right)+\frac{1}{\overline{V}^{(3)}}\frac{\partial u}{\partial\hat{V}^{(3)}}\overline{\phi}_V^{(3)}\hat{\phi}_V^{(3)}\right]+\overline{T}\sum_{i\in\{1,3,4\}}\frac{I_T^{(i)}(t)}{\overline{V}^{(i)}}\frac{\partial u}{\partial\hat{V}^{(i)}}\\
++\frac{\overline{\phi}_V^{(3)}\hat{\phi}_V^{(3)}}{\overline{V}^{(3)}}\frac{\partial u}{\partial\hat{V}^{(3)}},
+\end{multline*}
+where the restriction $\bm{\Phi}$ is the restriction over all the controls and $\bm{D}$ is the condition over the demand. The power generated by each source is given by
+\begin{equation*}
+\begin{cases}
+P_H^{(i)}=K_1^{(i)}\hat{\phi}_T^{(i)}+K_2^{(i)}(\hat{\phi}_T^{(i)})^2+K_3^{(i)}\hat{\phi}_S^{(i)}\hat{\phi}_T^{(i)}\ \text{for}\ i\in\{1,2,3,4\}\\
+P_F=\overline{\phi}_F\hat{\phi}_F
+\end{cases}.
+\end{equation*}
+Grouping therms, the Hamiltonian becomes
+\begin{equation*}
+H(\cdot,t)=\min_{\bm{\Phi},\bm{D},d\hat{V}^{(2)}=0}\left[\overline{C}_F\hat{\phi}_F+\sum_{i=1}^4\left[\overline{C}_T^{(i)}\hat{\phi}_T^{(i)}+\overline{C}_S^{(i)}\hat{\phi}_S^{(i)}\right]\right]+\min_{\bm{\Phi}}\left[\overline{C}_V^{(3)}\hat{\phi}_V^{(3)}\right]+\dots,
+\end{equation*}
+where we are using that
+\begin{equation*}
+\phi_T^{(2)}(t-\tau_{3,2})+\phi_S^{(2)}(t-\tau_{3,2})=I_R^{(2)}(t)+\phi_T^{(1)}(t-\tau_{3,1})+\phi_S^{(1)}(t-\tau_{3,1})
+\end{equation*}
+and
+\begin{equation*}
+\phi_V^{(2)}(t)=\phi_T^{(2)}(t)+\phi_S^{(2)}(t)-I_R^{(2)}(t)
+\end{equation*}
+with $\tau_{3,1}=\tau_{3,2}+\tau_{2,1}$. The condition over the normalized controls is that all must be between 0 and 1, the condition over the volume of Baygorria implies $\phi_V^{(2)}(t)=\phi_T^{(2)}(t)+\phi_S^{(2)}(t)-I_R^{(2)}(t)
+$ and the condition over the demand can be expressed as
+\begin{equation*}
+\begin{split}
+D&=P_F+\sum_{i=1}^4P_H^{(i)}\\
+&=\overline{\phi}_F\hat{\phi}_F+\sum_{i=1}^4\left[K_1^{(i)}\hat{\phi}_T^{(i)}+K_2^{(i)}(\hat{\phi}_T^{(i)})^2+K_3^{(i)}\hat{\phi}_S^{(i)}\hat{\phi}_T^{(i)}\right].
+\end{split}
+\end{equation*}
+Under this conditions, $\hat{\phi}_V^{(3)}$ is a bang-bang control.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{LM.png}
+\caption{Diagram of the Lagrangian multiplier.}
+\end{figure}\\
+Next we are going to use the method of Lagrange multipliers to find the minimum of the Hamiltonian over the restrictions. We apply the method over the restriction $\bm{D}$ and we add gradually the other restrictions until we find an admissible minimum.
+
+\subsection{Algorithm}\label{Alg-Sec}
+
+Given the minimization problem
+\begin{equation*}
+\min_{\begin{cases}
+\underline{x}_i\leq x_i\leq\overline{x}_i\\
+g_1(\bm{x})=x_a+x_b-x_c-k_1=0\\
+g_2(\bm{x})=\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0
+\end{cases}} \bm{d}\cdot\bm{x}
+\end{equation*}
+where $\bm{x}=\{x_i\}_{i=1}^n$ and $\{a,b,c\}\subseteq\{1,\dots,n\}$ all different. We will call $h_i$ to each one of the $2n$ inequality conditions with $\mathfrak{G}=\{g_i\}_{i=1}^{2n}$ the corresponding set of associated equality conditions. We use the method of Lagrangian multipliers over the equality condition $g_3$ and then we follow the next steps:
+\begin{enumerate}
+\item Solve
+\begin{equation*}
+\begin{cases}
+\lambda \bm{d}=\nabla g_3\ \text{(linear system)}\\
+g_1(\bm{x})=0\\
+g_2(\bm{x})=0\\
+g_3(\bm{x})=0.
+\end{cases}
+\end{equation*}
+If $\bm{x}$ is an admissible solution, we are done. Otherwise, we continue with the next step.
+
+\item We solve the previous problem but adding extra equality conditions $\mathcal{G}\subseteq\mathfrak{G}$, this is
+\begin{equation*}
+\begin{cases}
+\lambda\bm{d}=\nabla g_3\ \text{(linear system)}\\
+g_1(\bm{x})=0\\
+g_2(\bm{x})=0\\
+g_3(\bm{x})=0\\
+\mathcal{G}(\bm{x})=\bm{0}.
+\end{cases}
+\end{equation*}
+If $\bm{x}$ is an admissible solution, we are done. The idea is to add gradually all the conditions, i.e., we start trying with each $\mathcal{G}_1\subseteq\mathfrak{G}$ such that $|\mathcal{G}_1|=1$, after all $\mathcal{G}_2\subseteq\mathfrak{G}$ such that $|\mathcal{G}_2|=2$ and like this until each $\mathcal{G}_n\subseteq\mathfrak{G}$ such that $|\mathcal{G}_n|=n$. Using the Lemma \ref{Lemma1}, we conclude that if in some of the levels we find one or more admissible solutions, the minimum between them is the optimal solution of the minimization problem.
+\end{enumerate}
+
+\subsubsection{Our particular case}
+
+Applying the algorithm described in subsection \ref{Alg-Sec} to our particular case, we find two scenarios. One when the value of the $\lambda$ is trivial (when $\hat{\phi}_F\neq0$), and the other where it is not ($\hat{\phi}_F=0$). In both scenarios, $\hat{\phi}_F$ does not play a role during the solution of the linear system, then we remove its component for all matrices and vectors. Now we analyze the two scenarios:
+\begin{enumerate}
+
+\item When it is trivial ($\hat{\phi}_F\neq0$), we must satisfy $\overline{C}_F=\lambda\overline{\phi}_F$, then we deduce $\lambda=\frac{\overline{C}_F}{\overline{\phi}_F}$. Now we can write the system without including the control $\hat{\phi}_F$ (which would make $Q$ not invertible) and we can solve numerically
+\begin{equation*}
+\begin{cases}
+\bm{x}=\frac{Q^{-1}(\lambda\bm{d}-\bm{b})}{2}\\
+P_F=D-\sum_{i=1}^4P_H^{(i)}\\
+\phi_V^{(2)}=\phi_T^{(2)}+\phi_S^{(2)}+I_R^{(2)}.\end{cases}
+\end{equation*}
+
+\item When it is not trivial ($\hat{\phi}_F=0$), we have to compute $\lambda$ as follows
+\begin{equation*}
+\lambda\bm{d}=\nabla g_3=2Q\bm{x}+\bm{b}\implies\bm{x}=\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}.
+\end{equation*}
+Now we insert $\bm{x}$ into the equality condition
+\begin{equation*}
+g_2(\bm{x})=\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)^TQ\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)+\bm{b}\cdot\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)+c=0,
+\end{equation*}
+It is possible to write $Q$ as a symmetric matrix, using that property and the fact that $Q^{-1}$ also would be symmetric, we have the equality
+\begin{equation*}
+\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)^T=\frac{\lambda}{2}\bm{d}^TQ^{-1}-\frac{1}{2}\bm{b}^TQ^{-1},
+\end{equation*}
+then we also have that
+\begin{multline*}
+\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)^TQ\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)=\\
+=\frac{\lambda^2}{4}\bm{d}^TQ^{-1}\bm{d}-\frac{\lambda}{4}\bm{d}^TQ^{-1}\bm{b}-\frac{\lambda}{4}\bm{b}^TQ^{-1}\bm{d}+\frac{1}{4}\bm{b}^TQ^{-1}\bm{b}.
+\end{multline*}
+The other term can be expressed as follows
+\begin{equation*}
+\bm{b}\cdot\left(\frac{\lambda}{2}Q^{-1}\bm{d}-\frac{1}{2}Q^{-1}\bm{b}\right)=\frac{\lambda}{2}\bm{b}^TQ^{-1}\bm{d}-\frac{1}{2}\bm{b}^TQ^{-1}\bm{b}.
+\end{equation*}
+Grouping all terms and using $\bm{d}^TQ^{-1}\bm{b}=\bm{b}^TQ^{-1}\bm{d}$, we have
+\begin{equation*}
+\lambda=\pm\sqrt{\frac{\bm{b}^TQ^{-1}\bm{b}-4c}{\bm{d}^TQ^{-1}\bm{d}}}.
+\end{equation*}
+We can conclude that $\lambda\geq0$ since we know its trivial value, and the fact that, more demand always implies more cost. Finally we can solve numerically
+\begin{equation*}
+\begin{cases}
+\bm{x}=\frac{Q^{-1}(\lambda\bm{d}-\bm{b})}{2}\\
+\phi_V^{(2)}=\phi_T^{(2)}+\phi_S^{(2)}+I_R^{(2)}.\end{cases}
+\end{equation*}
+
+\end{enumerate}
+In both scenarios, not having a admissible solution implies that we have to keep adding conditions. Also the second scenario is a particular case of the first one where we fix the fuel control. The vectors and matrices of our system are
+\begin{equation*}
+Q=\left(\begin{array}{c|cc|cc|cc|cc}
+\color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 & \color{red}0 \\
+\midrule
+\color{red}0 & K_2^{(1)} & \frac{K_3^{(1)}}{2} & 0 & 0 & 0 & 0 & 0 & 0 \\
+\color{red}0 & \frac{K_3^{(1)}}{2} & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\midrule
+\color{red}0 & 0 & 0 & K_2^{(2)} & \frac{K_3^{(2)}}{2} & 0 & 0 & 0 & 0 \\
+\color{red}0 & 0 & 0 & \frac{K_3^{(2)}}{2} & 0 & 0 & 0 & 0 & 0 \\
+\midrule
+\color{red}0 & 0 & 0 & 0 & 0 & K_2^{(3)} & \frac{K_3^{(3)}}{2} & 0 & 0 \\
+\color{red}0 & 0 & 0 & 0 & 0 & \frac{K_3^{(3)}}{2} & 0 & 0 & 0 \\
+\midrule
+\color{red}0 & 0 & 0 & 0 & 0 & 0 & 0 & K_2^{(4)} & \frac{K_3^{(4)}}{2} \\
+\color{red}0 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{K_3^{(4)}}{2} & 0 \\
+\end{array}\right),\ \bm{x}=\begin{pmatrix}
+\color{red}\hat{\phi}_F \\
+\hat{\phi}_T^{(1)} \\
+\hat{\phi}_S^{(1)} \\
+\hat{\phi}_T^{(2)} \\
+\hat{\phi}_S^{(2)} \\
+\hat{\phi}_T^{(3)} \\
+\hat{\phi}_S^{(3)} \\
+\hat{\phi}_T^{(4)} \\
+\hat{\phi}_S^{(4)}
+\end{pmatrix},
+\end{equation*}
+\begin{equation*}
+\bm{b}=\begin{pmatrix}
+\color{red}\overline{\phi}_F \\
+K_1^{(1)} \\
+0 \\
+K_1^{(2)} \\
+0 \\
+K_1^{(3)} \\
+0 \\
+K_1^{(4)} \\
+0
+\end{pmatrix},\ \bm{d}=\begin{pmatrix}
+\color{red}\overline{C}_F \\
+\overline{C}_T^{(1)} \\
+\overline{C}_S^{(1)} \\
+\overline{C}_T^{(2)} \\
+\overline{C}_S^{(2)} \\
+\overline{C}_T^{(3)} \\
+\overline{C}_S^{(3)} \\
+\overline{C}_T^{(4)} \\
+\overline{C}_S^{(4)}
+\end{pmatrix},\ c=-D,
+\end{equation*}
+but in both scenarios we remove the components corresponding to the fuel.
+
+\subsubsection{List of functions}
+
+Here we list all the function implemented for this algorithm:
+\begin{enumerate}
+
+\item[$\bullet$] [newQ,newb,newc,newd] = \textbf{Mat\_Red}(Q,b,c,d,i,x). Given the linear minimization problem with quadratic conditions
+\begin{equation*}
+\min_{\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0}\bm{d}\cdot\bm{x},
+\end{equation*}
+this function fix the i-thm value of $\bm{x}$ and assigns it the value x. Then it returns the new parameters of the minimization problem after fixing. See \ref{fixing}.
+
+\item[$\bullet$] [x1] = \textbf{Check\_T}(Q,b,c,d,X,C). Given the previous minimization problem where we have the set of possible solutions X and we need to check the conditions C, this function returns the admissible minimum or tells if they are not admissible.
+
+\item[$\bullet$] [x] = \textbf{NT\_Solver}(Q,b,c,d). Here we use Lagrangian multiplier method over the quadratic condition for the no trivial problem. It returns an admissible point for the quadratic condition and a complex number if there is no admissible solution (it always looks for minimums).
+
+\item[$\bullet$] [x] = \textbf{T\_Solver}(Q,b,d,T\_lambda). Assuming we know the value of the Lagrangian multiplier, it returns an admissible point for the quadratic condition and a complex number if there is no admissible solution (it always looks for minimums).
+
+\item[$\bullet$] [X] = \textbf{Opt\_NT\_m}(Q,b,c,d,m). Given the linear minimization problem with quadratic conditions and restriction over the controls
+\begin{equation*}
+\min_{\begin{cases}
+\underline{x}_i\leq x_i\leq\overline{x}_i\\
+\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0
+\end{cases}} \bm{d}\cdot\bm{x},
+\end{equation*}
+and a number m, this function returns all the admissible points fixing m of the controls over their extremes. It checks all the possible combinations.
+
+\item[$\bullet$] [X] = \textbf{Opt\_T\_m}(Q,b,c,d,T\_lambda,m). Given the linear minimization problem with quadratic conditions and restriction over the controls
+\begin{equation*}
+\min_{\begin{cases}
+\underline{x}_i\leq x_i\leq\overline{x}_i\\
+\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0
+\end{cases}} \bm{d}\cdot\bm{x},
+\end{equation*}
+assuming we know the Lagrangian multiplier over the quadratic condition and setting a number m, this function returns all the admissible points fixing m of the controls over their extremes. It checks all the possible combinations.
+
+\item[$\bullet$] [x1] = \textbf{Quad\_FMC}(Q,b,c,d). Given the linear minimization problem with quadratic conditions and restriction over the controls
+\begin{equation*}
+\min_{\begin{cases}
+\underline{x}_i\leq x_i\leq\overline{x}_i\\
+\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0
+\end{cases}} \bm{d}\cdot\bm{x},
+\end{equation*}
+this function returns the minimum using fmincon.
+
+\item[$\bullet$] [x1] = \textbf{Quad\_FMC\_P}(Q,b,c,d,k). Particular version of the previous function. Given the linear minimization problem with quadratic  and linear conditions and restriction over the controls
+\begin{equation*}
+\min_{\begin{cases}
+0\leq x_i\leq1\\
+\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0\\
+x_{10}+k_1^{(1)}-k_1^{(2)}x_4-k_1^{(3)}x_5=0\\
+x_{11}+k_2^{(1)}-k_2^{(2)}x_6-k_2^{(3)}x_7=0
+\end{cases}} \bm{d}\cdot\bm{x},
+\end{equation*}
+this function returns the minimum using fmincon. Here we need $|\bm{x}|=11$.
+
+\item[$\bullet$] M = \textbf{Rand\_Sym}(n). Returns an $n\times n$ symmetric random matrix.
+
+\item[$\bullet$] [sets,bins] = \textbf{Set\_Bin}(v,m). Given v a vector 1:n, and a number m. This function returns a set \emph{sets} of combinations of v taken by m values, each element of the set is ordered in increasing order. Also it returns a set \textit{bins} with all the binary numbers of m digits.
+
+\item[$\bullet$] [newQ,newb,newd] = \textbf{App\_Cond}(Q,b,d,i,k,fr). This function is used for applying the equality conditions over the virtual flows. Given the minimization problem
+\begin{equation*}
+\min_{\begin{cases}
+\underline{x}_i\leq x_i\leq\overline{x}_i\\
+g_1(\bm{x})=x_j+x_k-x_l-k=0\\
+g_2(\bm{x})=\bm{x}^TQ\bm{x}+\bm{b}\cdot\bm{x}+c=0
+\end{cases}} \bm{d}\cdot\bm{x}
+\end{equation*}
+where $d_j=0$. Fixing $x_j$ equal to zero or one, we get the new matrices of the equivalent system.
+
+\end{enumerate}
+
+\subsubsection{Procedure 1 (does not work because Q becomes singular)}
+
+[{\color[rgb]{1,0,0} When we fix a turbined flow, the reduction in the matrix Q makes it singular over the associated spillage}] Now we will detail the procedure we explained before. We will add the equality restrictions gradually (we call $n$ to the number of restrictions):
+
+\begin{enumerate}
+
+\item[$\bullet$] $n=0:$ We use \textbf{Opt\_T\_m}($\cdot,m=0$).
+
+\item[$\bullet$] $n=1:$ We have to find first a set of admissible solutions and after the minimum between them, we look in:
+\begin{enumerate}
+\item $\hat{\phi}_F=0:$ We use \textbf{Opt\_NT\_m}($\cdot,m=0$).
+\item $\hat{\phi}_V^{(i)}\in\{0,1\}:$ Here we modify the system with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_T\_m}($\cdot,m=0$).
+\item Otherwise: We use directly \textbf{Opt\_T\_m}($\cdot,m=1$).
+\end{enumerate}
+
+\item[$\bullet$] $n=2:$ We have to find first a set of admissible solutions and after the minimum between them, we look in:
+\begin{enumerate}
+\item $\hat{\phi}_F=0:$ We use \textbf{Opt\_NT\_m}($\cdot,m=1$).
+\item $\hat{\phi}_V^{(i)}\in\{0,1\}:$ Here we modify the system with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_T\_m}($\cdot,m=1$).
+\item $\hat{\phi}_F=0,\hat{\phi}_V^{(i)}\in\{0,1\}:$ Here we modify the system with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_NT\_m}($\cdot,m=0$).
+\item $\hat{\phi}_V^{(i)}\in\{0,1\},\hat{\phi}_V^{(j)}\in\{0,1\}:$ Here we modify the system two times with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_T\_m}($\cdot,m=0$).
+\item Otherwise: We use directly \textbf{Opt\_T\_m}($\cdot,m=2$).
+\end{enumerate}
+
+\item[$\bullet$] $n=N>2:$ We have to find first a set of admissible solutions and after the minimum between them, we look in:
+\begin{enumerate}
+\item $\hat{\phi}_F=0:$ We use \textbf{Opt\_NT\_m}($\cdot,m=N-1$).
+\item $\hat{\phi}_V^{(i)}\in\{0,1\}:$ Here we modify the system with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_T\_m}($\cdot,m=N-1$).
+\item $\hat{\phi}_F=0,\hat{\phi}_V^{(i)}\in\{0,1\}:$ Here we modify the system with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_NT\_m}($\cdot,m=N-2$).
+\item $\hat{\phi}_V^{(i)}\in\{0,1\},\hat{\phi}_V^{(j)}\in\{0,1\}:$ Here we modify the system two times with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_T\_m}($\cdot,m=N-2$).
+\item $\hat{\phi}_F=0,\hat{\phi}_V^{(i)}\in\{0,1\},\hat{\phi}_V^{(j)}\in\{0,1\}:$ Here we modify the system two times with \textbf{App\_Cond}($\cdot$) and after we use \textbf{Opt\_NT\_m}($\cdot,m=N-3$).
+\item Otherwise: We use directly \textbf{Opt\_T\_m}($\cdot,m=N$).
+
+\end{enumerate}
+
+\item When we fix some of the controls, the matrix $Q$ becomes singular. Then the Lagrangian multilayer has no solution which means that the minimum is in the boundary of the new domain. Then we do now have to try to find the minimum in that case and keep adding conditions if in that level there is no an admissible solution.
+
+\item A common error would be, when the dam is almost full, to optimize the turbined flow and after to compute directly the necessary spillage such that $V\leq\overline{V}$. The problem with this is that, when we put the spillage, the efficiency of the dam decreases and then, it produces less power for the same turbined flow. This will make the demand not to be satisfy.
+
+\item We will say that we only have spillage in the dams that are not Bonete, when we are near the condition $V\geq\overline{V}$. Adding always the spillage makes the optimization more expensive and complicate, because instead of 6 real controls, we would have 9 (fuel + 4 dams). In the case where the Lagrange multipliers have the same value, we have multiple solutions (the solution over the spillages and the fuel becomes an hyperplane, from where me have infinite solutions).
+
+\item Si mandamos extra agua a Palmar, el cambio seria un pequenio incremento en la eficiencia. Por lo que casi nunca seria el caso, a no ser que no tenga agua para turbinar.
+
+\item We will also consider the maximum flow as a function of the level. We have a report where we explain this better.
+
+\item To solve over the optimal path gives us an admissible solution but not the political of operation in all the state space. To have the PoO we would need to solve for each point, given all the information in the last 6h, which would increase the states of the HJB to infinite.
+
+\item In the case with wind we can do MC simulations of optimal path from the initial point, and estimate the expected value of the cost. Finally compare with the solution of the HJB.
+
+\item Our system does not consider scenarios, it solves for all states and time. Then we have covered all the possible cases inside our domain.
+
+\item To have smooth and nice derivatives we must check some conditions. First, we need a monotonous numerical scheme, we achieve this adding a error of $\mathcal{O}(\Delta t)$. Second, we need a tolerance high enough in the minimization of the Hamiltonian such that it does not affect the derivative too much. Finally, we need to follow the Von Neumann stability condition and choose an appropriate $\Delta x$ and $\Delta t$.
+
+\item The last part of the project is to have all the connected dams, a battery, a flexible demand, the fuel station and do MC realizations of the wind and take it like deterministic. And using $\lambda=0$ because is hard to compute it for each wind's realizations.
+
+\item During the optimization of the Hamiltonian with the battery, we have to put the control between the maximum and minimum power, and no between -1 and +1, because $P_A(\phi_A)$ is not differentiable and we would not be able to use the sqp algorithm.
+
+\item Remember that when we are computing the optimal lambda, we are finding the minimum of $-f$.
+
+\item Remember that the cone is computed assuming maximum and minimum flow, then the discretizations in space and time have to be such that, between consecutive time steps, the spacial discretization is able to catch the effect of the flow in the change of volume.
+
+\item Stability wave equation to see the correct discretizations.
+
+\item Due to the delay in out controls (see scheme), when the battery changes suddenly from 1 to -0.35, and the derivative is so high, we increase too much the cost in a very inefficient way.
+
+\item https://www.mathworks.com/help/optim/ug/tolerances-and-stopping-criteria.html
+
+\item Use cake plots (energy, costs and use of the battery), check dimension of the lambda, use fixed epsilons, compute lambda with the battery, add wind, explain model of the maximum power of the dam.
+
+\end{enumerate}
+
+\section{Figures to complete}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.3\textwidth]{1.jpg}
+\caption{.}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.3\textwidth]{2.jpg}
+\caption{.}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.3\textwidth]{3.jpg}
+\caption{.}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.3\textwidth]{4.jpg}
+\caption{.}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{5.jpg}
+\caption{.}
+\label{fixing}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{6.jpg}
+\caption{.}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Opt_Test.eps}
+\caption{RegionPlot3D[
+ $x^2$ + $y^2$ + $z^2$ + x*y + 2*x + z < 1, {x, 0, 1}, {y, 0, 1}, {z, 0, 1},
+  AxesLabel -> Automatic, FaceGrids -> All].}
+\end{figure}
+\end{document}

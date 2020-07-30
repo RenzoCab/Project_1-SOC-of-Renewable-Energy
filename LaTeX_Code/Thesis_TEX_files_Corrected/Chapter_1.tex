@@ -1,0 +1,47 @@
+\chapter{Introduction}
+
+Uruguay is a pioneer in the use of renewable energy, to the point 
+of being able to supply 100\% of its demand from renewable sources. 
+The generation facilities use biomass combustion, hydropower, solar and wind 
+power \cite{secretariat2018global} as well as fossil fuel driven generators.\\
+Wind and solar power generators are mostly not controllable. Also, they exhibit high uncertainty \cite{foley2012current} and variability in relatively short time scales, which span just a few hours. This fact makes stochastic effects relevant when planning the power generation in one day.  In this context, classic scenario-based approaches like \cite{de2010optimal}  become less attractive, as they do not provide optimal policies for all states. In this thesis,  we use stochastic optimal control to construct space-time continuous feasible policies. These policies produce an electric energy dispatch which minimizes the total production cost while satisfying the demand. 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Figures/Flow.pdf}
+\caption{Workflow of optimal control for real systems.}
+\label{Flow_Control}
+\end{figure}\\
+Fig. (\ref{Flow_Control}) shows the workflow adopted in this thesis. It involves 
+the following steps:
+
+\begin{enumerate}
+
+\item[Step 1]: A physical and engineering description is developed for the real 
+system under study. All relevant physical phenomena, limitations, and parameters
+ must be identified to understand the behavior of the system. We use official 
+ data to model the Uruguayan system provided by the companies ADME \cite{ADME} and UTE \cite{UTE}. The system is shown in Fig. \ref{fig:pptfigure}, where we can see the generators on left, the consumption on the right and a storage device, namely a battery. Throughout this thesis, we disregard the constraints imposed by the power transmission network and model the Uruguayan grid as a single node.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/RENZO.png}
+\caption{Representation of the Uruguayan grid with its different kinds of generators on the left and demand sources on the right. On the bottom right, we also include a battery, which is central to this thesis: it can absorb energy during low demand and supply it later during high demand to reduce the use of costly, fuel based generators.}
+\label{fig:pptfigure}
+\end{figure}
+
+\item[Step 2]: A mathematical model is compiled from the description of the entire 
+system, including generators and demand functions. We use physical laws, data fitting, and 
+information available for the different components and processes.
+
+\item[Step 3]: Once a mathematical model is in hand, 
+we can apply stochastic optimal control. Continuous-time Dynamic Programming (DP)
+applies to our model, which includes time-delays,
+after a continuous-time Lagrangian Relaxation (LR) to obtain a 
+Markovian system. Continuous-time DP is equivalent to solve the Hamilton-Jacobi-Bellman 
+(HJB) partial differential equation, whose solution is the value function.
+
+\item[Step 4]: Apply the method and models developed to examples from a real system, in our case, the Uruguayan grid, to assess their performance and have a validation.
+
+\end{enumerate} 
+The final step  is to use the optimal controls in the real system and compare
+the results with current control strategies. This would require
+modifications and tunings with data that is out of scope for this work, but the results
+obtained so far indicate that such an effort would be well advised.

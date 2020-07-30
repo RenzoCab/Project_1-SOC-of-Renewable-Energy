@@ -1,0 +1,317 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{bbm}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Problem 1: 1 Dam + 1 Fuel Generator (all deterministic), non linearity in the dam.}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Model}
+
+Here we have Salto Grande and one fuel generator, also the demand is deterministic. We use time in seconds, power in kW, money in U\$S, distance in meters and volume in $m^3$.
+
+\subsection{Hydraulic power}
+
+The dynamics of the system are given by
+\begin{equation*}
+\begin{cases}
+dV(t)=(I_T(t)-\phi_T(t))dt\\
+V(t_0)=5000\ hm^3=5.000*10^9\ m^3\\
+3.0*10^9\leq V(t)\leq5.0*10^9\ m^3,\\
+0\leq\phi(t)\leq4200\ m^3/s,
+\end{cases}
+\end{equation*}
+the power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_H(t)=\eta\phi_T(t)h(t)=8.72\phi_T(t)\Big[H(V(t))-dh(\phi_T(t))-5.1\Big]\\
+H(V)=(-7.91*10^{-19})V^2+(1.03*10^{-8})V+3.79\\
+dh(\phi_T)=(1.27*10^{-3})\phi_T
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_H(t)=K_H\int_0^t\phi_T(s)ds=1.8*10^{-5}\int_0^t\phi_T(s)ds.
+\end{equation*}
+We set $I_T(t)=2.2*10^3\ m^3/s$, corresponding to half of the maximum turbined flow.
+
+\subsection{Fossil fuel power station}
+
+The power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_F(t)=\phi_F(t)\\
+0\leq\phi_F(t)\leq\overline{\phi_F}=2.0*10^6\ kW
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_F(t)=\frac{K_F}{3.6*10^6}\int_0^tP_F(s)ds=(3.6*10^{-5})\int_0^t\phi_F(s)ds.
+\end{equation*}
+
+\subsection{Demand}
+
+Deterministic and only depending on time $D(t)$, we will use $D(t)=1000+500\sin\big(\frac{2\pi}{12*3600}t\big)$ (Figure (\ref{D_1})). Also we use $D(t)=1000$ MW constant.
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.5\textwidth]{Demand_01012017.eps}
+%\caption{Demand of 01/01/2017 (from \href{adme.com.uy}{adme.com.uy}).}
+%\label{Demand01012017}
+%\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{D_1.eps}
+\caption{Synthetic demand.}
+\label{D_1}
+\end{figure}
+
+\subsection{Constraint}
+
+We need at any moment to supply the demand, this is
+\begin{equation*}
+D(t)=P_H(t)+P_F(t).
+\end{equation*}
+
+\subsection{Objective function}
+
+We want to minimize
+\begin{equation*}
+\Theta(T)=\E\Big[C_H(T)+C_F(T)\Big]=K_H\int_0^T\phi_H(s)ds+\frac{K_F}{3.6*10^6}\int_0^T\phi_F(s)ds.
+\end{equation*}
+
+\section{Construction of the H-J-B equation}
+
+\subsection{Hamiltonian}
+
+Our Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(Du,u,t,V)=\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[(I_T-\phi_T)\frac{\partial u}{\partial V}+\frac{K_F}{3.6*10^6}\phi_F+K_H\phi_T\Bigg]\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[-\phi_T\frac{\partial u}{\partial V}+\frac{K_F}{3.6*10^6}\phi_F+K_H\phi_T\Bigg]+I_T\frac{\partial u}{\partial V}\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[\Bigg(-\frac{\partial u}{\partial V}+K_H\Bigg)\phi_H+\Bigg(\frac{K_F}{3.6*10^6}\Bigg)\phi_F\Bigg]+I_T\frac{\partial u}{\partial V}.
+\end{multline*}
+%We have that $\underline{H}=30$ and $\overline{H}=35.5$, then $h(t)=(H(V(t))-5.1)\in[24.9,30.4]$ for all $t\geq0$. Now we compare the influence of $\phi_T$ and $\phi_F$, it is natural to assume $K_F>-\frac{\partial u}{\partial V}+K_H\eta(H(V)-5.1)$ which is correct if $\frac{\partial u}{\partial V}>K_H\eta(H(V)-5.1)-K_F(>-50.5)$.
+
+\subsection{H-J equation}
+
+The Hamilton-Jacobi equation is
+\begin{equation*}
+\begin{cases}
+\frac{\partial u}{\partial t}+\mathbf{H}(Du,u,t,V)=0\\
+u(T,v)=0.
+\end{cases}
+\end{equation*}
+
+\section{Simulation}
+
+\subsection{Scheme and discretization}
+
+We use central finite differences and explicit Euler. For the volume, we simulate between 3000 and 5000 $hm^3$ with $dV=10\ hm^3$, and for the time, we simulate from 24:00 to 00:00 hs (86400 to 0 seconds) with $dt=1200$ seconds. For the demand, we use the one defined before (see Figure (\ref{D_1})). The boundary conditions are $\frac{\partial^2 u}{\partial V^2}=0$ in both extremes.
+
+\subsection{Results}
+
+The results are in the presentation.
+
+%\subsubsection{Case 1}
+%
+%Here we take $K_{HE}=0.3$ U\$S/MWh. As is it too much smaller than the price per energy of the fuel, the system try to use water always it can. The figures are from (\ref{Result_1}) to (\ref{D3000_1}).
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{Result_1.eps}
+%\caption{Optimal cost function.}
+%\label{Result_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{DU_1.eps}
+%\caption{Gradient function.}
+%\label{DU_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiT_1.eps}
+%\caption{Turbined flow.}
+%\label{PhiT_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiF_1.eps}
+%\caption{Fuel control.}
+%\label{PhiF_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D5000_1.eps}
+%\caption{Demand and all the powers with $V=5000\ hm^3$.}
+%\label{D5000_1}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D3000_1.eps}
+%\caption{Demand and all the powers with $V=3000\ hm^3$.}
+%\label{D3000_1}
+%\end{figure}
+%
+%\subsubsection{Case 2}
+%
+%Here we take $K_{HE}=130$ U\$S/MWh. Also the price is higher when the dam start to have less water, then the system changes between water and fuel. The figures are from (\ref{Result_2}) to (\ref{D3000_2}).
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{Result_2.eps}
+%\caption{Optimal cost function.}
+%\label{Result_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{DU_2.eps}
+%\caption{Gradient function.}
+%\label{DU_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiT_2.eps}
+%\caption{Turbined flow.}
+%\label{PhiT_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{PhiF_2.eps}
+%\caption{Fuel control.}
+%\label{PhiF_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D5000_2.eps}
+%\caption{Demand and all the powers with $V=5000\ hm^3$.}
+%\label{D5000_2}
+%\end{figure}
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.7\textwidth]{D3000_2.eps}
+%\caption{Demand and all the powers with $V=3000\ hm^3$.}
+%\label{D3000_2}
+%\end{figure}
+
+
+\section{Extra}
+
+Here we have some computations and assumptions.
+
+\subsection{Water's value}
+
+Our data can be the value of the water's energy, this is $K_{HE}$ in $U\$S/MWh$, but we need the value per volume $K_H$ in $U\$S/m^3$, then we need to do a conversion. Assuming maximum volume and that we use the dam at its maximum power, we want
+\begin{equation*}
+\frac{K_{HE}}{1000}\int_0^TP_H(s)ds=K_H\int_0^T\phi_T(s)ds.
+\end{equation*}
+Now, in $T=1$ hs we have
+\begin{equation*}
+\begin{cases}
+\frac{K_{HE}}{1000}\int_0^TP_H(s)ds=\frac{K_{HE}}{1000}*8.72*4200*(H(\overline{V})-dh(4200)-5.1)\\
+K_H\int_0^T\phi_T(s)ds=K_H*4200*3600
+\end{cases}
+\end{equation*}
+from where we deduce
+\begin{equation*}
+K_H(K_{HE})=\frac{K_{HE}*8.72*(H(\overline{V})-dh(4200)-5.1)}{3.6*10^6}.
+\end{equation*}
+Then $K_{HE}=0.3\implies K_H=1.8*10^{-5}$.
+
+\subsection{Minimum cost condition}
+
+Given the nonlinearity in the cost of the turbine flow, we will find the optimal distribution of power. We will omit the time dependence for conformity.
+\begin{multline*}
+P_H=\\
+=\eta\phi_T(H(V)-dh(\phi_T)-5.1)\\
+=\eta\phi_T(H(V)-1.27*10^{-3}\phi_T-5.1)\\
+=\underbrace{[\eta(H(V)-5.1)]}_{=K_1}\phi_T+\underbrace{[-\eta1.27*10^{-3}]}_{=K_2\in\R^-}\phi_T^2\\
+=K_1\phi_T+K_2\phi_T^2.
+\end{multline*}
+Now we define $\overline{K}_2=-K_2\in\R^+$ and try to find $\phi_T(P_H)$, then
+\begin{multline*}
+P_H=-\overline{K}_2\phi_T^2+K_1\phi_T\implies0=-\overline{K}_2\phi_T^2+K_1\phi_T-P_H\implies\\
+\phi_T=\frac{-K_1\pm\sqrt{K_1^2-4(-\overline{K}_2)(-P_H)}}{2(-\overline{K}_2)}\implies
+\phi_T=\frac{K_1-\sqrt{K_1^2-4\overline{K}_2P_H}}{2\overline{K}_2}.
+\end{multline*}
+For the last implication, we use that for zero power we have zero flow. Now we have $D=P_F+P_H=\phi_F+P_H$ and the cost of the Hamiltonian is $C=\hat{K}_F\phi_F+\hat{K}_H\phi_T$, then writing $P_H=D-\phi_F$ and using our expression for $\phi_T(P_H)$ we have
+\begin{equation*}
+C(P_H)=\hat{K}_F(D-\phi_H)+\frac{\hat{K}_H}{2\overline{K}_2}\Bigg(K_1-\sqrt{K_1^2-4\overline{K}_2P_H}\Bigg)
+\end{equation*}
+and
+\begin{equation*}
+\frac{\partial C}{\partial P_H}(P_H)=\frac{\hat{K}_H}{\sqrt{K_1^2-4\overline{K}_2P_H}}-\hat{K}_F.
+\end{equation*}
+Then we want to know until which point $C(P_H)$ is a decreasing function then we want $P_H^*$ such that $\frac{\partial C}{\partial P_H}(P_H^*)=0$, this is
+\begin{equation*}
+P_H^*=\frac{1}{4\overline{K}_2}\Bigg[K_1^2-\Bigg(\frac{\hat{K}_H}{\hat{K}_F}\Bigg)^2\Bigg].
+\end{equation*}
+Then the distribution of power is given by
+\begin{equation*}
+\begin{cases}
+P_H=D,P_F=0\ &\text{if}\ D\leq P_H^*,D\leq\overline{P}_H\\
+P_H=\overline{P}_H,P_F=D-\overline{P}_H\ &\text{if}\ D\leq P_H^*,D>\overline{P}_H\\
+P_H=P_H^*,P_F=D-P_H^*\ &\text{if}\ D>P_H^*,D\leq\overline{P}_H\\
+P_H=P_H^*,P_F=D-P_H^*\ &\text{if}\ D>P_H^*,D>\overline{P}_H,P_H^*\leq\overline{P}_H\\
+P_H=\overline{P}_H,P_F=D-\overline{P}_H\ &\text{if}\ D>P_H^*,D>\overline{P}_H,P_H^*>\overline{P}_H
+\end{cases}
+\end{equation*}
+where $\overline{P}_H=\eta*4200*(H(V)-dh(4200)-5.1)$.
+
+\end{document}

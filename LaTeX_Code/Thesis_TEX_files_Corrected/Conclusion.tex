@@ -1,0 +1,28 @@
+% Conclusion File
+
+\chapter{Concluding Remarks}
+
+We were able to simulate and control a simplified version of the short term Uruguayan electricity dispatch system using stochastic optimal control. This approach constructs a near optimal policy and corresponding value function.  The technique is based on the numerical solution of a sequence of parametric HJB PDEs. \\
+Following this line, we included non-linearities in our model, for instance, those arising in the hydropower generators. The computation of the Hamiltonian function in the HJB equations is carried out numerically using continuous optimization tools. To carry out this task efficiently, we used smaller computational domains and simple parallelization techniques. \\
+Our methodology allows to model and to quantify the benefit of adding an energy storage device. The additional storage seems to be particularly important in the presence of the high variability introduced by renewable sources.
+
+\section{Future Research Work}
+
+The work presented in this thesis can be extended in several directions, we mention some examples below.
+
+\begin{enumerate}
+
+\item Using more realistic models for the FFSs. We would need to add integer variables to the optimization, including, for instance, the starting cost and the minimum power constraint.
+
+\item Modeling additional features. In the spirit of smart cities, we would like to add some degree of demand flexibility and controllability, a model for the power exported to nearby countries and the stochastic description of the solar generators. These additional features will increases the computational work considerably.
+
+\item Improving the efficiency of the numerical solution of the dual problem. The implementation of Trust Region Bundle Methods using Subgradient information seems to be a promising direction.
+
+\item Improving the efficiency of the numerical approximation of the Hamiltonian function. This minimization problem is very specific  since it has linear objective and quadratic constraints. It may be possible to use this particular structure to find a specific numerical optimization solver.
+
+\item Throughout this thesis, we disregarded the constraints imposed by the power transmission network and model the Uruguayan grid as a single node. Including the effects of the transmission network through a graph representation with flux balance on its nodes and flux constraints on its edges is a useful step towards a more realistic description.
+\end{enumerate}
+
+% Copyright 2010 Imran Shafique Ansari
+% Contact Email: imran.ansari@kaust.edu.sa
+% Contact Number: +966 59 897 1005

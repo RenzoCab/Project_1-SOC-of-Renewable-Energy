@@ -1,0 +1,282 @@
+\let\mypdfximage\pdfximage
+\def\pdfximage{\immediate\mypdfximage}
+
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fmtcount}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage[maxfloats=256]{morefloats}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\usepackage{geometry}
+\geometry{a4paper,
+          left=            5mm,
+          right=           5mm,
+          top=             15mm,
+          bottom=          25mm,
+          heightrounded}
+
+\maxdeadcycles=100000
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\Date}{This text will change :D}
+\newcommand{\DateDay}{This text will change :(}
+\newcommand{\DateMonth}{This text will change :)}
+\newcommand{\mysize}{0.28}
+\newcommand{\mysizee}{0.19}
+\newcommand{\mysizeee}{0.48}
+\newcommand{\mysizeeee}{0.35}
+\newcommand{\legsize}{0.3}
+%\newcommand{\mysize}{0.1}
+%\newcommand{\mysizee}{0.1}
+%\newcommand{\mysizeee}{0.1}
+\newcommand{\soft}{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Soft}
+\newcommand{\real}{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Real}
+\newcommand{\pc}{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/plotsCosts/}
+\newcommand{\roott}{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Uruguayan Historicals of Production\\
+and Simulations: From July 2018 to September 2018}
+% \author{Renzo Caballero, Ra\'ul Tempone} 
+\maketitle
+
+\newpage
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2019}{
+\forloop{j}{7}{\value{j} < 13}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+% I have somehow 4 cases. I have to consider that the date 20190101 must be written as i0j0k. But the date 20191010 should be ijk. For this reason, I added the 4 cases ijk, i0jk, ij0k, i0j0k.
+
+% To test the ifnum:
+%\ifnum\i<2020
+%\arabic{i}
+%\else
+%FALSE
+%\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\IfFileExists{\real_\arabic{i}\arabic{j}\arabic{k}/120.eps}{
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+\graphicspath{{\real_\arabic{i}\arabic{j}\arabic{k}/}}
+% \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\multicolumn{2}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\multicolumn{2}{c}{\includegraphics[scale=\mysizee]{101.eps}} & {\includegraphics[scale=\mysize]{103.eps}} \\
+\multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizee]{101.eps}} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}}{\includegraphics[scale=\mysize]{103.eps}} \\
+\includegraphics[scale=\mysize]{104.eps} & \includegraphics[scale=\mysize]{106.eps} & \includegraphics[scale=\mysize]{127.eps} \\
+\graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{104.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{106.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{127.eps} \\
+\includegraphics[scale=\mysize]{107.eps} & \includegraphics[scale=\mysize]{108.eps} &  \\
+\graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{107.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{108.eps} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{3}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}\arabic{j}\arabic{k}.eps} & \includegraphics[scale=\mysizeeee]{116.eps} & \includegraphics[scale=\mysizeeee]{117.eps} & \includegraphics[scale=\mysizeeee]{121.eps} \\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}\arabic{j}\arabic{k}.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{116.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{117.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{121.eps} \\
+\multicolumn{2}{c}{\graphicspath{{\real_\arabic{i}\arabic{j}\arabic{k}/}}{\includegraphics[scale=\mysizeee]{120.eps}}} & \multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}\arabic{j}\arabic{k}/}}{\includegraphics[scale=\mysizeee]{120.eps}}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% I added the \ifnum because: The loop considered two times the date 2019-01-05. The correct one, and the extra one when i-0j-k, e.g., i=2019, j=10, and k=5.
+\ifnum \value{k}>9
+\IfFileExists{\real_\arabic{i}0\arabic{j}\arabic{k}/120.eps}{
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+\graphicspath{{\real_\arabic{i}0\arabic{j}\arabic{k}/}}
+% \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\multicolumn{2}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-0\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\multicolumn{2}{c}{\includegraphics[scale=\mysizee]{101.eps}} & {\includegraphics[scale=\mysize]{103.eps}} \\
+\multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizee]{101.eps}} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}{\includegraphics[scale=\mysize]{103.eps}} \\
+\includegraphics[scale=\mysize]{104.eps} & \includegraphics[scale=\mysize]{106.eps} & \includegraphics[scale=\mysize]{127.eps} \\
+\graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{104.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{106.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{127.eps} \\
+\includegraphics[scale=\mysize]{107.eps} & \includegraphics[scale=\mysize]{108.eps} &  \\
+\graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{107.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysize]{108.eps} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{3}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}0\arabic{j}\arabic{k}.eps} & \includegraphics[scale=\mysizeeee]{116.eps} & \includegraphics[scale=\mysizeeee]{117.eps} & \includegraphics[scale=\mysizeeee]{121.eps} \\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}0\arabic{j}\arabic{k}.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{116.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{117.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}} \includegraphics[scale=\mysizeeee]{121.eps} \\
+\multicolumn{2}{c}{\graphicspath{{\real_\arabic{i}0\arabic{j}\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}} & \multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+}{}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifnum \value{k}<10
+\IfFileExists{\real_\arabic{i}\arabic{j}0\arabic{k}/120.eps}{
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+\graphicspath{{\real_\arabic{i}\arabic{j}0\arabic{k}/}}
+% \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\multicolumn{2}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-0\arabic{k}:} \\
+\midrule\\
+\multicolumn{2}{c}{\includegraphics[scale=\mysizee]{101.eps}} & {\includegraphics[scale=\mysize]{103.eps}} \\
+\multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizee]{101.eps}} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}}{\includegraphics[scale=\mysize]{103.eps}} \\
+\includegraphics[scale=\mysize]{104.eps} & \includegraphics[scale=\mysize]{106.eps} & \includegraphics[scale=\mysize]{127.eps} \\
+\graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{104.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{106.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{127.eps} \\
+\includegraphics[scale=\mysize]{107.eps} & \includegraphics[scale=\mysize]{108.eps} &  \\
+\graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{107.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{108.eps} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{3}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}\arabic{j}0\arabic{k}.eps} & \includegraphics[scale=\mysizeeee]{116.eps} & \includegraphics[scale=\mysizeeee]{117.eps} & \includegraphics[scale=\mysizeeee]{121.eps} \\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}\arabic{j}0\arabic{k}.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{116.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{117.eps} & \graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{121.eps} \\
+\multicolumn{2}{c}{\graphicspath{{\real_\arabic{i}\arabic{j}0\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}} & \multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}\arabic{j}0\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+}{}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\IfFileExists{\real_\arabic{i}0\arabic{j}0\arabic{k}/120.eps}{
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+\graphicspath{{\real_\arabic{i}0\arabic{j}0\arabic{k}/}}
+% \graphicspath{{\soft_\arabic{i}0\arabic{j}\arabic{k}/}}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\multicolumn{2}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-0\arabic{j}-0\arabic{k}:} \\
+\midrule\\
+\multicolumn{2}{c}{\includegraphics[scale=\mysizee]{101.eps}} & {\includegraphics[scale=\mysize]{103.eps}} \\
+\multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizee]{101.eps}} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}}{\includegraphics[scale=\mysize]{103.eps}} \\
+\includegraphics[scale=\mysize]{104.eps} & \includegraphics[scale=\mysize]{106.eps} & \includegraphics[scale=\mysize]{127.eps} \\
+\graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{104.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{106.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{127.eps} \\
+\includegraphics[scale=\mysize]{107.eps} & \includegraphics[scale=\mysize]{108.eps} &  \\
+\graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{107.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysize]{108.eps} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cccc}
+\toprule
+\multicolumn{3}{c}{\graphicspath{{\roott}} \includegraphics[scale=\legsize]{legend.png}} & \textbf{\arabic{i}-\arabic{j}-\arabic{k}:} \\
+\midrule\\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}0\arabic{j}0\arabic{k}.eps} & \includegraphics[scale=\mysizeeee]{116.eps} & \includegraphics[scale=\mysizeeee]{117.eps} & \includegraphics[scale=\mysizeeee]{121.eps} \\
+\graphicspath{{\pc}}\includegraphics[scale=\mysizeeee]{costs_\arabic{i}0\arabic{j}0\arabic{k}.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{116.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{117.eps} & \graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}} \includegraphics[scale=\mysizeeee]{121.eps} \\
+\multicolumn{2}{c}{\graphicspath{{\real_\arabic{i}0\arabic{j}0\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}} & \multicolumn{2}{c}{\graphicspath{{\soft_\arabic{i}0\arabic{j}0\arabic{k}/}}\includegraphics[scale=\mysizeee]{120.eps}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%>>>>>>>>>>>>>>>>>>>>>>
+
+}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+}
+}
+}
+
+\end{document}

@@ -1,0 +1,118 @@
+\let\mypdfximage\pdfximage
+\def\pdfximage{\immediate\mypdfximage}
+
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fmtcount}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage[maxfloats=256]{morefloats}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\usepackage{geometry}
+\geometry{a4paper,
+          left=            5mm,
+          right=           5mm,
+          top=             15mm,
+          bottom=          25mm,
+          heightrounded}
+
+\maxdeadcycles=10000
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\Date}{This text will change :D}
+\newcommand{\DateDay}{This text will change :(}
+\newcommand{\DateMonth}{This text will change :)}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Uruguayan Historicals of Production\\
+and Simulations}
+%\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\newpage
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2020}{
+\forloop{j}{1}{\value{j} < 13}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+% I have somehow 4 cases. I have to consider that the date 20190101 must be written as i0j0k. But the date 20191010 should be ijk. For this reason, I added the 4 cases ijk, i0jk, ij0k, i0j0k.
+
+% To test the ifnum:
+%\ifnum\i<2020
+%\arabic{i}
+%\else
+%FALSE
+%\fi
+
+\IfFileExists{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}/120.eps}{
+\graphicspath{{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}/}}
+\include{Report_Ibex_costVerification_20191013_aux}
+}{}
+
+% I added the \ifnum because: The loop considered two times the date 2019-01-05. The correct one, and the extra one when i-0j-k, e.g., i=2019, j=10, and k=5.
+\ifnum \value{k}>9
+\IfFileExists{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}/120.eps}{
+\graphicspath{{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}/}}
+\include{Report_Ibex_costVerification_20191013_aux}
+}{}
+\fi
+
+\IfFileExists{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}/120.eps}{
+\graphicspath{{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}/}}
+\include{Report_Ibex_costVerification_20191013_aux}
+}{}
+
+\IfFileExists{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}/120.eps}{
+\graphicspath{{../../IbexJobs/Ibex_costVerification_20191013/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}/}}
+\include{Report_Ibex_costVerification_20191013_aux}
+}{}
+
+}
+}
+}
+
+\end{document}

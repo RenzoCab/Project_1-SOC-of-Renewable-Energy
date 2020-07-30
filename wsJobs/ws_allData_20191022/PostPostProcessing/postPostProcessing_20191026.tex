@@ -1,0 +1,225 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------
+%	PACKAGES AND THEMES
+%------------------------------------------------
+
+\documentclass[aspectratio=169]{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{subfig}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{commath}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{wasysym}
+\usepackage{mathtools}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+
+%------------------------------------------------
+%	TITLE PAGE
+%------------------------------------------------
+
+\title[SOC of Renewable Energy]{Stochastic Optimal Control of Renewable Energy:\\
+Post Post Processing} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Renzo Caballero} % Your name
+\institute[KAUST] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{renzo.caballerorosas@kaust.edu.sa\\
+\quad\\
+\medskip
+Advisor: Professor Ra\'ul Tempone\\
+}
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%------------------------------------------------
+%	PRESENTATION SLIDES
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Definitions}
+
+We do an abuse of notaton and we call:
+
+\begin{enumerate}
+
+\item \alert{Value function} to the value of the HJB solution at the initial point.
+
+\item \alert{Running cost} to the integration of the running cost over the simulated optimal path and simulated optimal controls.
+
+\item \alert{Historical running cost} to the integration of the running cost over the historical path and historical controls.
+
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Discretization relative error over almost 500 days}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_1.eps}
+
+\column{.4\textwidth}
+I still have to check a bit more carefully, but until now, the complicated days are:
+\begin{enumerate}
+
+\item Days where HJB does not use fuel, but the OP does (a bit).
+\item Days where the cost is extremely low, then a small absolute error relatively large.
+
+\end{enumerate}
+
+\end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Error and small water value}
+\begin{columns}[c]
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_1.eps}
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_4.eps}
+
+\end{columns}
+\quad\\
+We can see as the error increases when the water has minimal value. This effect motivates the idea of an absolute (and not only relative) error criteria.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Error and small cost}
+\begin{columns}[c]
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_1.eps}
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_6.eps}
+
+\end{columns}
+\quad\\
+One more time, we see that the relative error is significant when the value function is minimal. A small value function is associated with water with zero value.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Absolute and relarive error}
+\begin{columns}[c]
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_10.eps}
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_11.eps}
+
+\end{columns}
+\quad\\
+\alert{The plots above only contemplate red days}. We can observe that the absolute error is usually smaller than 0.2 HT-USD. The large absolute error is associated with the use of fuel during the optimal path.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Simulated and historical cost}
+\begin{columns}[c]
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_6.eps}
+
+\column{.4\textwidth}
+\includegraphics[width=1\columnwidth]{Plots/Plot_9.eps}
+
+\end{columns}
+\quad\\
+We can see how the historical cost is higher than the simulated one. However, one main reason is because of the virtual control, which has a lot of influence on the cost when $\lambda=0$, and the value has non-zero cost.
+
+\end{frame}
+
+\end{document} 

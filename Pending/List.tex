@@ -1,0 +1,186 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{commath}
+\usepackage{bm}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Improvements}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{Penalization in the Battery:}
+
+It is well known that multiple charges and discharges affect the SOH (state of health) of the battery. For this reason, we penalize its use. We add an \alert{extra term} in the cost-to-go:
+
+\begin{equation*}
+J(\bm{x}_0,\bm{\phi})=\dots+\alert{\int_0^TK_A\left|P_A(s)\right|\dif s}.
+\end{equation*}
+
+The new Hamiltonian is defined by
+\begin{equation*}
+H(t,\bm{x})=\min_{\bm{\phi}\in\Phi(t,\bm{x})}\left[\dots+\alert{K_A\left|P_A\right|}\right].
+\end{equation*}
+
+We define the auxiliary variable ${\color{blue}t}$. Then, we have the next equivalent problems:
+
+\begin{equation*}
+H(t,\bm{x})=\min_{\bm{\phi}\in\Phi(t,\bm{x})}\left[\dots+\alert{K_A\left|P_A\right|}\right]=\min_{\begin{cases}\bm{\phi}\in\Phi(t,\bm{x})\\
+{\color{blue}t}\geq\alert{\left|P_A\right|}\end{cases}}\left[\dots+{\color{blue}t}\right]=\min_{\begin{cases}\bm{\phi}\in\Phi(t,\bm{x})\\
+{\color{blue}t}\geq\alert{P_A}\\
+-{\color{blue}t}\leq\alert{P_A}\end{cases}}\left[\dots+{\color{blue}t}\right].
+\end{equation*}
+
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.4\textwidth]{Figures/20190809_1.png}\quad \includegraphics[width=0.4\textwidth]{Figures/20190809_2.png}\\
+%\end{figure}
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{To Check Later:}
+
+\begin{enumerate}
+
+\item Green molecules, green hydrogen, blue hydrogen, green hydrogen electrolysis to grid balance, and hydrogen cheaper to transport than electricity.
+
+\end{enumerate}
+
+About SOC project:
+
+\begin{enumerate}
+
+\item I need to add the historical spillage to the historical cost (08/12/2019: I am using historical spillage = 0).
+
+\item It would be interesting to do debugging using an optimization tool. The tool may search between the inputs until finding something that makes the solution diverge (a bug).
+
+\item Remember that the warm start itself is a control smoother.
+
+\item It seems fundamental to consider the spillage's effect for times $t\in[T-\tau_{21},T]$, and $t\in[T-\tau_{32},T]$. Because the Lagrangian Relaxation is not affecting those periods, and as the system never likes wasting water, we have that always $\phi_S^{(1)}([T-\tau_{21},T])=0$, and $\phi_S^{(2)}([T-\tau_{32},T])=0$. A solution may be to extend to two days the optimization windows.
+
+\end{enumerate}
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{About the Dual Gap (DG):}
+
+We have three values: DHJB (dual HJB), DOP (dual optimal path) and OP (primal optimal path). The {\color{blue}theoretical values are in blue} and the {\color{red}computational ones in red}. We have:
+\begin{enumerate}
+
+\item ${\color{blue}DHJB} = {\color{blue}DOP}\leq{\color{blue}OP}$. However, the numerical solutions show ${\color{red}DHJB}<{\color{red}DOP}$ for most cases. We believe that the interpolation in the partial derivatives makes the system to take 'worse decisions'.
+
+\item ${\color{blue}DG}={\color{blue}OP}-{\color{blue}DOP}$. We have that ${\color{blue}OP}<{\color{red}OP}$, because the path we compute is sub-optimal. The reason of this sub-optimality is that we are not using the exact optimal LM, and we force the constraint to hold. Then, the duality gap that we compute in an upper bound for the real duality gap. The question is the next: What is a better approximation for the duality gap? ${\color{red}OP}-{\color{red}DOP}$, or ${\color{red}OP}-{\color{red}DHJB}$?\\
+We have to remember that ${\color{red}DHJB}$ is computed solving a PDE, while ${\color{red}DOP}$ and ${\color{red}OP}$ are computed solving ODEs. Then, ${\color{red}OP}-{\color{red}DOP}$ may be more consistent.
+
+\item The difference between ${\color{red}OP}$ and ${\color{red}DOP}$ is that: We compute ${\color{red}OP}$ in the same way than we do for ${\color{red}DOP}$, but we fix the constraint and add a penalization in the derivative.
+
+\end{enumerate}
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{Numerical Subgradient:}
+
+To solve the dual problem, we evaluate the dual function solving the HJB equation numerically. Also, we compute subgradients of the dual function using a powerful theorem. \textbf{What is the problem?}\\
+To use the theorem, we need to know the optimal path for the relaxed system. The computation of this path depends on the discretization, which implies that the discretization introduces numerical error in the subgradient. The interpolation may be the main reason for this error.\\
+Something interesting is that, when we block the dams' controls to zero, we get a relative error in the subgradient smaller than $\SI{e-6}{}$. This effect encourages the idea that the error comes from the discretization.\\
+\quad\\
+Then, it is reasobale to compare \alert{OP} with \alert{DOP}, rather than with \alert{DHJB}.
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{{\small A trust region algorithm for minimization of locally Lipschitzian functions (Liqun Qi, Jie Sun):}}
+
+Trust-Region Algorithm: $\begin{cases}\bm{d}_k=\arg\min\{f(\bm{x}_k)+\nabla f(\bm{x}_k)^T\bm{d}+\frac{1}{2}\bm{d}^T\bm{B}_k\bm{d}:||\bm{d}||\leq\Delta_k\},\\
+\text{update step (find $\bm{x}_{k+1}$ and $\Delta_{k+1}$).}\end{cases}$\\
+$\nabla f(\bm{x}_k)$ and $\bm{B}_k$ are the gradient and Hessian of $f(\bm{x})$ when $\bm{x}=\bm{x}_k$, respectively.\\
+\quad\\
+What if $f(\cdot)$ is a non-smooth function? They propose to solve the sub-problem $\bm{d}_k=\arg\min\{f(\bm{x}_k)+\phi(\bm{x}_d,\bm{d})+\frac{1}{2}\bm{d}^T\bm{B}_k\bm{d}:||\bm{d}||\leq\Delta_k\}$, where $\phi:\R^n\times\R^n\to\R$ is a function that satiesfies some conditions. They suggest using quasi-Newton updates with the subgradient to construct $\bm{B}_k$ ($\bm{B}_{k+1}=\bm{B}_{k}+\bm{B}_{k}^U$, where $\bm{B}_k^U$ is constructed using the subgradient in $\bm{x}_k$ and $\bm{x}_{k+1}$).\\
+\quad\\
+For Lipschitzian piecewise $C^1$ functions (our case): $\phi(\bm{x},\bm{d})=\max_{\bm{g}\in\partial f(\bm{x})}\bm{g}^T\bm{d}$, where $\partial f(\bm{x})$ is the subdifferential of $f(\cdot)$ in $\bm{x}$.\\
+They suggest to approximate the set $\partial f(\bm{x})$ using bundle-type algorithms, \alert{but they are still researching about that issue}. This is a problem for us, because (until now) for each $\bm{x}$, we can only compute one subgradient of $f(\cdot)$ in $\bm{x}$.
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{{\small A trust region method using subgradient for minimizing a nondifferentiable function (Milanka Gardašević):}}
+
+Trust-Region Algorithm: $\begin{cases}\bm{d}_k=\arg\min\{f(\bm{x}_k)+\nabla f(\bm{x}_k)^T\bm{d}+\frac{1}{2}\bm{d}^T\bm{B}_k\bm{d}:||\bm{d}||\leq\Delta_k\},\\
+\text{update step (find $\bm{x}_{k+1}$ and $\Delta_{k+1}$).}\end{cases}$\\
+$\nabla f(\bm{x}_k)$ and $\bm{B}_k$ are the gradient and Hessian of $f(\bm{x})$ when $\bm{x}=\bm{x}_k$, respectively.\\
+\quad\\
+Given that we want to minimize $\Phi(\bm{x})$ with $\bm{x}\in\R^n$, she proposes the next steps:
+
+\begin{enumerate}
+
+\item We call $\Psi(\bm{x})$ to the second order Taylor approximation of $\Phi(\bm{x})$ in $\bm{x}$. We follow the trust-region idea to find $\bm{d}_k$ at the the setp $k$ using the second order approximation. However, in the Taylor approximation, we use a subgradient and an approximated Hessian to evaluate $\Psi(\cdot)$.
+
+\item We compute $r_k=\frac{\Phi(\bm{x}_k)-\Phi(\bm{x}_k+\bm{d}_k)}{\Psi(\bm{x}_k)-\Psi(\bm{x}_k+\bm{d}_k)}$ to evaluate the \emph{quality} of the approximation. Depending on the \emph{quality}, we make different decisions.
+
+\end{enumerate}
+
+She guarantees convergence for $\Phi(\bm{x})=f(\bm{x})+\sum_{i=1}^ph_i(c(\bm{x}))$; where $f(\cdot),c(\cdot)$ are smooth functions, and $h_i$ are convex but non-smooth functions for $i=1,\dots,p$.
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{Advantages of our system:}
+
+\begin{enumerate}
+
+\item It is time-continuous. We contemplate power balance.
+
+\item It contemplates the stochasticity of each source.
+
+\item It works with non-linear models.
+
+\item It is trivially parallelizable, making it very flexible for scalability.
+
+\item It can be used to find the optimal dispatch and to simulate the effect of adding or removing sources from the grid.
+
+\item Until now, it is working in the short-term. However, it may be expanded to covers other time intervals.
+
+
+\end{enumerate}
+
+\end{frame}
+
+\end{document}

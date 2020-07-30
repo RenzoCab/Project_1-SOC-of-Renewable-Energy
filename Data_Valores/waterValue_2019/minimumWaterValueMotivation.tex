@@ -1,0 +1,273 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------
+%	PACKAGES AND THEMES
+%------------------------------------------------
+
+\documentclass[aspectratio=169]{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{subfig}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{commath}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{wasysym}
+\usepackage{mathtools}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\usepackage{siunitx}
+
+%------------------------------------------------
+%	TITLE PAGE
+%------------------------------------------------
+
+\title[Minimum Water Value]{Stochastic Optimal Control of Renewable Energy:\\
+Minimum Water Value Motivation} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Renzo Caballero} % Your name
+\institute[KAUST] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{renzo.caballerorosas@kaust.edu.sa\\
+\quad\\
+\medskip
+Advisor: Professor Ra\'ul Tempone\\
+}
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%------------------------------------------------
+%	PRESENTATION SLIDES
+%------------------------------------------------
+
+\begin{frame}\frametitle{Bonete (almost 2 years)}
+\begin{columns}[c]
+
+\column{.6\textwidth}
+\includegraphics[width=1\columnwidth]{bonete.eps}\\
+
+\column{.3\textwidth}
+For the past 2 years the water value has changed a lot. We can compute:
+\begin{equation*}
+\begin{cases}
+\hat{\mu}_{\text{bon}}\approx20.6\\
+\hat{\sigma}_{\text{bon}}\approx34.1.
+\end{cases}
+\end{equation*}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Baygorria (almost 2 years)}
+\begin{columns}[c]
+
+\column{.6\textwidth}
+\includegraphics[width=1\columnwidth]{baygorria.eps}\\
+
+\column{.3\textwidth}
+For the past 2 years the water value has been zero:
+\begin{equation*}
+\begin{cases}
+\hat{\mu}_{\text{bay}}\approx0\\
+\hat{\sigma}_{\text{bay}}\approx0.
+\end{cases}
+\end{equation*}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Palmar (almost 2 years)}
+\begin{columns}[c]
+
+\column{.6\textwidth}
+\includegraphics[width=1\columnwidth]{palmar.eps}\\
+
+\column{.3\textwidth}
+For the past 2 years the water value has changed a lot. We can compute:
+\begin{equation*}
+\begin{cases}
+\hat{\mu}_{\text{pal}}\approx20.6\\
+\hat{\sigma}_{\text{pal}}\approx34.1.
+\end{cases}
+\end{equation*}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Salto Grande (almost 2 years)}
+\begin{columns}[c]
+
+\column{.6\textwidth}
+\includegraphics[width=1\columnwidth]{sg.eps}\\
+
+\column{.3\textwidth}
+For the past 2 years the water value has changed a lot. We can compute:
+\begin{equation*}
+\begin{cases}
+\hat{\mu}_{\text{sg}}\approx34.6\\
+\hat{\sigma}_{\text{sg}}\approx51.5.
+\end{cases}
+\end{equation*}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}\frametitle{Bonete (2019)}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=1\columnwidth]{bonete_2019.eps}
+
+\column{.5\textwidth}
+\includegraphics[width=0.8\columnwidth]{histBonete.eps}
+
+\end{columns}
+\quad\\
+\textbf{Here we have $\hat{\mu}_{\text{bon2019}}\approx4.9$ and $\hat{\sigma}_{\text{bon2019}}\approx6.1$.}
+
+\end{frame}
+
+
+\begin{frame}\frametitle{Baygorria (2019)}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=1\columnwidth]{baygorria_2019.eps}
+
+\column{.5\textwidth}
+\includegraphics[width=0.8\columnwidth]{histBaygorria.eps}
+
+\end{columns}
+\quad\\
+\textbf{Here we have $\hat{\mu}_{\text{bay2019}}=0$ and $\hat{\sigma}_{\text{bay2019}}=0$.}
+
+\end{frame}
+
+
+\begin{frame}\frametitle{Palmar (2019)}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=1\columnwidth]{palmar_2019.eps}
+
+\column{.5\textwidth}
+\includegraphics[width=0.8\columnwidth]{histPalmar.eps}
+
+\end{columns}
+\quad\\
+\textbf{Here we have $\hat{\mu}_{\text{pal2019}}\approx4.9$ and $\hat{\sigma}_{\text{pal2019}}\approx6.0$.}
+
+\end{frame}
+
+
+\begin{frame}\frametitle{Salto Grande (2019)}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=1\columnwidth]{sg_2019.eps}
+
+\column{.5\textwidth}
+\includegraphics[width=0.8\columnwidth]{histSG.eps}
+
+\end{columns}
+\quad\\
+\textbf{Here we have $\hat{\mu}_{\text{sg2019}}\approx5.7$ and $\hat{\sigma}_{\text{sg2019}}\approx8.0$.}
+
+\end{frame}
+
+
+\begin{frame}\frametitle{Conclusion:}
+\begin{columns}[c]
+
+\column{.5\textwidth}
+
+\column{.5\textwidth}
+
+\end{columns}
+For Uruguay, Bonete and Palmar have almost the same value, Baygorria is always free, and SG has an averaged higher value (and is uncorrelated with the other dams).\\
+It does not see it possible to conclude something significant. However, I have noticed that, if for the $i$-th dam with value zero, we choose $1.i\times10^{-3}\ \SI{}{USD/MWh}$ (very small), the system seems to behave well. Also, we can choose the order of the dams in case more than one has value zero.
+\end{frame}
+
+\end{document} 

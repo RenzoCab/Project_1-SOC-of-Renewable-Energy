@@ -1,0 +1,78 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Problem 1: Results}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Case 1}
+Here we take $K_{HE}=0.3$ U\$S/MWh; it is converted to $K_H=1.8*10^{-5}$ U\$S/m$^3$. As is it too much smaller than the price per energy of the fuel, the system tries to use water always it can.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Case 1}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Result_1.eps}}
+\subfigure{\includegraphics[scale=.5]{DU_1.eps}}
+\caption{Cost function and gradient. The more water we have, the less the cost function increases over time.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Case 1}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{PhiT_1.eps}}
+\subfigure{\includegraphics[scale=.5]{PhiF_1.eps}}
+\caption{Controls of the dam and fuel station.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Case 1}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{D5000_1.eps}}
+\subfigure{\includegraphics[scale=.5]{D3000_1.eps}}
+\caption{Demand and power supply in time. As we can see, the water's power follows the demand as much as it can, up to its limit.}
+\end{figure}
+\end{frame}
+
+\end{document}

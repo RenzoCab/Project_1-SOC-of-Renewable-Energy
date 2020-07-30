@@ -1,0 +1,649 @@
+%------------------------------------------------
+
+\section{Scope and Motivation}
+{\setbeamertemplate{footline}{} \setbeamercolor{background canvas}{bg=blue!50}
+\begin{frame}[noframenumbering]
+\centering
+{\Huge Scope and Motivation.}
+\end{frame}}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Scope and Motivation}
+Uruguay is a pioneer in the use of renewable energy. Nowadays, it can supply all its electric demand from renewable sources and even export its excess.
+\begin{table}
+\begin{tabular}{|l|ccccc|}
+ \toprule
+ & Hydro & Fossil Fuel & Wind & Solar & Biomass \\
+ \midrule
+Installed Power (MW) & 2566 & 972 & 1383 & 238 & 68 \\
+Is it controllable? & $\checked$ & $\checked$ & X & X & X \\
+Proportion & 49\% & 19\% & 26\% & 5\% & 1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+Given the large amount of non-controllable and highly unpredictable renewable sources, it is useful to develop stochastic optimal control techniques to construct contingent policies for optimal electric energy dispatch.\\
+{\small\alert{Goals: 1)} Find the optimal electric energy dispatch that satisfies the needs and minimizes the cost.\\
+\alert{2)} Study the advantages of adding a battery (storage system) to the Uruguayan electrical grid.}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Uruguayan Electrical Grid Description}
+\begin{figure}[ht!]
+\centering
+\subfloat[Distribution of generators in Uruguay.]{\includegraphics[width=0.37\columnwidth]{Figures/Uruguay.png}}\quad
+\subfloat[Electric grid in Uruguay.]{\includegraphics[width=0.5\columnwidth]{Figures/RENZO.png}}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Historical Power Balance for 1 Day (6 samples per hour, source: ADME)}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\columnwidth]{Figures/C_17.eps}\\
+\includegraphics[width=0.95\columnwidth]{Figures/D_17.eps}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\section{Mathematical Formulation}
+{\setbeamertemplate{footline}{} \setbeamercolor{background canvas}{bg=blue!50}
+\begin{frame}[noframenumbering]
+\centering
+{\Huge Mathematical Formulation.}
+\end{frame}}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Mathematical Model: Fossil Fuel Stations}
+
+\begin{columns}[c]
+
+\column{.3\textwidth}
+\includegraphics[width=0.8\columnwidth]{Figures/stations/ffs.png}
+
+\column{.6\textwidth}
+This simplified model applies to each station:
+\begin{itemize}
+\item Control: $0\leq\hat{\phi}_F\leq1$.
+\item Dynamics: None.
+\item Electric Power (linear in the control):
+\begin{equation*}
+P_F\left(\hat{\phi}_F\right)=\overline{P}_F\hat{\phi}_F.
+\end{equation*}
+\item Accumulated cost (linear in the control):
+\begin{equation*}
+C_F(t_1)=K_F\overline{P}_F\int_{t_0}^{t_1}\hat{\phi}_F(s)ds.
+\end{equation*}
+\end{itemize}
+Where $\overline{P}_F,K_F\in\R^+$.
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Mathematical Model: Dams}
+
+\begin{columns}[c]
+
+\column{.3\textwidth}
+\includegraphics[width=0.8\columnwidth]{Figures/stations/dam.jpg}\\
+
+\column{.6\textwidth}
+{\footnotesize This model applies to each station:
+\begin{itemize}
+\item Control: $0\leq\hat{\phi}_T\leq\mathbf{1}_{\{v>\underline{v}\}},0\leq\hat{\phi}_S\leq\mathbf{1}_{\{v>\underline{v}\}}$.
+\item Dynamics: $\underline{v}\leq v\leq\overline{v}$
+\begin{equation*}
+dv(t)=\left(I(t)-\overline{\phi}_T(v)\hat{\phi}_T(t)-\overline{\phi}_S(v)\hat{\phi}_S(t)\right)dt,.
+\end{equation*}
+\item Electric Power (quadratic in the flow):
+\begin{equation*}
+P_H\left(\hat{\phi}_T,\hat{\phi}_S,v\right)=\eta\overline{\phi}_T(v)\hat{\phi}_T(t)\Delta H,
+\end{equation*}
+\begin{equation*}
+\Delta H\left(\hat{\phi}_T,\hat{\phi}_S,v\right)=H(v)-h_0-d\left(\overline{\phi}_T(v)\hat{\phi}_T(t)+\overline{\phi}_S(v)\hat{\phi}_S(t)\right).
+\end{equation*}
+\item Accumulated cost:
+\begin{equation*}
+C_H(t_1)=K_H\int_{t_0}^{t_1}\left(\overline{\phi}_T(v(s))\hat{\phi}_T(s)+\overline{\phi}_S(v(s))\hat{\phi}_S(s)\right)ds.
+\end{equation*}
+\end{itemize}
+Where $\underline{v},\overline{v},\eta,d,h_0,K_H\in\R^+,$ and $I^{(i)}(t)$ a deterministic input.}
+
+\end{columns}
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Mathematical Model: Wind and Solar Power}
+
+\begin{columns}[c]
+
+\column{.3\textwidth}
+\includegraphics[width=0.8\columnwidth]{Figures/stations/wys.jpg}\\
+
+\column{.6\textwidth}
+\begin{itemize}
+\item Control: None.
+\item Dynamics (It\^o SDE):
+\begin{equation*}
+\begin{aligned}
+&d\hat{w}(t)=f_w(t,\hat{w}(t))dt+\sigma_w(t,\hat{w}(t))dB_w,\ \text{wind power},\\
+&d\hat{y}(t)=f_y(t,\hat{y}(t))dt+\sigma_y(t,\hat{y}(t))dB_y,\ \text{solar power}.
+\end{aligned}
+\end{equation*}
+\item Electric Power (linear in the states):
+\begin{equation*}
+P_W(\hat{w})=\overline{P}_W\hat{w},P_Y(\hat{y})=\overline{P}_Y\hat{y}.
+\end{equation*}
+\item Accumulated cost: None.
+\end{itemize}
+Where $\overline{P}_W,\overline{P}_Y\in\R^+$.
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Mathematical Model: Battery}
+
+\begin{columns}[c]
+
+\column{.3\textwidth}
+\includegraphics[width=0.8\columnwidth]{Figures/stations/battery.jpg}\\
+
+\column{.6\textwidth}
+\begin{itemize}
+\item Control: $-0.35\leq\underline{\phi}_A(a)\leq\hat{\phi}_A\leq\overline{\phi}_A(a)\leq1$.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\columnwidth]{Figures/contbatt.eps}
+\end{figure}
+\item Dynamics: $da(t)=-\frac{P_A(t)}{\overline{a}}dt,\ 0\leq a\leq1$.
+\item Electric Power (linear in the control):
+\begin{equation*}
+P_A\left(\hat{\phi}_A\right)=\overline{P}_A\hat{\phi}_A.
+\end{equation*}
+\item Accumulated cost: None.
+\end{itemize}
+Where $\overline{a},\overline{P}_W,\overline{P}_Y\in\R^+$.
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Mathematical Model: Demand as Constraint}
+
+\begin{columns}[c]
+
+\column{.3\textwidth}
+\includegraphics[width=0.8\columnwidth]{Figures/stations/net.jpg}
+
+\column{.6\textwidth}
+\alert{Main constraint linking all power sources with demand:} Power Balance must be satisfied for all times, given by
+\begin{multline*}
+D(t)+E(t)=\sum_{i=1}^4P_F^{(i)}(t)+\sum_{i=1}^4P_H^{(i)}(t)\\
++P_W(t)+P_Y(t)+P_B(t).
+\end{multline*}
+Here we assume the demand $D(t)$, the exports $E(t)$ and the biomass power station $P_B(t)$ deterministic.
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Dynamic Programming (DP)}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.4\textwidth} % Left column and width
+\includegraphics[width=1\textwidth]{Figures/DPP.eps}
+
+\column{.4\textwidth} % Right column and width
+\textbf{\alert{DP Principle of Optimality}}: An optimal path is the "best" union of locally optimal paths.\\
+%An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.\\
+\quad\\
+\textbf{\alert{DP assumption}}: Markovian dynamics for the state variables.\\
+\quad\\
+\textbf{\alert{DP consequence}}: Our Optimal Control problem can be solved as a backward equation.
+
+\end{columns}
+%\begin{table}[]
+%\center
+%\begin{tabular}{m{6cm} m{7cm}}
+%\includegraphics[width=0.4\textwidth]{Figures/DPP.eps} & {\textbf{Principle of Optimality (by Richard Bellman)}: An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.}
+%\end{tabular}
+%\end{table}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Continuous-Time Stochastic Optimal Control with It\^o SDEs} %Stochastic Differential Equations}
+{\small
+\begin{theorem} \label{T1}
+Let  $\bm{\phi}$ be a given Markovian control function. For   $t_0<t$,  $\bm{x}_{[\bm{x}_0;\bm{\phi}]} $ solves
+%
+\begin{equation*}
+\begin{aligned}
+&\begin{cases}d\bm{x}(t) = \bm{f}(t,\bm{x}(t),\bm{\phi}(t,\bm{x}(t)))dt+\bm{D}(t,\bm{x}(t))d\bm{B},\ \text{system dynamics with $\bm{D}_{ij}=0$ for $i\neq j$},\\
+\bm{x}(t_0)=\bm{x}_0.
+\end{cases} \\
+&J(t, t_1,\bm{x}_0,\bm{\phi})=\E\left\{g\left(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(t_1)\right)+\int_{t}^{t_1}h(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s),\bm{\phi}(s,\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s)))ds\right\},\ \text{cost-to-go functional},\\
+&V(t,\bm{x})=\min_{\bm{\phi}\in\bm{\Phi}(t,\bm{x})}\ J(t,t_1,\bm{x}_0,\bm{\phi}),\ \text{value function}.\ \bm{\Phi}(t,\bm{x})\ \text{space of admissible controls}.
+\end{aligned}
+\end{equation*}
+Then, for $t<t_1$, the value function is the weak solution of a Hamilton Jacobi Bellman PDE,
+\begin{equation*}
+\begin{cases}
+\frac{\partial V}{\partial t}+\min_{\bm{a}\in \mathcal{A}(t,\bm{x})}\ \left[\sum_{i=1}^n\left(f_i(t,\bm{x},\bm{a})\frac{\partial V}{\partial x_i}(t,\bm{x})+\frac{D_{ii}^2(t,\bm{x})}{2}\frac{\partial^2V}{\partial x_i^2}(t,\bm{x})\right)+h(\bm{x},\bm{a})\right]=0,\\
+V(t_1,\bm{x})=g(\bm{x}).
+\end{cases}
+\end{equation*}
+\end{theorem}}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Continuous-Time Lagrangian Relaxation. A Deterministic Example}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.3\textwidth} % Left column and width
+\centering
+\includegraphics[width=1\columnwidth]{Figures/dams_relax.pdf}
+
+\column{.65\textwidth} % Right column and width
+We want to solve the deterministic minimization problem
+{\small\begin{equation*}
+J(t_0,\bm{x}_0)=\min_{\bm{\phi}\in \Phi(t_0,\bm{x}_0)}\ \left[g(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(t_1))+\int_{t_0}^{t_1}h(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s),\bm{\phi}(s))ds\right],
+\end{equation*}}
+with non-Markovian dynamics
+\begin{equation*}
+\begin{cases}
+\dots\\
+dv^{(i)}&=\left(I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)\right)dt\\
+dv^{(i+1)}&=\Big(I^{(i+1)}(t)-\phi_T^{(i+1)}(t)-\phi_S^{(i+1)}(t)\\
+&+{\color{red}\phi_T^{(i)}(t-\tau)}+{\color{red}\phi_S^{(i)}(t-\tau)}\Big)dt.
+\end{cases}
+\end{equation*}
+We define the new control ${\color{blue}\psi(t)}={\color{red}\phi_T^{(i)}(t-\tau)}+{\color{red}\phi_S^{(i)}(t-\tau)}$ and the extended controls vector $\overline{\bm{\phi}}=(\bm{\phi},\psi)\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)$.
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Continuous-Time Lagrangian Relaxation. A Deterministic Example}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.3\textwidth} % Left column and width
+\centering
+\includegraphics[width=1\columnwidth]{Figures/dams_relax.pdf}
+
+\column{.65\textwidth} % Right column and width
+The new dynamics are
+\begin{equation*}
+\begin{cases}
+\dots\\
+dv^{(i)}&=\left(I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)\right)dt\\
+dv^{(i+1)}&=\Big(I^{(i+1)}(t)-\phi_T^{(i+1)}(t)-\phi_S^{(i+1)}(t)+{\color{blue}\psi(t)}\Big)dt,
+\end{cases}
+\end{equation*}
+with the constraint ${\color{blue}\psi(t)}-{\color{red}\phi_T^{(i)}(t-\tau)}-{\color{red}\phi_S^{(i)}(t-\tau)}=0$. We relax this constraint with the Lagrange multiplier $\lambda:[\tau,t_1]\to\R$. Then, the \textbf{Lagrangian function} is
+{\small\begin{multline*}
+\mathcal{L}\left(t_0,\bm{x}_0,\lambda,\overline{\bm{\phi}}\right)=g\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(t_1)\right)+\int_{t_0}^{t_1}h\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(s),\bm{\phi}(s)\right)ds\\
++\int_{\tau}^{t_1}\lambda(s)\left({\color{blue}\psi(s)}-{\color{red}\phi_T^{(i)}(s-\tau)}-{\color{red}\phi_S^{(i)}(s-\tau)}\right)ds.
+\end{multline*}}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Continuous-Time Lagrangian Relaxation. A Deterministic Example}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.3\textwidth} % Left column and width
+\centering
+\includegraphics[width=1\columnwidth]{Figures/dams_relax.pdf}
+
+\column{.65\textwidth} % Right column and width
+$\lambda$ is a bounded piece-wise smooth function. We approximate $\lambda\in\Lambda=\{\text{bounded piece-wise constant functions on a grid}\}$.\\
+The \textbf{dual function} is
+\begin{equation*}
+\alert{\theta}(\lambda)=\min_{\overline{\bm{\phi}}\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)}\mathcal{L}(t_0,\bm{x}_0,\lambda,\overline{\bm{\phi}}),
+\end{equation*}
+and the approximate \textbf{dual problem} is
+\begin{equation*}
+\min_{\lambda\in\Lambda}-\alert{\theta}(\lambda).
+\end{equation*}
+Observe that the dual function is concave, possibly non-smooth and a lower bound for the primal problem. We define $\bm{\xi}_{\lambda}\alert{\theta}(\lambda)$ a subgradient of $\alert{\theta}$ in $\lambda$.\\
+
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Continuous-Time Lagrangian Relaxation. A Deterministic Example}
+
+Recall that the dynamics are Markovian and the dual function is:
+\begin{multline*}
+\theta\left(\alert{\lambda}\right)=\min_{\overline{\bm{\phi}}\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)}\Bigg[g\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(t_1)\right)+\int_{t_0}^{t_1}h\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(s),\bm{\phi}(s)\right)ds\\
++\int_{\tau}^{t_1}\alert{\lambda}(s)\left({\color{blue}\psi(s)}-{\color{violet}\phi_T^{(i)}(s-\tau)}-{\color{violet}\phi_S^{(i)}(s-\tau)}\right)ds\Bigg].
+\end{multline*}
+Then, $\theta(\alert{\lambda})$ is equal to the value function at $(t_0,\bm{x}_0)$ (i.e., $V(t_0,\bm{x}_0,\alert{\lambda})=\theta(\alert{\lambda})$) that, by theorem (\ref{T1}), solves in the weak sense the HJB PDE
+\begin{equation*}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\bm{x},\alert{\lambda},D_{\bm{x}}V)=0,\\
+V(t_1,\bm{x})=0,
+\end{cases}
+\end{equation*}
+where the running cost (in the Hamiltonian) is $\alert{\lambda}$ dependent.\\
+Solving numerically this PDE, we can evaluate the dual function $\theta(\alert{\lambda})=V(t_0,\bm{x}_0,\alert{\lambda})$.
+
+\end{frame}
+
+%------------------------------------------------
+
+\section{Numerical Methods}
+{\setbeamertemplate{footline}{} \setbeamercolor{background canvas}{bg=blue!50}
+\begin{frame}[noframenumbering]
+\centering
+{\Huge Numerical Methods.}
+\end{frame}}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Main Algorithm}
+\begin{theorem} \label{theo_subgradient}
+Given a problem $\min_{\bm{x}\in X}f(\bm{x})$ subject to the $n$-dimensional equality constraint $\bm{h}(\bm{x})=0$, its Lagrangian function $\mathcal{L}(\bm{x},\bm{\lambda})=f(\bm{x})+\bm{\lambda}^T\bm{h}(\bm{x})$ and its dual function $\theta(\bm{\lambda})=\min_{\bm{x}\in X}\mathcal{L}(\bm{x},\bm{\lambda})$, if for $\hat{\bm{\lambda}}\in\R^n$ we have $\hat{\bm{x}}=\arg\min_{\bm{x}\in X}\mathcal{L}(\bm{x},\hat{\bm{\lambda}})$, then $\bm{h}(\hat{\bm{x}})$ is a subgradient of $\theta$ in $\hat{\bm{\lambda}}$.
+\end{theorem}
+
+\begin{center}
+\begin{minipage}{0.9\textwidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+ initialization: $\lambda\leftarrow\lambda_0$\;
+ \While{Not converge}{
+  Evaluate $\theta(\lambda)$\tcp*{Solving the HJB equation}
+  Compute $\bm{\xi}_{\lambda}\theta(\lambda)$\tcp*{Using above Theorem}
+  Update $\lambda\leftarrow\mathfrak{P}(\theta(\lambda),\bm{\xi}_{\lambda}\theta(\lambda))$\tcp*{Updating rule $\mathfrak{P}(\cdot)$}
+ }
+ \caption{Non-smooth optimization for the dual problem.}
+\end{algorithm}
+\end{minipage}
+\end{center}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Numerical Scheme for HJB}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.5\textwidth} % Left column and width
+\centering
+\includegraphics[width=0.9\columnwidth]{Figures/FDS.pdf}
+
+\column{.4\textwidth} % Right column and width
+\textbf{Explicit finite difference scheme, backward in time} with the characteristics:\\
+\begin{itemize}
+\item Order one in time and space.
+\item Monotonous.
+\item Satisfying CFL condition.
+\item Spatial boundary conditions: $\frac{\partial^2 V}{\partial x_i^2}(\text{Boundary})=0$.
+\end{itemize}
+
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Reducing Computational Work}
+
+\begin{figure}[ht!]
+\centering
+\subfloat
+{\includegraphics[width=0.31\columnwidth]{Figures/Cone_Plot.eps}}\quad
+{\includegraphics[width=0.31\columnwidth]{Figures/Square_Plot.eps}}\quad
+{\includegraphics[width=0.31\columnwidth]{Figures/Wind_CI.eps}}
+\end{figure}
+{\footnotesize The main tools we use are:
+\begin{itemize}
+\item \alert{Change of Variables}: solve the HJB equation only in attainable state domains.
+\item \alert{Parallelization}: The computation of the Hamiltonian in trivially parallelizable for different states at each time-step.
+\item \alert{Warm start}: In consecutive time steps, we use as the initial guess for the optimal controls, the optimal ones in the previous time step.
+\end{itemize}}
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Numerical Optimization}
+\textit{To compute the Hamiltonian} at each pair $(t,\bm{x})$, we need to solve the linear problem with quadratic and linear constraints
+\begin{equation*}
+\min\ \bm{\phi}^T\bm{d}\quad\text{s.t.}\quad\begin{cases}
+0\leq\phi_i\leq1\\
+\bm{\phi}^T\bm{Q}\bm{\phi}+\bm{\phi}^T\bm{b}=c,
+\end{cases}
+\end{equation*}
+where $\bm{Q,b,d}$ and $c$ depend on $(t,\bm{x})$. Both, objective and constraints, are $\mathcal{C}^{\infty}$. Then, we use SQP (sequential quadratic programming).\\
+\textit{To solve the dual problem}, we use the MATLAB's function fminunc with trust-region and supplying the subgradient.
+\end{frame}
+
+%------------------------------------------------
+
+\section{Results}
+{\setbeamertemplate{footline}{} \setbeamercolor{background canvas}{bg=blue!50}
+\begin{frame}[noframenumbering]
+\centering
+{\Huge Results.}
+\end{frame}}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Stochastic Markovian System}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\columnwidth]{Figures/Wind/1.eps}
+\end{figure}
+
+\column{.5\textwidth}
+System with:
+\begin{itemize}
+\item Stochastic wind power.
+\item Two non-linked dams.
+\item A fossil fuel station.
+\item Demand on the left.
+\end{itemize}
+Numerical setup:
+\begin{itemize}
+\item Wind power discretizations: $2^3$.
+\item Dams discretizations: $2^5$.
+\item Time discretizations: $24$.
+\item Tested: Convergence, monotinicity and CFL condition.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Stochastic Markovian System}
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.5\textwidth} % Left column and width
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.45\columnwidth]{Figures/Wind/4.eps}\quad
+\includegraphics[width=0.45\columnwidth]{Figures/Wind/3.eps}\\
+\includegraphics[width=0.45\columnwidth]{Figures/Wind/5.eps}\quad
+\includegraphics[width=0.45\columnwidth]{Figures/Wind/6.eps}
+\end{figure}
+
+\column{.5\textwidth}
+\includegraphics[width=0.9\columnwidth]{Figures/Wind/2.eps}\\
+We observe that the numerical solution is well behaved as all partial derivatives are smooth.\\
+Also, we observe the correct behavior of the value function in the wind power direction.
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Deterministic non-Markovian System (17/01/2019)}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\columnwidth]{Figures/Mariam.eps}
+\end{figure}
+
+\column{.5\textwidth}
+System with:
+\begin{itemize}
+\item Deterministic and non-controllable: Demand, exports, wind power, solar power, biomass power.
+\item Deterministic and controllable: Four dams (three linked over the same river), four fossil fuel stations and a battery,
+\end{itemize}
+Numerical setup:
+\begin{itemize}
+\item Five dimensional state space.
+\item Dams discretizations: $2^2$.
+\item Battery capacity discretizations: $2^5$.
+\item Time discretizations: $2^{11}$, $\Delta t\approx 40$ sec.
+\item Tested: Convergence, monotinicity and CFL condition.
+\end{itemize}
+
+\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Deterministic non-Markovian System (17/01/2019)}
+\includegraphics[width=0.95\columnwidth]{Figures/For_Slides_17/1.eps}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Deterministic non-Markovian System (17/01/2019)}
+\begin{figure}[ht!]
+\centering
+\subfloat[Simulated dispatch with battery.]{\includegraphics[width=0.45\columnwidth]{Figures/For_Slides_17/2.eps}}\quad
+\subfloat[Simulated dispatch without battery.]{\includegraphics[width=0.45\columnwidth]{Figures/For_Slides_17/120.eps}}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Deterministic non-Markovian System (17/01/2019)}
+\begin{figure}[ht!]
+\centering
+\subfloat[Dispatch with battery.]{\includegraphics[width=0.45\columnwidth]{Figures/For_Slides_17/2.eps}}\quad
+\subfloat[Battery capacity over time.]{\includegraphics[width=0.45\columnwidth]{Figures/For_Slides_17/3.eps}}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Deterministic non-Markovian System (first week 2019)}
+\centering
+\includegraphics[width=1\columnwidth]{Figures/120_1W.eps}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Conclusions}
+\textbf{Conclusions}:
+\begin{itemize}
+\item We were able to simulate and control a simplified version of the short term (24 hours) Uruguayan electricity dispatch system using stochastic optimal control.
+\item The additional storage seems to be particularly important in the presence of the high variability introduced by renewable sources.
+\end{itemize}
+\textbf{Future work}:
+\begin{itemize}
+\item Add integer variables to the optimization, including, for instance, the starting cost and the minimum power constraints for the fossil fuel stations.
+\item Add demand flexibility and controllability, a model for  power exports to nearby countries and the stochastic description of solar generators.
+\item Reduce computational work: More efficient optimization methods for Hamiltonian computation and/or numerical methods to solve PDE.
+%\item Implement a method that uses subgradients to solve the dual problem.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Main References}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem{p1} Fleming, W H. Soner, H M. (2006)
+\newblock Controlled Markov Processes and Viscosity Solutions
+\end{thebibliography}
+}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem{p1} Bertsekas, D P. (2012)
+\newblock Dynamic Programming and Optimal Control
+\end{thebibliography}
+}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem{p1} Bazaraa, M S. Sherali, H D. Shetty, C M. (2013)
+\newblock Nonlinear Programming: Theory and Algorithms
+\end{thebibliography}
+}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem{p1} Tempone, R F. (2016)
+\newblock Notes of AMCS 336
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+\Huge{\centerline{!`MUCHAS GRACIAS!}}
+\LARGE{\centerline{(The End)}}
+\end{frame}
+
+%------------------------------------------------

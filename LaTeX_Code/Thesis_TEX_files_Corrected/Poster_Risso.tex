@@ -1,0 +1,299 @@
+\documentclass[ima, 20pt, portrait, plainboxedsections]{sciposter}
+
+% Packages
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{wasysym}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[ruled,vlined,algo2e]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{breqn}
+
+% Commands
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\cf}{\textit{cf.}}
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\prob}{\mathrm{P}}
+\newcommand{\expt}{\mathrm{E}}
+\newcommand{\var}{\mathrm{Var}}
+\newcommand{\rset}{\mathbb{R}}
+\newcommand{\nset}{\mathbb{N}}
+\newcommand{\zset}{\mathbb{Z}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\poisson}{\mathcal{P}}
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\binomial}{\mathcal{B}}
+\newcommand{\Ordo}[1]{{\mathcal{O}}\left(#1\right)}
+\newcommand{\ordo}[1]{{o}\left(#1\right)}
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\green}[1]{{\color{green}#1}}
+\renewcommand{\emph}{\red}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\bibliographystyle{elsarticle-num}
+
+% Theorems
+\newtheorem{Def}{Definition}
+\newtheorem{Lem}{Lemma}
+\newtheorem{Thm}{Theorem}
+
+% Layout parameters
+\newcommand{\imsize}{0.49\columnwidth}
+%\definecolor{BoxCol}{rgb}{0,0,1}
+\definecolor{BoxCol}{rgb}{0.4,0.4,0.4}
+\definecolor{SectionCol}{rgb}{1,1,1}
+\renewcommand{\titlesize}{\Huge}
+\renewcommand{\sectionsize}{\Large}
+\setmargins[2cm]
+
+
+\leftlogo[1.3]{Figures/KAUST_Logo}  % KAUST LOGO
+\rightlogo[1]{Figures/fwdaachenlogo/rwth_cmyk.pdf} 
+
+% Overrides commands in sciposter.cls
+%\setlength{\columnsep}{0.02\textheight}
+%\setlength{\columnseprule}{0.001\textheight}
+\setlength{\parskip}{0.002\textheight}
+
+% Author info
+\title{Stochastic Optimal Control of Renewable Energy}
+\author{Renzo Caballero$^*$ \qquad Ra\'ul Tempone${^*}{^\dagger}$}
+\institute{$^*$CEMSE Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia\\
+$^\dagger$Alexander von Humboldt Professor in Mathematics of Uncertainty Quantification, RWTH Aachen University, Germany}
+
+\begin{document}
+\newcommand{\ddd}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{\ddd{#1}}
+\maketitle
+
+%%% Begin of Multicols-Enviroment
+\begin{multicols}{3}
+
+\section*{Abstract}
+
+Uruguay is a pioneer in the use of renewable sources of energy, being usually able to satisfy its total demand with those. Control and optimization of the system are complicated by half of the installed power - wind and solar sources - being non-controllable with high uncertainty and short-term variability. In this work, we present a novel optimization framework for efficient use of the daily production facilities. Also, we study the usefulness of extra system storage capacity offered by batteries.\\
+All the computations are based on available public data and the work presented in 'Benefits of controlling demands in a smart-grid to compensate the volatility intrinsic to non-conventional renewable energy' and 'Planificaci\'on estoc\'astica \'optima para la generaci\'on y acumulaci\'on diaria de energ\'ia, integrada a pol\'iticas de control en smart grids' (ANII-FSE\_1\_2015\_1\_110454).
+
+%Uruguay is a pioneer in the use of renewable sources of energy and can usually satisfy its total demand from renewable sources. Control and optimization of the system is complicated by half of the installed power - wind and solar sources - being non-controllable with high uncertainty and variability. In this work, we present a novel optimization technique for efficient use of the daily production facilities. Also, we study the usefulness of extra system storage capacity offered by batteries.
+
+%Tenemos dos tipos de resultado, uno es sobre las previsiones de viento, y el otro es sobre la organización del sistema.
+%Sobre este último, los resultados preliminares indican que podemos hablar entre una y 3 millones de dólares por mes, teniendo un modelo que trabaja en tiempo contino,Contempla todas las no linealidad es de los generadores hidroeléctricos y las demoras que tiene el agua al viajar entre uno y otro.
+%El sistema también contempla la STU casticidad de la producción eólica, la solar y si le va a incorporar dentro de poco las variables enteras relacionados de los generadores térmicos.
+%Además, el sistema permite probar el efecto de una batería de tamaño dado en el sistema uruguayo y verificar el ahorro que está produce con el fin de estudiar proyectos de inversión
+%Lo mismo para estudiar contratos de exportación
+%Por último, el sistema se adaptó a la transitoria de la generación de eólica, permitiendo ajustar las decisiones sobre la marcha, sin tener que volver a recalcular la política durante el intervalo de estudio.
+%Esos son los resultados y las perspectivas hasta el momento
+  
+\section*{Work Description}
+
+The increase of uncertainty in the Uruguayan electric grid, produced by the incorporation of intermittent renewable resources like wind and solar power, makes essential the use of stochastic optimal control techniques to find an optimal daily electric energy dispatch.\\
+Also, the possibility of exporting energy and the high variability in the wind requires a short term optimal policy which can be used at any time during the day.
+
+\subsection*{{\color{red}Main Assumptions:}}
+
+\begin{enumerate}
+
+\item[{\color{red}(1)}] The non-controllable power sources do not have associated cost. Moreover, the additional battery is controllable, and we assume it with no associated cost.
+
+\begin{center}
+\begin{minipage}{0.26\textwidth}
+\begin{table}
+\begin{tabular}{|l|ccccc|}
+ \toprule
+ & Hydro & Fossil Fuel & Wind & Solar & Biomass \\
+ \midrule
+Is it controllable? & $\checked$ & $\checked$ & X & X & X \\
+Has it associated cost? & $\checked$ & $\checked$ & X & X & X \\
+\bottomrule
+\end{tabular}
+%\caption{Characteristics of Uruguayan generators.}
+\end{table}
+\end{minipage}
+\end{center} 
+
+\item[{\color{red}(2)}] In this preliminary results, we are not considering starting cost, starting time, and the minimum power constraint for the fossil fuel stations.
+
+\item[{\color{red}(3)}] We are assuming all the Uruguayan grid as a single node. In Figure (\ref{Grid_Uy}), we can see a representation of this assumption where we already include the additional battery.
+
+\end{enumerate}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/RENZO.png}
+\caption{Electrical Uruguayan grid representation with a battery.}
+\label{Grid_Uy}
+\end{figure}
+
+We use a model which considers the stochasticity of the wind and solar power, and also the non-linearities in the dams models.\\
+In a way to consider the high variability in the wind and solar power, our framework can discretize the time in partitions of some minutes or even some seconds, which is one of our most innovating features.
+
+\subsection*{{\color{red}Goals:}}
+
+\begin{enumerate}
+
+\item[{\color{red}(1)}] Find an optimal policy for electric energy dispatch, which can be applied along the day and considers all the possible wind and solar power conditions.
+
+\item[{\color{red}(2)}] Study the advantages of adding a battery (storage system) to the Uruguayan electrical grid.
+
+\end{enumerate}
+
+In Figure (\ref{Map_Uy}), we can see the location of the power generators in Uruguay.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/Uruguay.png}
+\caption{Geographical distribution of generators in Uruguay. The labels correspond to dams (H), fossil fuel stations (T), wind power farms (E), solar power farms (F) and biomass stations (B).}
+\label{Map_Uy}
+\end{figure}\\
+
+In Figure (\ref{Historical}), we can see an example of historical daily production. This plot put in evidence the fast variability of the wind in a window of a day, and it is an example of a daily dispatch.\\
+Notice that all plots are normalized in power and time, where the time window is always one day.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\columnwidth]{Figures/Poster/C_17.eps}\\
+\quad\\
+\quad\\
+\includegraphics[width=1\columnwidth]{Figures/Poster/D_17.eps}
+\caption{Uruguayan historical production corresponding to 17/01/2017. In can be appreciated the high variability in the wind power production.}
+\label{Historical}
+\end{figure}
+ 
+\section*{Results}
+
+We show the simulated optimal electric energy dispatch for our system using data from 17/01/2019.
+
+\subsection*{Case without Battery}
+
+In this case, we have optimized the actual Uruguayan infrastructure. The time discretization is 5 minutes and the solution is an optimal solution. In Figure (\ref{Balance_NoBatt}), we can see an optimal dispatch for all the power generators.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\textwidth]{Figures/Poster_2/NB_101.eps}
+\caption{Simulated dispatch without battery. We can see all power sources, the demand and the export.}
+\label{Balance_NoBatt}
+\end{figure}
+
+ In Figure (\ref{Balance_NoBatt_Cont}), we can see an optimal dispatch for the controllable generators.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.85\textwidth]{Figures/Poster_2/NB_120.eps}
+\caption{Simulated dispatch without battery but only including the controllable sources.}
+\label{Balance_NoBatt_Cont}
+\end{figure} 
+
+ In Figure (\ref{Dist_NoBatt}), we can see the proportion of energy by source used during the day.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/Poster_2/NB_116.eps}
+\caption{Energy used during the day to supply demand and export.}
+\label{Dist_NoBatt}
+\end{figure} 
+
+\subsection*{Case with Battery}
+
+In this case, we have optimized the Uruguayan infrastructure assuming the existence of a battery. The time discretization is 40 seconds, and the solution is an optimal solution. In Figure (\ref{Balance_Batt}), we can see an optimal dispatch for all the power generators, including the battery on the top.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\textwidth]{Figures/Poster_2/101.eps}
+\caption{Simulated dispatch with battery. We can see all power sources, the demand, and the export. Also, we can see that the battery is substituting the use of expensive fossil fuel.}
+\label{Balance_Batt}
+\end{figure} 
+\quad\\
+\quad\\
+In Figure (\ref{Balance_Batt_Cont}), we can see an optimal dispatch for the controllable generators.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\textwidth]{Figures/Poster_2/120.eps}
+\caption{Simulated dispatch with battery but only including the controllable sources. We can see that the battery is substituting the use of expensive fossil fuel, which is the expected behavior.}
+\label{Balance_Batt_Cont}
+\end{figure}
+
+ In Figure (\ref{Dist_Batt}), we can see the proportion of energy by source used during the day. If we compare with the case with no battery in Figure (\ref{Dist_NoBatt}), we can see that the use of the battery reduced the energy corresponding to fossil fuel, and increased the energy corresponding to hydropower.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.65\textwidth]{Figures/Poster_2/116.eps}
+\caption{Energy used during the day to supply demand and export. In the case of the battery, here we are considering only the power supplied.}
+\label{Dist_Batt}
+\end{figure} 
+
+In Figure (\ref{Batt_Cap}), we can see the battery capacity over time. If we compare with Figure (\ref{Balance_Batt_Cont}), we can see that the battery is most of the time getting charged from hydropower sources, and discharged to substitute expensive fossil fuel.\\
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.7\textwidth]{Figures/Poster_2/128.eps}
+\caption{Battery capacity over time. It gets charged from cheaper sources and discharged to substitute expensive fossil fuel.}
+\label{Batt_Cap}
+\end{figure}
+
+\subsection*{Change in the Cost}
+
+In Figure (\ref{Cost}), we can see the effect of the battery over the cost. The inclusion of the battery substitute power associated with the fossil fuel by hydropower, which in most cases is cheaper. This behavior reduces the total cost.\\
+
+\begin{figure}[ht!]
+\centering
+{\includegraphics[width=0.3\columnwidth]{Figures/Poster_2/121.eps}}\quad\quad\quad
+{\includegraphics[width=0.3\columnwidth]{Figures/Poster_2/NB_121.eps}}
+\caption{Cost distribution with (left) and without (right) battery.}
+\label{Cost}
+\end{figure}
+ 
+Comparing the energy distributions (Figures (\ref{Dist_NoBatt}) and (\ref{Dist_Batt})), we can see as a small change in the use of fossil fuel represents a significant impact on the total cost. 
+ 
+\section*{Conclusions}
+  
+\begin{itemize}
+
+{\small
+\item \textbf{We found an optimal policy for a simplified version of the short term Uruguayan electricity dispatch system using stochastic optimal control.}
+
+\item \textbf{We included non-linearities in our model, for instance, those arising in the hydropower generators to accurately model the head.}
+
+\item \textbf{Our methodology allows to model and to quantify the benefit of adding an energy storage device. The additional storage seems to be particularly important in the presence of the high variability and lack of controllability introduced by renewable sources.}
+}
+
+\end{itemize}  
+  
+ \begin{figure}[ht!]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/PastedGraphic-1.pdf}
+\end{figure} 
+  
+%\section*{Next Steps}
+  
+%\begin{itemize}
+
+%\item Inclusion of starting cost, starting time, and the minimum power constraint for the fossil fuel stations.
+
+%\item Inclusion of smart grids system. For example, partial controllability in the demand and non-centralised generation.
+
+%\end{itemize}  
+
+%\section*{Acknowledgements}
+
+%We would like to thank ADME \cite{ADME} and UTE \cite{UTE} for supplying the needed data for this work.
+%{\small
+%We thank C. Risso, M. Scavino, J. Oppelstrup and S. Wolfers for all the useful discussions.
+%}
+
+%\bibliographystyle{IEEEtran}
+%\bibliography{Bibliography}
+
+\end{multicols}
+\end{document}

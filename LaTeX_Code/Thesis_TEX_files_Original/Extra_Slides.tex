@@ -1,0 +1,233 @@
+%------------------------------------------------
+
+{\setbeamertemplate{footline}{} \setbeamercolor{background canvas}{bg=blue!50}
+\begin{frame}[noframenumbering]
+\centering
+{\Huge Extra.}
+\end{frame}}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{Subgradient and Subdifferential:}
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.45\textwidth} % Left column and width
+\centering
+\includegraphics[width=0.8\columnwidth]{Figures/Subgradient.eps}
+
+\column{.45\textwidth}
+\begin{definition} \label{Def_Subgradient}
+Let $S\subset\R^m$ be a convex set and $\theta:S\to\R$ be a convex function. 
+Then $\bm{\xi}$ is called a \textit{subgradient} of $\theta$ at $\overline{\bm{x}}\in S$ if
+\begin{equation*}
+\theta(\bm{x})\geq\theta(\overline{\bm{x}})+\bm{\xi}^T(\bm{x}-\overline{\bm{x}})\quad\text{for all}\quad\bm{x}\in S.
+\end{equation*}
+\end{definition}
+\begin{definition} \label{Def_Subdifferential}
+The collection $\partial\theta(\overline{\bm{x}})$ of subgradients of $\theta$ in $\overline{\bm{x}}$ is called the subdifferential of $\theta$ in $\overline{\bm{x}}$.
+\end{definition}
+
+\end{columns}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{Non-smooth minimization stopping condition:}
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.45\textwidth} % Left column and width
+\centering
+\includegraphics[width=0.8\columnwidth]{Figures/Subdifferential.eps}
+
+\column{.45\textwidth}
+\begin{theorem}
+$\bm{x}^*$ is a minimizer of the convex possibly non-smooth function $\theta$ if $\bm{0}\in\partial\theta(\bm{x}^*)$.
+\end{theorem}
+
+\end{columns}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{Solving the problem forward:}
+
+Once we obtain the optimal $\lambda$ (call it $\lambda^*$), and we have the partial derivatives in all the space, we can compute the optimal path computing the optimal controls at each point:\\
+\quad\\
+{
+\centering{
+\begin{minipage}{0.8\textwidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+ initialization: $\bm{x}\leftarrow\bm{x}_0$\;
+ \For{$t=1:T-1$}{
+  $\phi\leftarrow \arg\min_{\phi\in\bm{\phi}}H(t,\bm{x},\lambda^*,D_{\bm{x}}V)$\tcp*{Minimizing Hamiltonian}
+  $\bm{x}\leftarrow \bm{x}+\Delta t\bm{f}(t,\bm{x},\bm{\phi})$\tcp*{Dynamics update}
+ }
+ \caption{Optimal path computation.}
+\end{algorithm}
+\end{minipage}}\\
+}\quad\\
+Where we impose the non-Markovian constraints to guarantee admissible controls.
+
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{One week simulated power balance (first week 2019):}
+\centering
+\includegraphics[width=1\columnwidth]{Figures/1_Week/101.eps}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{One week historical power balance (first week 2019):}
+\centering
+\includegraphics[width=1\columnwidth]{Figures/1_Week/003.eps}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{One week cost comparison (first week 2019):}
+\begin{figure}[ht!]
+\centering
+\subfloat[Accumulated cost using the battery.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/001.eps}}\quad
+\subfloat[Accumulated cost without the battery.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/002.eps}}
+\end{figure}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{One week CFL condition (first week 2019):}
+\begin{figure}[ht!]
+\centering
+\subfloat[CFL condition using the battery.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/005.eps}}\quad
+\subfloat[CFL condition without battery.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/004.eps}}
+\end{figure}
+The condition is given by $\Delta t\sum_{i=1}^n\frac{f_i(\bm{x},\bm{u})}{\Delta x_i}\leq1$. In both cases $\Delta t=2^{-11}$.
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]\frametitle{One week states evolution (first week 2019):}
+\begin{figure}[ht!]
+\centering
+\subfloat[Volume of Bonete in optimal path.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/106.eps}}\quad
+\subfloat[Volume of Palmar in optimal path.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/107.eps}}
+\end{figure}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]\frametitle{One week states evolution (first week 2019):}
+\begin{figure}[ht!]
+\centering
+\subfloat[Volume of Salto Grande in optimal path.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/108.eps}}\quad
+\subfloat[Battery capacity over the optimal path.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/122.eps}}
+\end{figure}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]
+\frametitle{Approximation by simple functions:}
+
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+
+\column{.3\textwidth} % Left column and width
+\includegraphics[width=1\textwidth]{Figures/OP_2.eps}\\
+\includegraphics[width=1\textwidth]{Figures/OP_4.eps}
+
+\column{.4\textwidth} % Right column and width
+We start with large discretizations and we refine when we need.\\
+For each refinement we repeat until convergence:
+\begin{itemize}
+
+\item Solve the problem forward without fixing the constraint to use theorem (\ref{theo_subgradient}) and compute the subgradient.
+
+\item We supply the subgradient to calculate the next $\lambda$.
+
+\end{itemize}
+
+\end{columns}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]\frametitle{Opportunity cost (17/01/2019):}
+\centering
+\includegraphics[width=0.3\columnwidth]{Figures/110.eps}\quad
+\includegraphics[width=0.3\columnwidth]{Figures/111.eps}\quad
+\includegraphics[width=0.3\columnwidth]{Figures/112.eps}\\
+\quad\\
+Opportunity cost of the dams, battery and FFSs over the optimal path.
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]\frametitle{Iterations dual problem (17/01/2019):}
+\begin{figure}[ht!]
+\centering
+\subfloat[Accumulated cost using the battery.]{\includegraphics[width=0.45\columnwidth]{Figures/OP_3.eps}}\quad
+%\subfloat[Accumulated cost without the battery.]{\includegraphics[width=0.45\columnwidth]{Figures/1_Week/002.eps}}
+\end{figure}
+\end{frame}
+}
+
+%------------------------------------------------
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}[noframenumbering]\frametitle{More ideas from the defense:}
+\begin{itemize}
+
+\item  To simulate failure (assume some generator stop working suddenly).
+
+\item Nesterov acceleration for dual problem.
+
+\item Integer constraints represented by non-convex, smooth optimization with many constraints (e.g.: Square and circle intersection in 2 dimensions). Read: $\mathit{l}_p$-Box ADMM: A Versatile Framework for Integer Programming.
+
+\end{itemize}
+\end{frame}
+}

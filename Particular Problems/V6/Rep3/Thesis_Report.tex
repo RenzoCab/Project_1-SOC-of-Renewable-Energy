@@ -1,0 +1,121 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction: Connected Dams + Battery}
+In this report we will use $\lambda(t)=0$ but a better model for the battery. We will see the effect of having a battery with a quadratic penalization. In this simulation, the penalization when the battery is being used at its maximum power is of the order of the cheapest machine.\\
+Next time we will also add a linear penalization such that
+\begin{equation*}
+C_A(T)=\int_0^T\left(\alpha_1\phi_A(s)+\alpha_2\phi_A^2(s)\right)ds
+\end{equation*}
+using
+\begin{equation*}
+\begin{cases}
+\alpha_1=\frac{c}{10}\\
+\alpha_2=\frac{\alpha_1}{5}\\
+\end{cases}
+\end{equation*}
+where $c$ denotes the cost of the cheapest machine of the system.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Battery Control:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F3.eps}}
+\caption{Now that we have the CFL condition working, we can use a better model for the battery. We choose it such that the energy in the battery never goes below 0 or over 1.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Usage of the battery}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F1.eps}}
+\subfigure{\includegraphics[scale=0.45]{F2.eps}}
+\caption{Adding a quadratic cost reduces the magnitude of the oscillation but they still have a high frequency. We need to add the linear cost and choose better values for tunning.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Costs and Power}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.42]{F4.eps}}
+\subfigure{\includegraphics[scale=0.42]{F5.eps}}
+\caption{On the left, we can see the instant costs of each control, the ones that the Hamiltonian optimizes. For the battery, we can see the cost when $\phi_A\approx0$ and when $\phi_A\approx1$ (quadratic cost). On the right the power balance, as we have a quadratic penalization in the battery, it prefers to use small power.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.25]{F6.eps}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.25]{F7.eps}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{I still need to:}
+\begin{enumerate}
+
+\item Be sure that the parameters of the dams are correct. I did not verify after adding a condition over the maximum turbine flow, and probably this is why the spillage of Bonete has few effects in Baygorria and all the system.
+
+\item Separate the fuel station into a fuel park using all real data.
+
+\item Add the linear cost to the battery, and choose appropriate values.
+
+\item Program the possibility of ponderation the solution of the HJB equation.
+
+\end{enumerate}
+\end{frame}
+
+\end{document}

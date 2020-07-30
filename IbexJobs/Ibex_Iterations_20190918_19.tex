@@ -1,0 +1,124 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Lagrange Multipliers Comparison:\\
+From Few to Many Discretizations}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2020}{
+\forloop{j}{1}{\value{j} < 13}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+%I check the file in folder Simulation_20190216_ZeroLambdas, because it is the last created, and its existence ensures that the other two folders also exist.
+
+\IfFileExists{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}_ZeroLambdas/120.eps} % DO:
+{
+\IfFileExists{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}/11.eps} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}_OptimalLambdas/11.eps}\quad \includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}/11.eps}
+\end{figure}
+\end{frame}
+}
+{}
+}
+{}
+
+\ifnum \value{k}>9
+\IfFileExists{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}_ZeroLambdas/120.eps} % DO:
+{
+\IfFileExists{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}/11.eps} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}_OptimalLambdas/11.eps}\quad \includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}/11.eps}
+\end{figure}
+\end{frame}
+}
+{}
+}
+{}
+\fi
+
+\IfFileExists{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}_ZeroLambdas/120.eps} % DO:
+{
+\IfFileExists{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}/11.eps} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}_OptimalLambdas/11.eps}\quad \includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}/11.eps}
+\end{figure}
+\end{frame}
+}
+{}
+}
+{}
+
+\IfFileExists{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}_ZeroLambdas/120.eps} % DO:
+{
+\IfFileExists{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}/11.eps} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190918/OutputEdited/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}_OptimalLambdas/11.eps}\quad \includegraphics[width=0.4\textwidth]{Ibex_Iterations_20190919/Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}/11.eps}
+\end{figure}
+\end{frame}
+}
+{}
+}
+{}
+
+}
+}
+}
+
+
+
+\end{document}

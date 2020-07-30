@@ -1,0 +1,118 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Particular Problems}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=blue!10}
+\begin{frame}\frametitle{Problem 1: Model}
+Deterministic setting, testing nonlinearities in the Dam models.
+\begin{enumerate}
+\item Generators: Salto Grande, Bonete, and one thermal unit.
+\item Demand: deterministic, no flexible demand.
+\end{enumerate}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=blue!10}
+\begin{frame}\frametitle{Problem 1: Salto Grande}
+Salto Grande is a dam, it is totally determined by its state system
+\begin{equation*}
+\begin{cases}
+dV_4(t)=(I_{T_4}(t)-\phi_{R_4}(t))dt+\sigma_{H_4}dW_{H_4}(t)\\
+V_4(t_0)=5000\ hm^3\\
+t\in[t_0,T]=[0,24]\ hs\\
+\phi_{R_4}(t)=\phi_{T_4}(t)+\phi_{P_4}(t)\\
+0\leq\phi_{T_4}(t)\leq4200\mathbbm{1}_{\{V_i(t)>\underline{V}_i\}}\ m^3/s\\
+0\leq\phi_{P_4}(t)\leq56000\mathbbm{1}_{\{V_i(t)>\underline{V}_i\}}\ m^3/s\\
+\end{cases}
+\end{equation*}
+Its power and cost function are
+\begin{equation*}
+P_{H_4}=8.72\phi_{H_4}(H_4-5.5),\ C_{H_4}(24)=-
+\end{equation*}
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\setbeamercolor{background canvas}{bg=red!10}
+\begin{frame}\frametitle{Problem 2: Model}
+Deterministic setting, testing Lagrangian relaxation to deal with coupled Dams.
+\begin{enumerate}
+\item Generators: Salto Grande, Bonete, Baygorria, Palmar and one thermal unit.
+\item Demand: deterministic, no flexible demand.
+\end{enumerate}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=green!10}
+\begin{frame}\frametitle{Problem 3: Model}
+Stochastic setting, testing the effect of wind power in the system.
+\begin{enumerate}
+\item Generators: Salto Grande, Bonete, Wind Power generators and one thermal unit.
+\item Demand: deterministic, no flexible demand.
+\end{enumerate}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=yellow!10}
+\begin{frame}\frametitle{Problem 4: Model}
+Stochastic Setting, testing the effect of wind power in the system and the flexible demand.
+\begin{enumerate}
+\item Generators: Salto Grande, Bonete, Wind Power generators and one thermal unit.
+\item Demand: deterministic, with flexible demand.
+\end{enumerate} 
+\end{frame}
+
+\end{document}

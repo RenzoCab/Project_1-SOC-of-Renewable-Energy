@@ -1,0 +1,378 @@
+\chapter{Numerical Methods}
+
+\section{Numerical Methods for Hamilton-Jacobi PDE}
+
+%Parabolic case
+%We say that a parabolic equation $u_t - Iu=0$ satiesfies the comparison principle if the following statement is true.
+%Given two functions $u : [0,T] \times \R^n \to \R$ and $v : [0,T] \times\R^n \to \R$ such that $u$ and $v$ are upper and lower semicontinuous in $[0,T] \times \overline \Omega$ respectively, $Iu \leq 0$ and $Iv \geq 0$ in the viscosity sense in $(0,T] \times \Omega$, and $u \leq v$ in $(\{0\} \times \R^n) \cup ([0,T] \times (\R^n \setminus \Omega))$, then $u \leq v$ in $[0,T] \times \Omega$ as well.
+This section presents some results about convergent numerical methods for Hamilton-Jacobi (HJ) equations. 
+As for any PDE, we want to guarantee the convergence of our numerical scheme to the solution of this PDE.\\
+For HJ equations, monotonicity is necessary for convergence \cite{oberman2006convergent}.
+The finite difference (FD) method is the natural method for building monotone schemes, but 
+conditions which ensure monotonicity are different for first-order and second-order equations, 
+and for explicit and implicit schemes.\\
+\cite{barles1991convergence} proved that any monotone, stable and consistent scheme converges 
+(to the correct solution) provided that there exists a comparison principle for the limiting 
+equation. In \cite{juutinen2001definition}, one additional requirement (trivially true in our case) is presented which is 
+needed to ensure that the comparison principle holds.\\
+In \cite{souganidis1985approximation} we can find more conditions for convergence. It 
+defines a notion of consistency using the approximation of the Hamiltonian by an explicit 
+finite difference scheme. Under this definition of consistency and under monotonicity, 
+the scheme converges to the viscosity solution with an error at best first order accurate 
+in the spatial discretization.
+
+\subsection{Finite Time Horizon Problem}
+
+ % Page 163 Fleming and Soner:
+We want to solve the HJB equation (recall the system (\ref{The_HJB_Equation})) associated 
+to a finite time horizon problem. Let us consider a control model in which the state evolves 
+according to a process $\bm{x}(s)$ in $\R^n$ governed by a system of stochastic differential 
+equations (recall subsection \ref{Subsection_SDE}) of the form
+\begin{equation}
+d\bm{x}=\bm{f}(s,\bm{x}(s),\bm{u}(s))ds+\bm{\sigma}(s,\bm{x}(s),\bm{u}(s))d\bm{B}(s),\quad t_0\leq s\leq t_1,
+\end{equation}
+where $\bm{u}(s)\in U(s,\bm{x})$ is the control applied at time $s$ and $\bm{B}(s)$ is a 
+$n$-dimensional Brownian motion. Let $D_+^n$ denote the set of diagonal, non-negative definite 
+$n\times n$ matrices $\bm{D}=(\bm{D}_{ij})$ with $i,j=1,\dots,n$, we ignore the mixed second order derivatives as in this thesis all the states are assumed uncorrelated. Let $\bm{M}=\E\left[(\bm{\sigma}\circ d\bm{B})(\bm{\sigma}\circ d\bm{B})^T\right]$ be a diagonal matrix with $\bm{M}_{ii}=\sigma_i^2$ (recall we assume the SDE system uncorrelated) and
+\begin{equation*}
+\tr \bm{M}\bm{D}=\sum_{i=1}^n\bm{M}_{ii}\bm{D}_{ii}.
+\end{equation*}
+For $(t,\bm{x})\in Q_0=[t_0,t_1]\times\R^n$, $\bm{p}\in\R^n$, $\bm{A}\in D^n_+$, let the Hamiltonian be
+\begin{equation*}
+H(t,\bm{x},\bm{p},\bm{A})=\min_{u\in U(t,\bm{x})}\ \left[\bm{p}^T\bm{f}(t,\bm{x},\bm{u})+\frac{1}{2}\tr\bm{M}(t,\bm{x},\bm{u})\bm{D}+g(t,\bm{x},\bm{u})\right].
+\label{Hamiltonian}
+\end{equation*}
+Notice that $\bm{p}$ represents the spatial gradient of the value function, and the matrix $\bm{D}$ has 
+its second spatial derivatives in its diagonal, i.e., $D_{ii} = \frac{{\partial}^2V}{\partial x_i^2}$.\\
+Under this setup, we can continue with the numerical analysis.
+
+\subsubsection{Monotonicity} \label{Monotonicity}
+
+We will start analyzing the case where our state space has only one dimension, then we can 
+discretize the space and create the set
+\begin{equation}
+\Sigma^{\Delta x}_0=\{x_j=j\Delta x:j=0,\pm1,\pm2,\dots\},
+\label{Infinite_Lattice}
+\end{equation}
+and for the time the set
+\begin{equation}
+\mathcal{T}=\{t_0,t_0+\delta,\dots,t_1-\delta,t_1\}.
+\label{Time_Lattice}
+\end{equation}
+We will define
+\begin{equation}
+f^+(x,u)=\max(f(x,u),0)
+\end{equation}
+and
+\begin{equation}
+f^-(x,u)=\max(-f(x,u),0)
+\end{equation}
+the \textit{positive} and \textit{negative} parts of $f(\cdot)$.\\
+For any function $W(t,x)$, let
+\begin{equation}
+\Delta_{x}^+W=\frac{W(t,x+\Delta x)-W(t,x)}{\Delta x},
+\end{equation}
+\begin{equation}
+\Delta_{x}^-W=\frac{W(t,x)-W(t,x-\Delta x)}{\Delta x}
+\end{equation}
+and
+\begin{equation}
+\Delta^2_xW=\frac{W(t,x+\Delta x)+W(t,x-\Delta x)-2W(t,x)}{{\Delta x}^2}.
+\end{equation}
+These are the forward and backward first order difference quotients in $x$, and the 
+second order difference quotient in $x$ (respectively). Also, we can consider the 
+first-order difference quotient backward in time
+\begin{equation}
+\Delta^-_tW=\frac{W(t,x)-W(t-\delta,x)}{\delta}.
+\end{equation}
+For time-dependent second-order HJ equations, the explicit monotone formulation using a three 
+points scheme is
+\begin{equation}
+\Delta_T^-V^{\delta}+\tilde{H}(x,\Delta^+_{x}V^{\delta},\Delta^-_{x}V^{\delta},\Delta^2_{x}V^{\delta})=0
+\label{Exp_FD_Scheme}
+\end{equation}
+ where
+ \begin{equation}
+ \tilde{H}(x,p^+,p^-,d)=\min_{\bm{u}\in U(t,x)}\ \left[f^+(x,\bm{u})p^+-f^-(x,\bm{u})p^-+\frac{m(x,\bm{u})}{2}d+g(x,\bm{u})\right].
+ \end{equation}
+ % See page 327 of the super book.
+ Eq. (\ref{Exp_FD_Scheme}) is called an explicit finite difference scheme, backward in time, since we can formulate
+ \begin{equation}
+ V^{\delta}(t-\delta,x)=V^{\delta}(t,x)-\delta\tilde{H}(x,\Delta^+_{x}V^{\delta},\Delta^-_{x}V^{\delta},\Delta^2_{x}V^{\delta}).
+ \end{equation}
+When the dimension of the state-space is greater than one we define for any function $W(t,\bm{x})$
+ \begin{equation}
+ \Delta^{\pm}_{x_i}W=\frac{W(t,\bm{x}\pm\Delta x_i\bm{e}_i)-W(t,\bm{x})}{\Delta x_i}
+ \end{equation}
+and
+\begin{equation}
+\Delta_{x_i}^2W=\frac{W(t,\bm{x}+\Delta x_i\bm{e}_i)+W(t,\bm{x}-\Delta x_i\bm{e}_i)-2W(t,\bm{x})}{{\Delta x_i}^2}.
+\end{equation}
+If $f_i(\bm{x},\bm{u})\geq0$ we put $\Delta^+_{x_i}V^{\delta}$ in the place of $V_{x_i}$, and 
+if $f_i(\bm{x},\bm{u})<0$ we put $\Delta^-_{x_i}V^{\delta}$ in the place of $V_{x_i}$. In the 
+same way, $V_{x_ix_i}$ is replaced by $\Delta^2_{x_i}V^{\delta}$. Then, our monotone finite 
+difference explicit time-stepping scheme is given by
+\begin{equation}
+V^{\delta}(t-\delta,\bm{x})=V^{\delta}(t,\bm{x})-\delta\tilde{H}(\bm{x},\Delta^{\pm}_{x_i}V^{\delta},\Delta^2_{x_i}V^{\delta})
+\end{equation}
+with
+\begin{multline}
+\tilde{H}(\bm{x},\bm{p}^{+},\bm{p}^{-},\bm{D})=\\
+\min_{\bm{u}\in U(t,\bm{x})}\left\{\sum_{i=1}^n\left[f^+_i(\bm{x},\bm{u})p_i^+-f_i^-(\bm{x},\bm{u})p_i^-+\frac{\bm{M}_{ii}(\bm{x},\bm{u})}{2}\bm{D}_{ii}\right]+g(\bm{x},\bm{u})\right\}.
+\end{multline}
+In summary: To ensure monotonicity of the finite difference scheme, for each state $x_i$, we have 
+to compute the partial derivative up-wind w.r.t. its drift function $f_i(\bm{x},\bm{u})$.
+
+ \subsubsection{Courant-Friedrichs-Lewy Condition} \label{CFL}
+
+% Page 339 Fleming and Soner:
+%this should be re-written too, since $E(\bm{\sigma}\bm{\sigma}^T) = diag(\sigma_i^2)$,
+%the sigma sigmaT matrix never appears in the HJB
+We take autonomous $\bm{f}(\bm{x},\bm{u}),\bm{\sigma}(\bm{x},\bm{u})$ and $g(\bm{x},\bm{u})$, 
+where $\bm{x}\in\R^n,\bm{f}=(f_1,\dots,f_n)$ is $\R^n$-valued and 
+$\bm{M}=\diag(\bm{\sigma})\in M^{n\times n}$. The matrices $\bm{M}(\bm{x},\bm{u})=(\bm{M}_{ij}(\bm{x},\bm{u})),i,j=1,\dots,n$, are non-negative 
+definite. Hence $\bm{M}_{ii}\geq0$. Then, the conditions
+\begin{equation}
+\bm{M}_{ii}(\bm{x},\bm{u})-\sum^n_{j\neq i}|\bm{M}_{ij}(\bm{x},\bm{u})|\geq0,
+\label{StabCon1}
+\end{equation}
+and
+\begin{equation}
+\delta\sum_{i=1}^n\left[\bm{M}_{ii}(\bm{x},\bm{u})-\frac{1}{2}\sum^n_{j\neq i}\left|\bm{M}_{ij}(\bm{x},\bm{u})\right|+\Delta x\left|f_i(\bm{x},\bm{u})\right|\right]\leq{\Delta x}^2,
+\label{CFL_Cond1}
+\end{equation}
+or equivalently in our uncorrelated case
+\begin{equation}
+\delta\left( \sum_i{\frac{|f_i(\bm{x},\bm{u})|}{\Delta x_i} }+ \sum_i{\frac{\sigma_{i}^2(\bm{x},\bm{u})}{{\Delta x_i}^2}}\right) \leq 1,
+\label{CFL_Cond2}
+\end{equation}
+are the equivalent CFL condition associated with a second-order HJ equation where 
+$\delta$ and $\Delta x_i$ are the lengths of the time-step and space steps, respectively. 
+In Eq. (\ref{CFL_Cond1}) all the spatial discretizations are referred to a single discretization $\Delta x$.\\
+For first-order HJ equations, as we do not have diffusion $\bm{M}_{ij}=0$ for all $i,j\in\{1,\dots,n\}$. Then condition (\ref{StabCon1}) becomes trivial and we can rewrite condition (\ref{CFL_Cond1}) as
+\begin{equation}
+\delta\sum_{i=1}^n\frac{f_i(\bm{x},\bm{u})}{\Delta x_i}\leq1,
+\label{CFL_Real}
+\end{equation}
+where we can see explicitly all the space discretizations. We could remove the absolute values using that the scheme is up-wind.\\
+In six Subproblems we will use the condition (\ref{CFL_Real}). Only in the Third Subproblem, where we include the stochastic wind power, we need to verify (\ref{CFL_Cond1}).\\
+Some important points are that: As our system of SDE is uncorrelated, the first condition (\ref{StabCon1}) is always true. Also, the second condition (\ref{CFL_Cond1}) depends on the time, space and controls. Then we need to make our algorithm adaptive and check that, we verify the condition (\ref{CFL_Cond1}) or (\ref{CFL_Real}) (depending on if we are solving a first-order or a second-order HJ equation) at each point.\\
+We study the possibility make $\delta=\delta(t,\bm{x},\bm{u})$ and increase the length of the time step when it is possible to reduce the total computational work. However, we notice that the condition varies few and a fixed $\delta$ works properly.
+
+\subsubsection{Boundary Conditions} \label{Subsection_BC}
+
+% Page 327 Fleming and Soner:
+In subsection \ref{Monotonicity} we considered $x\in\Sigma_0^{\Delta x}$ where $\Sigma_0^{\Delta x}$ is the infinite lattice defined by (\ref{Infinite_Lattice}). To realize numerical computations we must replace $\Sigma^{\Delta x}_0$ by some finite subset $\Sigma^{\Delta x}$, we will call $\overline{x}$ and $\underline{x}$ to the to the extreme points of $\Sigma^{\Delta x}$. At discrete time $k$, we can see the time transitions in the FD discretization as a controlled Markov chain with transition probabilities $p^{\{k\}}(x_i,x_{i+1})\geq0$ and $p^{\{k\}}(x_i,x_{i-1})\geq0$ for $x_{i-1},x,x_{i+1}\in\Sigma^{\Delta x}\subset\Sigma^{\Delta x}_0$.\\
+To keep the Dynamic Programming (DP) settings we have to assign
+\begin{equation}
+p^{\{k\}}(x_i,x_j)=0\quad\text{for all}\quad x_i\in\Sigma^{\Delta x},x_j\in\Sigma^{\Delta}_0\backslash\Sigma^{\Delta x},
+\end{equation}
+then the transitions are confined into the truncated set $\Sigma^{\Delta x}$. If we additionally assume that only neighborhood transition is allowed from $\overline{x}$ and $\underline{x}$, then the values assigned to $p(\underline{x},\underline{x}+\Delta x)$ and to $p(\overline{x},\overline{x}-\Delta x)$ effectively prescribe boundary conditions for $V^{\delta}$ at the extremes of $\Sigma^{\Delta x}$. For any boundary conditions we assign, the limit function of $V^{\delta}$ is $V$ as $(\underline{x},\overline{x})\to(-\infty,+\infty)$ and $\delta\to0$ (for more details, check \cite{fleming2006controlled} section IX.3).\\
+Our case is particular: We have effectively points in each lattice $\underline{v}^{(i)}$ and $\overline{v}^{(i)}$ such that $p^{\{k\}}(\overline{v}^{(i)},\overline{v}^{(i)}+i\Delta v^{(i)})=0$ and $p^{\{k\}}(\underline{v}^{(i)},\underline{v}^{(i)}-i\Delta v^{(i)})=0$ for all $i,k\in\{1,2,\dots\}$. This natural condition in  our system confines the solution $V$ to the continuous set $[\underline{v}^{(i)},\overline{v}^{(i)}]$ for all $t\in[t_0,t_1]$ and the controlled Markov chain to $\Sigma^{\Delta v^{(i)}}=\{\underline{v}^{(i)},\underline{v}^{(i)}+\Delta v^{(i)},\dots,\overline{v}^{(i)}-\Delta v^{(i)},\overline{v}^{(i)}\}$ for every boundary conditions that we choose outside these sets.\\
+However, to satisfy the monotonicity condition at the boundary, we choose at each extreme $\underline{x}^{(i)}$ and $\overline{x}^{(i)}$, $\frac{\partial^2V}{\partial{\underline{x}^{(i)}}^2}=\frac{\partial^2V}{\partial{\overline{x}^{(i)}}^2}=0$.
+
+ \subsection{Proposed Scheme} \label{Proposed_Scheme}
+
+In subsections \ref{Monotonicity} and \ref{CFL}, we can see sufficient conditions to build a convergent backward in time FD scheme. However, all the conditions are function of $\bm{f}(t,\bm{x},\bm{u})$ where $\bm{u}$ is the vector of optimal controls in a HJB equation. If at time $k$ we have $V^{\{k\}}(\bm{x})$ for each $\bm{x}\in\bm{\Sigma}$ where
+\begin{equation}
+\bm{\Sigma}=\Sigma^{\Delta x^{(1)}}\times\dots\times\Sigma^{\Delta x^{(n)}}
+\label{Spatial_Disc}
+\end{equation}
+and we want to compute $DV^{\{k\}}(\cdot)$, we need to verify the up-wind condition to ensure monotonicity, but this condition depends on $\bm{u}^{\{k\}}$ which also depends on $DV^{\{k\}}(\cdot)$.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/FDS.pdf}
+\caption{Diagram of our numerical scheme. Each color corresponds to each time iteration, the arrows indicate the information used to compute the next block. $V^{\{k\}}(\cdot)$ and $\bm{u}^{\{k\}}$ are the value function and optimal controls at time $k$ receptively. }
+\label{FDS}
+\end{figure}\\
+To avoid this problem, we propose the scheme in Fig. (\ref{FDS}), where we compute $DV^{\{k\}}(\cdot)$ using finite differences on $V^{\{k-1\}}(\cdot)$. In this way, adding an error of $\mathcal{O}(\delta)$ we guarantee monotonicity because we know $\bm{f}(k-1,\cdot,\bm{u}^{\{k-2\}})$ which was used to compute $V^{\{k-1\}}(\cdot)$.\\
+In summery: We are able to compute the time-transition from $V^{\{k\}}(\cdot)$ to $V^{\{k+1\}}(\cdot)$, we also are able to verify the CFL conditions (\ref{StabCon1}) and (\ref{CFL_Cond1}) as we have the needed values for $\bm{f}(\cdot)$.
+
+\section{Solution of the Dual Problem} \label{NM_DP}
+
+In subsection \ref{CTLR} we described a continuous-time Lagrangian Relaxation. We used it to formulate dual problems for the Fourth, Sixth and Seventh Subproblems presented in subsections \ref{Fourth_Subproblem}, \ref{Sixth_Subproblem} and \ref{Seventh_Subproblem} respectively.\\
+However, as we described in subsection \ref{Properties_DF}, we do not always have an explicit expression for the dual function, not even its gradient (or subgradient). For this reason, we need to implement a method which can maps $(\lambda_{21},\lambda_{32})\to(\theta,\bm{\xi}_{\lambda_{21}}\theta,\bm{\xi}_{\lambda_{32}}\theta)$ where $\bm{\xi}_{\lambda}\theta$ is a subgradient of $\theta$ w.r.t. $\lambda$. Recall that in the points $\overline{\lambda}$ where $\theta(\cdot)$ is differentiable w.r.t. $\lambda$, we have $\bm{\xi}_{\lambda}\theta(\overline{\lambda},\cdot)=\nabla_{\lambda}\theta(\overline{\lambda},\cdot)$. Once with our method, we have to use an algorithm to solve non-smooth convex problems.
+
+\subsection{Computation of Subgradient} \label{Subsection_Oracle}
+
+Solving the HJB equation associated to the dual problem, we guaranty a numerical approximation for $(\lambda_{21},\lambda_{32})\to(\theta)$. To find a finite dimensional gradient, we approximate $\lambda_{21}$ and $\lambda_{32}$ with a sequence of simple functions, i.e.,
+\begin{equation}
+\hat{\lambda}_{21}(t)=\sum_{i=0}^{m-1}\alpha_i\mathcal{X}_{[t_i,t_{i+1})}(t)
+\label{LH}
+\end{equation}
+where $\bm{\alpha}=(\alpha_0,\dots,\alpha_{m-1})$ is a real vector in $\mathbb{R}^m$ and the simple functions are defined as
+\begin{equation}
+\mathcal{X}_{[t_i,t_{i+1})}(t)=\begin{cases}
+1\quad\text{if}\quad t\in[t_i,t_{i+1})\\
+0\quad\text{otherwise}.
+\end{cases}
+\end{equation}
+We discretize the time using $m$ intervals $\Delta k_{21}=\frac{t_1-\tau_{21}}{m}$ such that $t^{(i)}=\tau_{21}+i\Delta k_{21}$ with $t^{(0)}=\tau_{21},t^{(m)}=t_1$ and $i\in\{0,1,\dots,m\}$. Using the approximation $\lambda_{21}=\hat{\lambda}_{21}$ as defined in (\ref{LH}), from Theorem (\ref{Theorem_SubGradient}), at the point $\hat{\lambda}_{21}=\overline{\lambda}_{21}$ the subgradient $\bm{\xi}_{\hat{\lambda}_{21}}\theta(\overline{\lambda}_{21},\cdot)$ becomes the vector with $j$-th element ($j\in\{1,\dots,m\}$)
+\begin{equation}
+\left(\bm{\xi}_{\hat{\lambda}_{21}}\theta(\overline{\lambda}_{21},\cdot)\right)_j=\left(\int_{t^{(j)}}^{t^{(j+1)}}\left(\psi^{(2)}(t)-\phi_T^{(1)}(t-\tau_{21})-\phi_S^{(1)}(t-\tau_{21})\right)dt\right)_j.
+\label{GradVec}
+\end{equation}
+Notice that basically, we are integrating the violation in the relaxed constraint.\\
+Analogue we can define $\bm{\beta}\in\R^n$ to approximate $\lambda_{32}$. Then, we are able to map $(\bm{\alpha},\bm{\beta})\mapsto(\theta,\bm{\xi}_{\bm{\alpha}}\theta,\bm{\xi}_{\bm{\beta}}\theta)$.\\
+Notice that: We compute the subgradient over the optimal path, which is characterized by an starting point $(t_0,\bm{x}_0)$. Then, when we converge, we do it for the optimal path with has as starting point $(t_0,\bm{x}_0)$ and the LM only is valid for that optimal path.
+
+\subsection{Solving the Non-Smooth Convex Problem}
+
+Matlab has implemented non-smooth convex solvers as \textit{surrogateopt} or \textit{patternsearch}. However, as we want to supply the subgradient to accelerate the convergence, we use \textit{fminunc} with truth-region supplying the subgradient. It is not theoretically guaranteed to converge as this algorithm is designed to work with the gradient. However, as we can see in subsection \ref{Sixth_Subproblem_Results}, it seems to perform well in practice.\\
+Literature as \cite{bagirov2014introduction} or \cite{bazaraa2013nonlinear} suggest the use of Subgradient Methods, Cutting Plane Methods and Bundle Methods. However, given the limited time in this thesis, it was no possible their implementation.\\
+As stopping conditions, we can use that the zero vector is in the subdifferential or that the duality gap is small enough. The duality gap that we can compute is an upper bound for the real duality gap. What we do it to compare the solution of HJB at $(t_0,\bm{x}_0)$ and compare its value with the accumulated cost during the optimal path imposing the relaxed condition. As we cannot compute the exact Lagrangian multiplier, it is necessary to impose the relaxed constraint to have admissible controls.\\
+However, when we impose that constraint, we reach a sub-optimum solution, which implies that our duality gap is an upper bound for the real duality gap.
+\section{Reducing Computational Work}
+
+One of the disadvantages of continuous-time DP is that the computational work grows exponentially with the number of dimensions (Curse of Dimensionality). Motivated by this difficulty, we find some ways to take advantage of the structure of the HJB equation, as we will explain in the next subsections.
+
+\subsection{Trivial Parallelization}
+
+Given a time-step $t\in\mathcal{T}$, we need to compute a number of minimizations equal to the cardinality of $\bm{\Sigma}$ before being able to calculate the forward Euler transition.\\
+However, all this minimizations are independent of each other and can trivially be computed in parallel. In this thesis, we use MATLAB's implemented function \textit{parfor} to accelerate the computation considerably.
+
+\subsection{Change of Variable in the State-Space}
+
+In this subsection we propose to solve the HJB equation only in the section of the space state where the solution has sense physically.\\
+Even when we are looking for the optimal policy in all the space, the initial condition of the dynamics (let say, $\bm{x}_0$ in (\ref{System_3})) and the dynamical system make some states impossible to reach in $t\leq t_1$. As an example, if a dam at $t=t_0$ has it reservoir full, for a time $t_1$ not large enough it is impossible to reach the lower limit in the water's volume.\\
+In the next subsections, we will use a change of variables in the HJB equation in a way to solve it only in the space where the solution can exist and then reduce the computational work. We show details about this change of variables in subsection \ref{COV} in the appendix.
+
+\subsubsection{Change of Variable for the Dams} \label{Subsection_Transformation_Dams}
+
+In the case of the dams, the inflow of water is a deterministic input to the system. Also, the maximum possible turbine flow and spillage are given. Then, from the initial volume, we can construct the domain where the solution is reachable, which is a cone.\\
+Given some initial volume $\hat{v}_0^{(i)}$ and some small $\epsilon^{(i)}>0$, we define $\hat{v}^{(i)}_{max}$ and $\hat{v}^{(i)}_{min}$ the maximum and minimum reachable volume (respectively) at time $t_1$. We define the linear transformation $F_v^{(i)}:[0,1]\times[t_0,t_1]\to[0,1]\times[t_0,t_1]$ which maps the convex trapezoid with nodes $\{(t_0,\hat{v}^{(i)}-\epsilon^{(i)}),(t_0,\hat{v}^{(i)}+\epsilon^{(i)}),(t_1,\hat{v}^{(i)}_{min}),(t_1,\hat{v}^{(i)}_{max})\}$ into the square with nodes $\{(t_0,\hat{v}^{(i)}_{min}),(t_0,\hat{v}^{(i)}_{max}),(t_1,\hat{v}^{(i)}_{min}),(t_1,\hat{v}^{(i)}_{max})\}$ (other option would be to always maps into the normalizes square $[0,1]^2$).\\
+We solve the transformed HJB equation in the new domain, and we antitransform the solution. The idea is to save computation reducing the number of points gradually as we move from $t_1$ to $t_0$ using the extra information that, the optimal path trajectory must be confined in the cone.\\
+In Fig. (\ref{Cone}) we can see an example of the transformation in the domain. As the trajectory must be contained in the cone in (a), we can transform this cone into the square of (b) and solve there the transformed HJB equation. In subsection \ref{First_Subproblem_Results} we can see the numerical solution of the HJB equation after the change of variable.
+\begin{figure}[!ht]
+\centering
+\subfloat[Space where we solve the HJB equation.]{\includegraphics[width=0.45\columnwidth]{Figures/Cone_Plot.eps}}\qquad
+\subfloat[Transformed space. Using a change of coordinates, we pass from the set which can be seen in (a) to this one, where is trivial to use finite differences.]{\includegraphics[width=0.45\columnwidth]{Figures/Square_Plot.eps}}
+\caption{Truncated domain of the HJB equation. We want to solve the equation in the cone that can be seen in (a). We transform the space from the cone into a square, in a way to apply finite differences.}
+\label{Cone}
+\end{figure}
+
+\subsubsection{Change of Variable for the Wind Power} \label{Subsection_Transformation_Wind}
+
+From the wind power generation model described in subsection \ref{Wind_Model}, we can compute a proper confidence interval using:
+
+\begin{enumerate}
+
+\item[$\bullet$] Euler-Maruyama: We generate Monte Carlo realizations of the wind power SDE (\ref{Wind_SDE}) and compute empirically the confidence intervals.
+
+\item[$\bullet$] The Fokker-Planck equation: We can solve the Fokker-Plank equation associated to the wind power SDE (\ref{Wind_SDE}) to have the probability distribution function in all the space and time.
+
+\end{enumerate}
+To reduce the computational work, we can compute the solution of the HJB equation in the space covered by the confidence interval. We define a transformation $F_w:[0,1]\times[t_0,t_1]\to[0,1]\times[t_0,t_1]$ which transforms the area converted by the confidence interval into a normalized square. We use finite differences or collocation points to solve the transformed HJB equation in the new domain. We can see in Fig. (\ref{Plot_SP3_1}) a confidence interval for the wind power.
+
+\section{Computation of the Optimal Path} \label{Subsection_OP}
+
+Once we have solved the HJB equation, we not only have the value function $V(\cdot)$ but also its gradient $D_{\bm{x}}V(\cdot)$ for each point $(t,\bm{x})\in\mathcal{D}$ with
+\begin{equation}
+\mathcal{D}=\mathcal{T}\times\bm{\Sigma}.
+\end{equation}
+Then, given an initial state in the dynamics $\bm{x}_0$ and using the information described in the previous paragraph, we can see the terminal value problem (\ref{The_HJB_Equation}) as an initial value problem with $\bm{x}(t_0)=\bm{x}_0$. Solving forward in time this new problem, we compute what we call an \textit{optimal path}. This is the trajectory we take through the dynamics when, at each point, we use optimal controls. This path corresponds to an optimal electric energy dispatch.\\
+A natural difficulty that appear is the possibility to move from a point $\bm{x}_i\in\bm{\Sigma}$ to a point $\bm{x}_{i+1}\notin\bm{\Sigma}$. In this case, we use linear interpolation to approximate the gradient $D_{\bm{x}}V(\bm{x}_{i+1})$.
+
+\section{Numerical Solution of Subproblems}
+
+We will enumerate again the Subproblems introduced in Chapter \ref{Chapter_3}. However, in this Chapter, we present the numerical models and optimization tools used. We can summarize our procedure to apply continuous-time DP in the next points:
+
+\begin{enumerate}
+
+\item[$\bullet$] We want a convergence scheme to solve the associated HJB equation: We build a explicit FD scheme as described in subsection \ref{Proposed_Scheme}. In this way, we can verify monotonicity and the stability condition (\ref{CFL_Real}) for each point in the discretization. We use this scheme in all our Subproblems.
+
+\item[$\bullet$] We want a way to find the optimal controls that minimizes the Hamiltonian at each pair $(t,\bm{x})\in\mathcal{D}$: For all the Subproblems, the minimization of the Hamiltonian (e.g., (\ref{Hamiltonian_1}) in the First Subproblem) can be modeled as a linear problem with quadratic and linear constraints
+\begin{equation}
+\min\ \bm{\phi}^T\bm{d}\quad\text{s.t.}\quad\begin{cases}
+0\leq\phi_i\leq1\\
+\bm{\phi}^T\bm{Q}\bm{\phi}+\bm{\phi}^T\bm{b}=c
+\end{cases}
+\label{Minimization_Problem}
+\end{equation}
+where $\bm{\phi},\bm{b},\bm{d}\in\R^d,\bm{Q}\in\R^{d\times d}$ and $d\in\N$ is the dimensionality of the controls vector which varies with the Subproblem. In some Subproboelms, it is possible to find an exact analytical solution for (\ref{Minimization_Problem}), which implies extremely few computational work.\\
+However, in more complicated cases, we use MATLAB's implemented function \textit{fmincon}, which is designed for constrained optimization. We choose SQP as the algorithm for being appropriate for our problem and in each time step we use \textit{warm start} (we use as the initial point for the optimizer the optimal in the previous time step. With warm start we reduce the computational time in more than 70\%).
+
+\item[$\bullet$] If we are solving the dual problem, we want a numerical solver for non-smooth convex functions using subgradients: Using the method introduced in subsection \ref{Subsection_Oracle} and the implemented function \textit{fminunc} of MATLAB with gradient supply and truth-region, we find an optimal candidate $(\hat{\lambda}_{21}^*,\hat{\lambda}_{32}^*)$.
+
+\item[$\bullet$] After solving the primal or dual problem (depending on if we used the Lagrangian Relaxation), we compute the optimal path.
+
+\end{enumerate}
+
+We follow the previous points in each Subproblem.
+
+\subsection{One Dam and One FFS} \label{First_Subproblem_Num}
+
+Recall the First Subproblem formulated in subsection \ref{First_Subproblem} which results can be seen in subsection \ref{First_Subproblem_Results}.\\
+
+We are able to find an analytic solution for the Hamiltonian at each pair $(t,v^{(1)})$.
+
+\subsection{Two Dams and One FFS} \label{Second_Subproblem_Num}
+
+Recall the First Subproblem formulated in subsection \ref{First_Subproblem} which results can be seen in subsection \ref{First_Subproblem_Results}.\\
+
+We are able to find an analytic solution for the Hamiltonian at each point $(t,\hat{v}^{(1)},\hat{v}^{(2)})$. This analytic solution can be extended to a similar system with any amount of independent dams under the following assumptions:
+\begin{enumerate}
+\item[$\bullet$] All the dams are independent.
+\item[$\bullet$] The dams do not use spillage or, the spillage does not affect the efficiency.
+\end{enumerate}
+
+\subsection{Stochastic Wind Power} \label{Third_Subproblem_Num}
+
+Recall the Third subproblem from subsection \ref{Third_Subproblem} which results can be seen in subsection \ref{Third_Subproblem_Results}.\\
+
+In this Subproblem the minimization of the Hamiltonian is similar to the one in the Second Subproblem. The only difference is the constant value in the quadratic constraint, which is associated with the Effective Demand (recall subsection \ref{Subsection_ED}).\\
+In the wind power's direction, we transform the HJB equation as explained in subsection \ref{Subsection_Transformation_Wind} and  explore two approaches for the solution:
+\begin{enumerate}
+
+\item[$\bullet$] Collocation Points: We assume that the value function $V(t,\hat{\bm{v}},w)$ is a polynomial of some odd order (e.g., order 7 as in the results). We discretize in the wind power direction following the Chebyshev nodes
+to mitigate the Runge's phenomenon. If we discretize $[\underline{w},\overline{w}]$ into $n$ equal distributed points and we use a polynomial of also order $n$, we would use as grid $\left\{\underline{w}+\left(\overline{w}-\underline{w}\right)\cos\left(\frac{j}{n}\pi\right)\right\}$ for $j\in\{0,1,\dots,n\}$ and an anzats and partial derivatives for $V(t,\hat{\bm{v}},w)$
+\begin{equation}
+\begin{cases}
+V(t,\hat{\bm{v}},w)=\sum_{i=0}^nc_i(t,\hat{\bm{v}})w^i\\
+\frac{\partial V}{\partial w}(t,\hat{\bm{v}},w)=\sum_{i=1}^nic_i(t,\hat{\bm{v}})w^{i-1}\\
+\frac{\partial^2V}{\partial w^2}(t,\hat{\bm{v}},w)=\sum_{i=2}^ni(i-1)c_i(t,\hat{\bm{v}})w^{i-2}.
+\end{cases}
+\end{equation}
+
+\item[$\bullet$] Finite Differences: We discretize using a uniform grid and solve using a monotone FD scheme.
+
+\end{enumerate}
+
+After exploring the two approaches, we notice that collocation points with polynomials may have oscillations which have physically no sense in the solution. We prefer to use FD with nine discretizations in the wind power direction.
+
+\subsection{Simple Linked System} \label{Fourth_Subproblem_Num}
+
+Recall example from subsection \ref{Fourth_Subproblem} which results can be seen in subsection \ref{Fourth_Subproblem_Results}.\\
+
+We have to evaluate the dual function, which numerically is similar to solve the Second Subproblem in Subsction \ref{Second_Subproblem_Num}. As we want to study the effect of the relaxation, we use as Lagrangian Multiplier $\lambda(t)=k\in\R$ for $t\in[\tau,t_1]$ and sweep over $k$.\\
+In this Subproblem we consider two cases:
+
+\begin{enumerate}
+
+\item[$\bullet$] First case: The second (downstream) dam has its efficiency affected by its level. Then, when it receives extra water from the virtual control, its efficiency is increased, and we reduce the accumulated cost. This case if what happens in reality.
+
+\item[$\bullet$] Second case: We fix the efficiency of the second (downstream) dam. Then, the only effect of $\lambda(t)$ in the minimization is the change in the cost associated to the first dam's control.
+
+\end{enumerate}
+
+
+\subsection{Four Dams, a FFS and a Battery} \label{Fifth_Subproblem_Num}
+
+Recall example from subsection \ref{Fifth_Subproblem}  which results can be seen in subsection \ref{Fifth_Subproblem_Results}.\\
+
+The complexity added to the dams in this Subproblem (e.g., the inclusion of the spillage) and the inclusion of the battery makes more complicate the find an analytic expression for the Hamiltonian. Then we use the MATLAB's implemented function \textit{fmincon}, which increases considerably the computational work.\\
+Other difficulty of the battery, introduced by the fast changes in its dynamics, is the increment in the restriction of the CFL condition (\ref{CFL_Real}).
+
+\subsection{Complete Linked System (no Battery)} \label{Sixth_Subproblem_Num}
+
+Recall example from subsection \ref{Sixth_Subproblem} which results can be seen in subsection \ref{Sixth_Subproblem_Results}.\\
+
+As we want to solve the dual problem, we use our method from subsection \ref{Subsection_Oracle} and the MATLAB's implemented function \textit{fminunc}. As the computational work is too much more extensive than in the previous Subproblems, we use parallelization in the solution of the Hamiltonian (i.e., at each time-step, we solve in parallel the minimization of the Hamiltonian for each point in the state-space).\\
+We do not include the battery due to the high computational cost involved.
+
+\subsection{Complete Linked System with Battery} \label{Seventh_Subproblem_Num}
+
+Recall example from subsection \ref{Seventh_Subproblem}  which results can be seen in subsection \ref{Seventh_Subproblem_Results}.\\
+
+The inclusion of the battery increases the computational work considerably. For this reason it is not possible to find the optimal LMs $(\hat{\lambda}^*_{21},\hat{\lambda}^*_{32})$ using our solver in a reasonable time. However, as we do not model any dam as a ROR dam, the effects of the LMs in the system is actuated, and we approximate them with zero for all time.\\
+To compute the spot price, we check the LM associated with the quadratic constraint. This constraint corresponds to the power balance, and its LM is equivalent to the cost of increasing slightly the demand. 

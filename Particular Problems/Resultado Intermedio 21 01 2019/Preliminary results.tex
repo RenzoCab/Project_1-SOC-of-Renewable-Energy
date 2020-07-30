@@ -1,0 +1,105 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Preliminary results:\\
+Solution of HJB}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Data of the system:}
+We use as demand a $\sin(x)$ function with period of one day and mean value 0.5 or $\SI{1000}{MW}$. Assuming that approximately $20 \%$ of the total energy will be from fuel and that the costs associated are:
+\begin{equation*}
+\begin{cases}
+\SI{0.3}{USD/MWh}\ \text{for the water},\\
+\SI{70}{USD/MWh}\ \text{for the fuel},
+\end{cases}
+\end{equation*}
+we conclude that the final cost will be approximately:
+\begin{equation*}
+Cost=24\times(\SI{1000}{MWh})\times(0.2\times70+0.8\times0.3)\approx\SI{0.34}{M USD}.
+\end{equation*}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Solution using 4 discretizations:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Demand_1.eps}}
+\subfigure{\includegraphics[scale=.5]{Cost_1.eps}}
+\caption{Solution at the initial time using four discretizations in space and time. The three solutions are for three different amount of water in Salto Grande (maximum possible, minimum possible and middle between the previous two). Naturally, the more water, the less cost.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Solution using 8 discretizations:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Demand_2.eps}}
+\subfigure{\includegraphics[scale=.5]{Cost_2.eps}}
+\caption{Solution at the initial time using four discretizations in space and time. The three solutions are for three different amount of water in Salto Grande (maximum possible, minimum possible and middle between the previous two). Naturally, the more water, the less cost.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Solution using 16 discretizations:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Demand_3.eps}}
+\subfigure{\includegraphics[scale=.5]{Cost_3.eps}}
+\caption{Solution at the initial time using four discretizations in space and time. The three solutions are for three different amount of water in Salto Grande (maximum possible, minimum possible and middle between the previous two). Naturally, the more water, the less cost.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Solution using 32 discretizations:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.5]{Demand_4.eps}}
+\subfigure{\includegraphics[scale=.5]{Cost_4.eps}}
+\caption{Solution at the initial time using four discretizations in space and time. The three solutions are for three different amount of water in Salto Grande (maximum possible, minimum possible and middle between the previous two). Naturally, the more water, the less cost.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Conclusion:}
+We can see that the results are in the expectable order. Also, all the costs decrease the more water we have in each dam. When we have the solution for more discretizations we will be able to check the convergence.
+\end{frame}
+
+\end{document}

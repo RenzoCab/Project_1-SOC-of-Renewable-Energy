@@ -1,0 +1,115 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction:}
+In the next file, we will analyze and cost in our system when it is solved in different ways (with a battery, without a battery and the actual real solution used). All the results are computed using $\lambda(t)=0$ (HJB solution and optimal path). We choose all the discretizations such that we always satisfy the CFL condition. All the data is from government sources.\\
+We will analyze January and February 2019, corresponding to 9 weeks of data. We do not have the result for all the days.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Cost comparison:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Cost_Week_1.eps}
+\includegraphics[width=0.4\textwidth]{Cost_Week_2.eps}
+\caption{Cost comparison between the solution of HJB (with and without battery), the optimal paths (with and without battery) and the real controls used in Uruguay.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Cost comparison:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Cost_Week_3.eps}
+\includegraphics[width=0.4\textwidth]{Cost_Week_4.eps}
+\caption{Weeks 3 and 4.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Cost comparison:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Cost_Week_5.eps}
+\includegraphics[width=0.4\textwidth]{Cost_Week_6.eps}
+\caption{Weeks 5 and 6.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Cost comparison:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Cost_Week_7.eps}
+\includegraphics[width=0.4\textwidth]{Cost_Week_8.eps}
+\caption{Weeks 7 and 8.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Cost comparison:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Cost_Week_9.eps}
+\caption{Week 9.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Effect of the battery:}
+\graphicspath{{./Historical/}}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.4\textwidth]{Relative_BatNoBat_HJB.eps}
+\includegraphics[width=0.4\textwidth]{Relative_BatNoBat.eps}
+\caption{On the left, we can see the relative reduction in the optimal cost (HJB) when we introduce the battery in the system. On the right, we can see the reduction during the optimal path. All as a function of the days.}
+\end{figure}
+\end{frame}
+
+\end{document}

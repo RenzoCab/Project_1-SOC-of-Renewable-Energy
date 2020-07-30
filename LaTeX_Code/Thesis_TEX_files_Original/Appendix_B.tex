@@ -1,0 +1,39 @@
+% Appendix B File
+
+\refstepcounter{chapter}%
+\chapter*{\thechapter \quad Mathematical Background}
+\label{appendixB}
+
+\section{Change of Variables in N Dimensions} \label{COV}
+
+In this Subsection we will follow \cite{risken1996fokker}. Let $\bm{x}\in\R^n$ and $t\in[t_0,t_1]$ and the system
+\begin{equation}
+\begin{cases}
+\left(\frac{\partial V}{\partial t}+\sum\limits^{n}_{i=1}a_i\frac{\partial V}{\partial x_i}+\sum\limits^{n}_{i,j=1}b_{ij}\frac{\partial^2V}{\partial x_i\partial x_j}\right)(t,\bm{x})=0\\
+V(t_1,\bm{x})=g(\bm{x}).
+\end{cases}
+\label{Kolmogorov_Backward_Equation_MD}
+\end{equation}
+We want to see how (\ref{Kolmogorov_Backward_Equation_MD}) changes when we introduce a new system of coordinates in the space $\bm{y}=(y_1,\dots,y_n)^T$ with $y_i=f(\bm{x})$. We are going to analyze the particular case where the change of coordinates is an injective transformation of each one of the spatial dimensions, i.e. $y_i=f(\bm{x})=f(x_i)$. Then if $v(t,\bm{y}(\bm{x}))=V(t,\bm{x})$ is a solution of (\ref{Kolmogorov_Backward_Equation_MD}), it is also a solution of
+\begin{equation}
+\begin{cases}
+\frac{\partial v}{\partial t}+\sum\limits^{n}_{i=1}\underbrace{\frac{\partial y_i}{\partial x_i}a_i(t,\bm{x})}_{a^*_i(t,\bm{y})}\frac{\partial v}{\partial y_i}+\sum\limits^{n}_{i,j=1}\underbrace{\frac{\partial y_j}{\partial x_j}\frac{\partial y_i}{\partial x_i}b_{ij}(t,\bm{x})}_{b^*_{ij}(t,\bm{y})}\frac{\partial^2v}{\partial y_i\partial y_j}=0\\
+v(t_1,\bm{y})=V(t_1,f^{-1}(\bm{y}))=g(f^{-1}(\bm{y}))=g^*(\bm{y})\\
+\bm{x}=f^{-1}(\bm{y}).
+\end{cases}
+\end{equation}
+Then we have that $v(t,\bm{y})$ is the solution of
+\begin{equation}
+\begin{cases}
+\left(\frac{\partial v}{\partial t}+\sum\limits^{n}_{i=1}a^*_i\frac{\partial v}{\partial y_i}+\sum\limits^{n}_{i,j=1}b^*_{ij}\frac{\partial^2v}{\partial y_i\partial y_j}\right)(t,\bm{y})=0\\
+v(t_1,\bm{y})=g^*(\bm{y}),
+\end{cases}
+\end{equation}
+where we have used
+\begin{equation}
+\frac{\partial v}{\partial x_i}=\frac{\partial v}{\partial y_i}\frac{\partial y_i}{\partial x_i},\quad\frac{\partial^2v}{\partial x_i\partial x_j}=\frac{\partial^2v}{\partial y_i\partial y_j}\frac{\partial y_j}{\partial x_j}\frac{\partial y_i}{\partial x_i}.
+\end{equation}
+
+% Copyright 2010 Imran Shafique Ansari
+% Contact Email: imran.ansari@kaust.edu.sa
+% Contact Number: +966 59 897 1005

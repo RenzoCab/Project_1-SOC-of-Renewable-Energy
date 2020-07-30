@@ -1,0 +1,227 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{bbm}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Problem 1: 1 Dam + 1 Fuel Generator (all deterministic)}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\section{Model}
+
+Here we have Salto Grande and one fuel generator, also the demand is deterministic.
+
+\subsection{Hydraulic power}
+
+The dynamics of the system are given by
+\begin{equation*}
+\begin{cases}
+dV(t)=(I_T(t)-\phi_T(t))dt\\
+V(t_0)=5000\ hm^3=5.000*10^9\ m^3\\
+3470\leq V(t)\leq5000\ hm^3,\\
+0\leq\phi(t)\leq4200*\mathbbm{1}_{\{V(t)>3470\}}\ m^3/s,
+\end{cases}
+\end{equation*}
+the power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_H(t)=\eta\phi_T(t)h(t)=8.72\phi_T(t)(H(V(t))-5.1)\\
+H(V)=(-7.91*10^{-7})V^2+(1.03*10^{-2})V+3.79
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_H(t)=K_H\int_0^tP_H(s)ds=0.0003\int_0^tP_H(s)ds.
+\end{equation*}
+We set $I_T(t)=2.8*10^3\ m^3/s$.
+
+\subsection{Thermal power}
+
+The power and cost functions are
+\begin{equation*}
+\begin{cases}
+P_F(t)=\phi_F(t)\\
+0\leq\phi_F(t)\leq\overline{\phi_F}=2000\ MW
+\end{cases}
+\end{equation*}
+and
+\begin{equation*}
+C_F(t)=K_F\int_0^tP_F(s)ds=130\int_0^tP_F(s)ds.
+\end{equation*}
+
+\subsection{Demand}
+
+Deterministic and only depending on time $D(t)$, we will use wither the one in Figure (\ref{Demand01012017}) or $D(t)=1000+500\sin\big(\frac{2\pi}{6}t\big)$ (Figure (\ref{Sin})).
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Demand_01012017.eps}
+\caption{Demand of 01/01/2017 (from \href{adme.com.uy}{adme.com.uy}).}
+\label{Demand01012017}
+\end{figure}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.5\textwidth]{Sin.eps}
+\caption{Synthetic demand.}
+\label{Sin}
+\end{figure}
+
+\subsection{Constraint}
+
+We need at any moment to supply the demand, this is
+\begin{equation*}
+D(t)=P_H(t)+P_F(t).
+\end{equation*}
+
+\subsection{Objective function}
+
+We want to minimize
+\begin{equation*}
+\Theta(T)=\E\Big[C_H(T)+C_F(T)\Big]=K_H\int_0^TP_H(s)ds+K_F\int_0^TP_F(s)ds.
+\end{equation*}
+
+\section{Construction of the H-J-B equation}
+
+\subsection{Hamiltonian}
+
+Our Hamiltonian is given by
+\begin{multline*}
+\mathbf{H}(Du,u,t,V)=\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[(I_T-\phi_T)\frac{\partial u}{\partial V}+K_F\phi_F+K_H\eta\phi_T(H(V)-5.1)\Bigg]\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[-\phi_T\frac{\partial u}{\partial V}+K_F\phi_F+K_H\eta\phi_T(H(V)-5.1)\Bigg]+I_T\frac{\partial u}{\partial V}\\
+=\min_{\begin{cases}
+0\leq\phi_H(t)\leq\overline{\phi_T}\\
+0\leq\phi_F(t)\leq\overline{\phi_F}\\
+D(t)=P_H(t)+P_F(t)
+\end{cases}}\Bigg[\Big(-\frac{\partial u}{\partial V}+K_H\eta(H(V)-5.1)\Big)\phi_H+\Big(K_F\Big)\phi_F\Bigg]+I_T\frac{\partial u}{\partial V}.
+\end{multline*}
+%We have that $\underline{H}=30$ and $\overline{H}=35.5$, then $h(t)=(H(V(t))-5.1)\in[24.9,30.4]$ for all $t\geq0$. Now we compare the influence of $\phi_T$ and $\phi_F$, it is natural to assume $K_F>-\frac{\partial u}{\partial V}+K_H\eta(H(V)-5.1)$ which is correct if $\frac{\partial u}{\partial V}>K_H\eta(H(V)-5.1)-K_F(>-50.5)$.
+To find the minimum for every pair $(t,V)$ we use the function \textit{linprog} of MATLAB. That function solves
+\begin{equation*}
+\min_xf(x)\ \text{such that}\ \begin{cases}
+A\cdot x\leq b\\
+Aeq\cdot x=beq\\
+lb\leq x\leq ub,
+\end{cases}
+\end{equation*}
+then in our case for $V(t)>3470\ hm^3$, we have
+\begin{multline*}
+A=\begin{bmatrix}
+1 & 0 \\
+0 & 1 
+\end{bmatrix},\ 
+x=\begin{bmatrix}
+\phi_H \\
+\phi_F
+\end{bmatrix},\ 
+b=\begin{bmatrix}
+4200 \\
+1000
+\end{bmatrix},\ 
+Aeq(V)=\begin{bmatrix}
+\eta(H(V)-5.1)/1000 & 1
+\end{bmatrix},\\
+beq(t)=\begin{bmatrix}
+D(t)
+\end{bmatrix},\ 
+lb=\begin{bmatrix}
+0 \\
+0
+\end{bmatrix},\
+ub=\begin{bmatrix}
+4200 \\
+1000
+\end{bmatrix},\ 
+f=\begin{bmatrix}
+-\frac{\partial u}{\partial V}+K_H\eta(H(V)-5.1) & K_F
+\end{bmatrix}.
+\end{multline*}
+If $V(t)\leq3470\ hm^3$, we set
+\begin{equation*}
+b=\begin{bmatrix}
+0 \\
+1000
+\end{bmatrix}\ \text{and}\ ub=\begin{bmatrix}
+0 \\
+1000
+\end{bmatrix}.
+\end{equation*}
+\subsection{H-J equation}
+
+The Hamilton-Jacobi equation is
+\begin{equation*}
+\begin{cases}
+\frac{\partial u}{\partial t}+\mathbf{H}(Du,u,t,V)=0\\
+u(T,v)=0.
+\end{cases}
+\end{equation*}
+
+\section{Simulation}
+
+\subsection{Scheme and discretization}
+
+We use central finite differences and explicit Euler. For the volume, we simulate between 3000 and 5000 $hm^3$ with $dV=10\ hm^3$, and for the time, we simulate from 24:00 to 01:00 hs with $dt=1$ hour. For the demand, we use the second expression (see Figure (\ref{Sin})).
+
+\subsection{Results}
+
+The resulting objective function can be seen in Figure (\ref{Result}). The cost increases dramatically when the volume is minor to 3470 $hm^3$, where the dam stops acting.
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\textwidth]{Result.eps}
+\caption{Optimal cost function.}
+\label{Result}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Graciela Email Response}
+\author{Ra\'ul Tempone\\
+Renzo Caballero (Author)}
+\date{13 July, 2019}
+\maketitle
+
+\section*{Probabilistic Wind Power Forecasting}
+
+\begin{enumerate}
+
+\item[(a)] Datos: Tienen diferente set de par\'ametros para diferentes estaciones del año? Por el tamaño de la muestra y la cantidad de puntos considerados me pareció que si. Por lo que me acuerdo cuando estudié estos temas, había diferencias estacionales.
+
+\item[(a)-R] Tenemos el equivalente a dos años de datos, con frecuencia horaria. En el futuro vamos a analizar los resultados cuando distinguimos por estación.\\
+De todas maneras, nuestro sistema construye los intervalos de confianza usando solamente la predicción y la producción real. El efecto de las estaciones se vería reflejado en las predicciones, y nosotros agregariamos los intervalos de confianza sobre las predicciones.
+
+\item[(b)] Resultados: En la Figura 5, dice "Note that this forecasting company computes a new forecast every 6-9 hours for reliability." ¿A qué compañía se refiere? Pudieron comparar la performance del modelo con otros que están en uso? (por ejemplo, los que utiliza UTE, que creo usa por lo menos 3).
+
+\item[(b)-R] UTE tiene disponible 4 tipos de predicciones, nosotros estamos trabajando sobre 2 de ellos. Estamos ahora mismo intentando conseguir los datos de todas las compañías, y luego vamos a poder comparar con propiedad.
+
+\item[(c)] El tipo de modelos que utilizan, les permiten introducir algún tipo de predictores externos? Por ejemplo: en el cortísimo plazo se sabe que hay una tormenta instalada sobre el territorio nacional y en las próximas horas (4-6 horas) se esperan vientos arrachados de unos 80km/h con probabilidad de un 80\%. Eso seguramente haría caer drásticamente la producción de energía eólica ¿Esto de alguna manera se puede considerar en el modelo?
+
+\item[(c)-R] Una de las características de nuestro sistema es crear intervalos de confianza alrededor de las predicciones. La otra es, crear simulaciones del viento futuro. En esas simulaciones seria posible agregar el efecto que describiste, 20\% de ellas podrían considerar la micro tormenta y el otro 80\% no, y a su ves, esto afectaría el intervalo de confianza.
+
+\end{enumerate}
+
+
+\section*{Stochastic Optimal Control of Renewable Energy}
+
+Por lo que entendí se trata de un modelo diario, que permite tener detalle con paso de 5 minutos e incluso menor. Como comentario general me parece interesante los resultados, como una primer aproximación, que muestra un posible beneficio ahorrando generación cara. Sin embargo, me parece que algunos supuestos realizados pueden ser muy fuertes en un modelo para la operación real.
+
+\begin{enumerate}
+
+\item[(a)] Por tratarse de un modelo de corto plazo y con un paso de discretización pequeño, las restricciones de tiempo de arranque y parada de las máquinas no son despreciables, empezando por las térmicas e incluso las hidro (si mal no recuerdo, eso depende mucho de la tecnología instalada, el tiempo de respuesta en las hidro era de algunos minutos). Otra restricción importante es la rampa de generación de acuerdo a la etapa de arranque en que se esté. En fin creo que si se afina la discretización habría que introducir más detalles de modelado de las máquinas.
+
+\item[(a)-R] Estamos trabajando en una modificación que nos permite introducir los costos de arranque y tiempos de arranque para las térmicas. En el caso de las hidráulicas lo tenemos controlado, podemos limitar la velocidad con la que accionan.
+
+\item[(b)] Creo que habría que considerar un margen de reserva en algunas máquinas, con lo cual algunos  ahorros  no son tales, en otras palabras: A veces se deben despachar algunas máquinas con criterio no económico, sobre todo en el corto plazo.
+
+\item[(b)-R] No estamos seguros de lo que esto significa. Pero si esto significara una restricción extra, podemos agregarla y satisfacerla de forma óptima.
+
+\item[(c)] Un tema que desconozco es si la tecnología de las baterías permite disponer de potencia y energía en forma instantánea o si tiene rampas que merezcan considerar según el intervalo de discretización que se considere.
+
+\item[(c)-R] Las baterías son muy rápidas. Al punto que podemos considerarlas instantáneas en nuestro sistema. De todas maneras, tenemos programada una opción que permite limitar la velocidad de acción de todos los generadores (incluido la batería).
+
+\item[(d)] Otro tema que tal vez se interesante introducir en el corto plazo, en alguna versión futura del modelo, es el tema de la distribución espacial, o sea la red eléctrica y la conveniencia o no de ubicar estratégicamente las baterías. Esto me parece que está ligado a varios temas: pérdidas en la red, mejora de la seguridad de la red y calidad del servicio, funcionamiento en islas (desconexiones) etc. A veces las pérdidas no son nada despreciables (claro, depende si estas en la red de alta o de más baja tensión).
+
+\item[(d)-R] Este es un feature que estamos pensando introducir tanto en el optimal cobntrol como en el probabilistic wind power forcast. Nos gustaria, en primer lugar, simular generación distribuida para poder elegir la mejor disposición de las baterías y reducir todos los efectos negativos que mencionaste.\\
+En un futuro cuando sectoricemos la generación y el consumo, vamos a poder optimizar tomando en cuenta las perdidas y priorizando la seguridad en la red.
+
+\item[(e)] Hace un tiempo algún generador eólico estuvo interesado en estimar la conveniencia o no de adquirir baterías, el laburo al final no salió, pero me había planteado unas cuantas dudas que ahora me vuelven a la memoria al leer estos documentos. 
+
+\item[(e)-R] Una ventaja importante de nuestro sistema es la capacidad de evaluar el ahorro introducido por baterías. 
+
+\end{enumerate}
+
+\end{document}

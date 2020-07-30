@@ -1,0 +1,1048 @@
+\chapter{Mathematical Background}
+
+This chapter presents a number of relevant mathematical concepts for our work. Each section closely follows different references:
+\begin{enumerate}
+
+\item[$\bullet$] Section 1: \emph{Introduction to Stochastic Differential Equations}  follows the notes in course AMCS 336 \cite{carlsson2010stochastic} by Prof. Ra\'ul Tempone.
+
+\item[$\bullet$] Section 2: \emph{Introduction to Dynamic Programming} follows the
+complete introduction given by Prof. Dimitri Bertsekas in \cite{bertsekas1995dynamic}.
+The continuous-time stochastic case follows the notes in course AMCS 336
+\cite{carlsson2010stochastic} by Prof. Ra\'ul Tempone.
+
+\item[$\bullet$] Section 3: \emph{Relevant Results in Optimization} cover concepts
+from basic to more advanced ones, following \cite{bertsekas2003convex},
+\cite{bazaraa2013nonlinear} and \cite{nocedal2006numerical}.
+
+\item[$\bullet$] Section 4: \emph{Relevant Results for HJB Equations} presents the mathematical techniques implemented in our work, following the excellent text
+    Fleming \& Soner \cite{fleming2006controlled}.
+
+\end{enumerate}
+
+\section{Introduction to Stochastic Differential Equations}
+
+This Section surveys, with some omission of precise detail,
+the basic foundations of Stochastic Differential Equations (SDE).
+
+\subsection{Deterministic System of Ordinary Differential Equations} \label{Section_SDE}
+
+Consider the dynamical system
+\begin{equation}
+\begin{cases}
+d\bm{z}=\bm{f}(\bm{z}(t))dt\quad t\in[t_0,t_1]\\
+\bm{z}(t_0)=\bm{z}_0,
+\end{cases}
+\label{System_1}
+\end{equation}
+with initial point $\bm{z}_0\in\R^n$. $\bm{f}:\R^n\to\R^n$ is a vector field. We call $\bm{z}(t)$ the \textit{state trajectory} at time $t\in[t_0,t_1]$. If
+$\bm{f}$ is Lipchitz continuous, then (by Theorem 7.3 in \cite{brezis2010functional})
+the system (\ref{System_1}) has a unique solution through the initial point $\bm{z}_0$.\\
+
+Systems such (\ref{System_1}) play a prominent role in many disciplines, including engineering, physics, economics, and biology. In many applications,  the state is subject to random perturbations. It seems necessary to modify the system (\ref{System_1}) to include such random effects, and have a predictive model for our application of interest. The result is a system of \textit{stochastic differential equations} (SDE). The formal definition will be introduced at the end of this section.
+
+\subsection{Probability Background}
+
+We introduce the needed background to understand the SDE formulation: A probability space is a triple $(\Omega,\mathcal{F},\mathcal{P})$, where $\Omega$ is the set of outcomes, $\mathcal{F}$ is the set of events and $\mathcal{P}:\mathcal{F}\to[0,1]$ is a function that assigns probabilities to events satisfying the following definitions.
+
+\begin{definition}
+If $\Omega$ is a given non-empty set, then a \textit{$\sigma$-algebra} $\mathcal{F}$ on $\Omega$ is a collection $\mathcal{F}$ of subsets of $\Omega$ that satisfy:
+\begin{enumerate}
+
+\item $\Omega\in\mathcal{F}$,
+
+\item $F\in\mathcal{F}\implies F^c\in\mathcal{F}$, where $F^c=\Omega-F$ is the complement of $F$ in $\Omega$, and
+
+\item $F_1,F_2,\dots\in\mathcal{F}\implies\cup_{i=1}^{\infty}F_i\in\mathcal{F}$.
+
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+A \textit{probability measure} on $(\Omega,\mathcal{F})$ is a set function $\mathcal{P}:\mathcal{F}\to[0,1]$ such that:
+
+\begin{enumerate}
+
+\item $\mathcal{P}(\emptyset)=0$, $\mathcal{P}(\Omega)=1$, and
+
+\item if $A_1,A_2,\dots\in\mathcal{F}$ are mutually disjoint sets then $\mathcal{P}\left(\cup_{i=1}^{\infty}A_i\right)=\sum_{i=1}^{\infty}\mathcal{P}(A_i)$.
+
+\end{enumerate}
+
+\begin{definition}
+A random variable $X$, in the probability space $(\Omega,\mathcal{F},\mathcal{P})$, is a function $X:\Omega\to\R^d$ such that the inverse image
+\begin{equation}
+X^{-1}(A)=\{w\in\Omega:X(w)\in A\}\in\mathcal{F},
+\end{equation}
+for all open subsets $A$ of $\R^d$.
+\end{definition}
+
+\begin{definition}
+Two events $A,B\in\mathcal{F}$ are \textit{independent} if
+\begin{equation}
+\mathcal{P}(A\cap B)=\mathcal{P}(A)\mathcal{P}(B).
+\end{equation}
+Two random variables $X,Y$ in $\R^d$ are \textit{independent} if
+\begin{equation}
+\text{$X^{-1}(A)$ and $Y^{-1}(B)$ are independent for all open sets $A,B\subseteq\R^d$.}
+\end{equation}
+\end{definition}
+
+\end{definition}
+
+\begin{definition}
+A \emph{stochastic process} $\bm{X}:[t_0,t_1]\times\Omega\to\R^d$ in the probability space $(\Omega,\mathcal{F},\mathcal{P})$ is a function such that $\bm{X}(t,\cdot)$ is a $d$-dimensional random variable in $(\Omega,\mathcal{F},\mathcal{P})$ for all $t\in(t_0,t_1)$.
+\end{definition}
+
+Brownian motion is a stochastic process and is needed in the definition of stochastic differential equations, it is defined as follows:
+
+\begin{definition}[Definition 3.2.1 in \cite{evans2012introduction}] \label{Definition_BM}
+A real-valued stochastic process $B(\cdot)$ is called a Brownian motion if
+\begin{enumerate}
+\item[(i)] $B(0)=0$, and the mapping $t\to B(t)$ is continuous with probability 1 (almost sure),
+\item[(ii)] $B(t)-B(s)$ is normal distributed with mean $0$ and variance $t-s$ for all $t\geq s\geq0$,
+\item[(iii)] for all times $0<t_1<t_2<\dots<t_n$, the random variables $B(t_1),B(t_2)-B(t_1),\dots,B(t_n)-B(t_{n-1})$ are independent.
+\end{enumerate}
+\end{definition}
+
+%A formal way to add random effects in the system (\ref{System_1}) is to write
+%\begin{equation}
+%\begin{cases}
+%\dot{\bm{x}}(t)=\bm{f}(\bm{x}(t))+\bm{A}(\bm{x}(t))\bm{n}(t)\quad t\in[t_0,t_1]\\
+%\bm{x}(t_0)=\bm{x}_0,
+%\end{cases}
+%\label{System_2}
+%\end{equation}
+%where $\bm{A}:\R^n\to\M^{n\times m}$, $\bm{n}(\cdot)$ is the $m$-dimensional
+%\textit{white noise}. In analogy with the system (\ref{System_1}), we set
+% $\bm{x}_0=\bm{z}_0$.\\
+%
+%Let now $m=n$, $\bm{x}_0=0$,
+%$\bm{f}\equiv\bm{0}$ and $\bm{A}=\text{the unit matrix }\bm{I}$ in (\ref{System_2}).
+%The solution turns out to be the $n$-dimensional Brownian motion, denoted by $\bm{B}(\cdot)$. We may symbolically write
+%\begin{equation}
+%\dot{\bm{B}}(\cdot)=\bm{n}(\cdot),
+%\end{equation}
+%thereby asserting that \textit{white noise} is the time derivative of
+%\textit{Brownian motion} (see \cite{leon2008probability}, Example 9.43).\\
+%
+%Formally multiplying (\ref{System_2}) by $dt$ produces
+%\begin{equation}
+%\begin{cases}
+%d\bm{x}=\bm{f}(\bm{x}(t))dt+\bm{A}(\bm{x}(t))d\bm{B}(t)\quad t\in[t_0,t_1]\\
+%\bm{x}(t_0)=\bm{x}_0.
+%\end{cases}
+%\label{System_3}
+%\end{equation}
+%The terms $d\bm{x}$ and $\bm{A}d\bm{B}$ are stochastic differentials, and
+%(\ref{System_3}) is
+% a system of \textit{stochastic differential equations}.\\
+
+\subsection{Stochastic Integral with respect to Brownian Motion}
+
+Suppose there exists a function $f:[t_0,t_1]\to\R$. We consider a partition $\{\overline{t}_n\}_{n=0}^N$, $\overline{t}_0=t_0$, $\overline{t}_N=t_1$ of the time interval $[t_0,t_1]$, and the corresponding forward Euler approximation
+\begin{equation}
+\sum_{n=0}^{N-1}f(\overline{t}_n)(B(\overline{t}_{n+1})-B(\overline{t}_{n})),
+\end{equation}
+where we are adding evaluations of $f(\cdot)$ weighted by increments of Brownian process $B(\overline{t}_{n+1})-B(\overline{t}_{n})$.\\0
+It can be proved that this approximation converges, and the limit defines the It\^o integral
+\begin{equation}
+\sum_{i=0}^{N-1}f(\overline{t}_n)(B(\overline{t}_{n+1})-B(\overline{t}_{n}))\underset{N\to\infty}{\to}\int_{t_0}^{t_1}f(s)dB(s).
+\end{equation}
+
+\subsection{Stochastic Differential Equations} \label{Subsection_SDE}
+
+A formal way to add random effects in system (\ref{System_1}) is the inclusion of a stochastic differential
+\begin{equation}
+\begin{cases}
+d\bm{x}(t)=\bm{f}(\bm{x}(t))dt+\bm{A}(\bm{x}(t))d\bm{B}(t)\quad t\in[t_0,t_1]\\
+\bm{x}(t_0)=\bm{x}_0.
+\end{cases}
+\label{System_3}
+\end{equation}
+Then, $d\bm{x}$ and $\bm{A}d\bm{B}$ are stochastic differentials, and
+(\ref{System_3}) is
+ a system of \textit{stochastic differential equations}.\\
+
+We say that $\bm{x}(\cdot)$ solves (\ref{System_3}) strongly if
+\begin{equation}
+\bm{x}(t)=\bm{x}_0+\int_{t_0}^t\bm{f}(\bm{x}(s))ds+\int_{t_0}^t\bm{A}(\bm{x}(s))d\bm{B}\quad a.s.,\ \forall t\in[t_0,t_1].
+\label{Stochastic_Solution}
+\end{equation}
+To make sense of (\ref{Stochastic_Solution})  we need to:
+\begin{enumerate}
+
+\item[$\bullet$] Recall Brownian motion ($\bm{B}(\cdot)$) definition: Definition \ref{Definition_BM}.
+
+\item[$\bullet$] Recall the stochastic integral with stochastic differential $d\bm{B}$. We refer to \cite{carlsson2010stochastic} for more details.
+
+\item[$\bullet$] Show that (\ref{Stochastic_Solution}) has a solution. Similar to the previous point, we refer to \cite{carlsson2010stochastic}. However, it is important to know that: The solution of the SDE (\ref{System_3}), if it exists, is a stochastic process $\bm{x}:[t_0,t_1]\times\Omega_{\bm{x}}\to\R^n$ with $\Omega_{\bm{x}}$ its corresponding sample space.
+
+\end{enumerate}
+
+The stochastic differential $\bm{A}d\bm{B}$ can be interpreted as uncertainty in the deterministic solution (the ODE system in (\ref{System_1})). For example, uncertainty
+in  the prediction of the wind and solar power in Subsection
+\ref{Subsection_NoControllable} is  modeled by SDEs.\\
+\\
+
+\textbf{Section summary and discussion}: We briefly introduced the concept of SDEs and motivate their use to model systems with uncertainty. In our system, some dynamics have insignificant uncertainties (i.e., the dams) and we can model them with ODEs. However, in the case of wind and solar power, we must use SDEs given the high uncertainty in their production.\\
+The systems presented in this section are Markovian, (i.e,. differentials $d\bm{x}$ and $d\bm{z}$ at time $t$, only depend on the state trajectory at time $t$).  However, in the next section, we will introduce possible non-Markovian features and explain the difficulties they present.
+
+\section{Introduction to Dynamic Programming} \label{Section_DP}
+
+This section presents a basic description of the discrete and continuous Dynamic
+Programming (DP) algorithm, focused on finite horizon optimal control problems.
+We will first introduce the discrete-time stochastic case, to continue with the
+time-continuous deterministic case and finish with the time-continuous stochastic
+case. Both deterministic and stochastic continuous-time problems are addressed in this work.
+
+\subsection{General Structure of discrete Finite Horizon Optimal Control Problems}
+
+Here we will follow \cite{berkovitz2013optimal}, Chapter 1. 
+Our model will be characterized by a structure containing:
+\begin{enumerate}
+\item A discrete-time partially-controllable dynamical system.
+\item A cost function that is additive over time.
+\end{enumerate}
+The dynamical system controls the evolution of the state variables associated 
+with the system,
+\begin{equation}
+\bm{x}_{k+1} = \bm{f}_k(\bm{x}_k,\bm{u}_k,\bm{w}_k),\quad k=0,1,\dots,N-1
+\label{Disc_Dyn}
+\end{equation}
+where
+\begin{enumerate}
+\item[$k$] indexes discrete time,
+\item[$\bm{x}_k$] is the state of the system at time $k$,
+\item[$\bm{u}_k$] is the control at time $k$,
+\item[$\bm{w}_k$] is a random parameter at time $k$,
+\item[$N$] is the horizon
+\end{enumerate}
+and $\bm{f}_k$ is a function that describes how the state is updated. 
+The cost of the system gets accumulated over time:
+\begin{equation*}
+g_N(\bm{x}_N)+\sum_{k=0}^{N-1}g_k(\bm{x}_k,\bm{u}_k,\bm{w}_k),
+\end{equation*}
+where the function $g_k(\bm{x}_k,\bm{u}_k,\bm{w}_k)$ is the cost incurred at 
+time $k$ and the function $g_N(\bm{x}_N)$ is the terminal incurred cost. As we can 
+see, the total cost is a random variable, so the
+problem is formulated as an optimization of the expected cost
+\begin{equation*}
+\E\left[g_N(\bm{x}_N)+\sum_{k=0}^{N-1}g_k(\bm{x}_k,\bm{u}_k,\bm{w}_k)\right],
+\end{equation*}
+where the expectation is with respect to the joint distribution of the random
+variables $\{\bm{w}_0,\dots,\bm{w}_{N-1}\}$. The optimization is made over
+the controls $\bm{u}_0,\bm{u}_1,\dots,\bm{u}_{N-1}$ where for each
+$\bm{u}_k$, we have some knowledge, also known as feed-back, about the current 
+state $\bm{x}_k$. This is a closed loop problem, with more details given in
+ \ref{Subsection_OLCO}.
+
+\subsubsection{The Basic Problem}
+
+The discrete-time dynamical system is
+\begin{equation*}
+\bm{x}_{k+1}=\bm{f}_k(\bm{x}_k,\bm{u}_k,\bm{w}_k),\quad k=0,1,\dots,N-1
+\end{equation*}
+where the state $\bm{x}_k$ is an element of the space $S_k$, the control
+$\bm{u}_k$ is an element of the space $C_k$, and the random variable
+$\bm{w}_k$ is an element of the space $D_k$. Each control $\bm{u}_k$ can take
+values in a non-empty subset $U(\bm{x}_k)\subset C_k$, which depends of the
+current state $\bm{x}_k\in S_k$. Examples of systems whose controls depends
+on their state are the dams, where the maximum amount of used water depends
+on their total amount of water in the reservoirs.\\
+The random variable $\bm{w}_k $ has a probability distribution 
+$P(\cdot|\bm{x}_k,\bm{u}_k)$ that does not depend on values of prior 
+random variables $\bm{w}_{k-1},\dots,\bm{w}_0$. This makes the system Markovian, 
+and is one of the stronger assumptions in DP.\\
+The class of policies (or control laws) consists of a sequence of functions
+\begin{equation*}
+\pi=\{\mu_0\dots,\mu_{N-1}\},
+\end{equation*}
+where for each time $k$, the function $\mu_k$ maps $\bm{x}_k$ 
+into controls $\bm{u}_k=\mu_k(\bm{x}_k)$.\\
+Given an initial state $\bm{x}_0$ and an admissible policy $\pi$, the state 
+$\bm{x}_k$ and disturbance $\bm{w}_k$ are random variables with distributions 
+through the system equation
+\begin{equation*}
+\bm{x}_{k+1} = \bm{f}_k(\bm{x}_k,\mu_k(\bm{x}_k),\bm{w}_k),\quad k=0,1,\dots,N-1.
+\end{equation*}
+Then, for given functions $g_k$, the expected cost of $\pi$ starting at $\bm{x}_0$ is
+\begin{equation*}
+J_\pi(\bm{x}_0)=\E\left\{g_N(\bm{x}_N)+\sum_{i=0}^{N-1}g_k(\bm{x}_k,\mu_k(\bm{x}_k),\bm{w}_k)\right\}
+\end{equation*}
+where the expectation is taken over the random variables $\bm{w}_k$ and
+$\bm{x}_k$. The function $J_{\pi}(\cdot)$ is called the \textit{cost-to-go}
+function, and represent the accumulated cost as we move from the initial
+state $\bm{x}_0$ to the final one $\bm{x}_N$. An optimal policy $\pi^*$ is
+one that minimizes this cost. Then
+\begin{equation*}
+J_{\pi^*}(\bm{x}_0)=\min_{\pi\in\Pi}\ J_\pi(\bm{x}_0),
+\end{equation*}
+where $\Pi$ is the set of all admissible policies. Even when the optimal
+policy $\pi^*$ is associated with a fixed initial state $\bm{x}_0$ in the
+basic problem, DP is typically able to find a policy $\pi^*$ that 
+is simultaneously optimal for all initial states.\\
+The optimal cost depends on $\bm{x}_0$ and is denoted by $V(\bm{x}_0)$, then
+\begin{equation}
+V(\bm{x}_0)=\min_{\pi\in\Pi}\ J_\pi(\bm{x}_0).
+\label{Value_Function}
+\end{equation}
+The value function $V(\cdot)$ assigns to each initial state $\bm{x}_0$ 
+the optimal cost $V(\bm{x}_0)$ in (\ref{Value_Function}).
+
+\subsubsection{Open and Closed Loop} \label{Subsection_OLCO}
+
+In an open-loop system we select all the controls $\bm{u}_0,\dots,\bm{u}_{N-1}$ at 
+once at time $0$, and in a closed-loop we select a policy $\pi=\{\mu_0,\dots,\mu_{N-1}\}$ 
+that applies the control $\mu_k(\bm{x}_k)$ at time $k$ with knowledge of the current 
+state $\bm{x}_k$. In a closed-loop system, it is possible to achieve lower cost, using 
+the extra information as an advantage. The examples that 
+we present are closed-loop problems.
+
+\subsubsection{The Dynamic Programming Algorithm}
+
+\textbf{Principle of Optimality, proposition 1.3.1 in \cite{bertsekas1995dynamic}}: Let $\pi^*=\{\mu_0^*,\dots,\mu^*_{N-1}\}$ be an 
+optimal policy for the \textit{basic problem}, and assume that when using $\pi^*$, a 
+given state $\bm{x}_i$ occurs at time $i$ with positive probability. Consider the 
+subproblem whereby we are at $\bm{x}_i$ at time $i$ and wish to minimize the 
+cost-to-go from time $i$ to time $N$
+\begin{equation*}
+\E\left\{g_N(\bm{x}_N)+\sum_{k=i}^{N-1}g_k(\bm{x}_k,\mu_k(\bm{x}_k),\bm{w}_k)\right\}.
+\end{equation*}
+Then the truncated policy $\{\mu_i^*,\dots,\mu^*_{N-1}\}$ is optimal for this subproblem.\\
+
+The intuitive justification of this principle is as follows: If the truncated 
+policy $\{\mu_i^*,\dots,\mu^*_{N-1}\}$ were not optimal, we would be 
+able to reduce the cost further by switching to an optimal policy for the subproblem 
+once we reach $\bm{x}_i$. The principle of optimality suggests that an optimal policy 
+can be constructed by first constructing an optimal policy for the 
+\textit{tail sub-problem} involving the last stage, then extending the optimal 
+policy to the \textit{tail sub-problem} involving the last two stages, and 
+continuing until an optimal policy for the entire problem is constructed.\\
+
+Motivated by this principle, we can state the next:
+
+\begin{proposition}[\textbf{The DP Algorithm}]
+For every initial state $\bm{x}_0$, the optimal cost $V(\bm{x}_0)$ of the \textit{basic problem} is equal to $J_0(\bm{x}_0)$, given by the last step of the following algorithm, which proceeds backward in time from period $N-1$ to period $0$ as follows
+\begin{equation*}
+J_N(\bm{x}_N)=g_N(\bm{x}_N),
+\end{equation*}
+\begin{equation}
+J_k(\bm{x}_k)=\min_{\bm{u}_k\in U_k(\bm{x}_k)}\E\left\{g_k(\bm{x}_k,\bm{u}_k,\bm{w}_k)+J_{k+1}\left(\bm{f}_k(\bm{x}_k,\bm{u}_k,\bm{w}_k)\right)\right\},\quad k=0,1,\dots,N-1,
+\label{DP_Eq}
+\end{equation}
+where the expectation is taken with respect to the probability distribution 
+of $\bm{w}_k$, which depends on $\bm{x}_k$ and $\bm{u}_k$. Furthermore, if
+ $\bm{u}_k^*=\mu_k^*(\bm{x}_k)$ minimizes the right side of Eq. \ref{DP_Eq} 
+ for each $\bm{x}_k$ and $k$, the policy $\pi^*=\{\mu_0^*,\dots,\mu^*_{N-1}\}$ is optimal.
+\end{proposition}
+We can interpret $J_k(\bm{x}_k)$ as the optimal cost for a $(N-k)$-stage 
+subproblem starting at state $\bm{x}_k$ and time $k$, and ending at time 
+$N$. We consequently call $J_k(\bm{x}_k)$ the cost-to-go as state $\bm{x}_k$ 
+and time $k$, and refer to $J_k$ as the \textit{cost-to-go} function or optimal 
+cost function at time $k$.
+
+\subsubsection{State Augmentation} \label{Subsection_SA}
+
+When necessary conditions for the \textit{basic problem} are violated by a problem, it can 
+often be reformulated into a \textit{basic problem}. We call this state augmentation 
+because it typically involves the enlargement of the state space. The  reformulated problem 
+may have complex state and control spaces.
+Some examples of applications are:
+\begin{enumerate}
+
+\item Time Delays: In many applications the system state $\bm{x}_{k+1}$ depends not 
+only on the present state $\bm{x}_k$ and control $\bm{u}_k$ but also on earlier 
+states and controls. This case is of particular importance in this thesis, where the models
+involve time-delays in continuous time.
+
+\item Correlated Random Variables: We may have correlation in the random variables $\bm{w}_k$ over the time.
+
+\item Forecasts: At time $k$ we may have access to a forecast $\bm{y}_k$ 
+that results in a reassessment of the probability distribution of $\bm{w}_k$ 
+and possible future random variables. In general, some interesting forecasts
+are the state of the weather, the interest rate of money, and the demand for inventory.
+
+\end{enumerate}
+
+The models used in this work only consider the time delay and ignore the 
+correlation between the random variables.
+
+\subsection{Deterministic Continuous-Time Optimal Control}
+
+Following \cite{berkovitz2013optimal}, Chapter 5, we introduce the continuous time analog 
+of the DP algorithm, the Hamilton-Jacobi-Bellman (HJB) equation.
+
+\subsubsection{The Continuous-Time Basic Problem} \label{Subsection_CTOP}
+
+We consider the deterministic and continuous-time dynamical system 
+analogue to (\ref{Disc_Dyn}),
+\begin{equation}
+\begin{cases}
+d\bm{z}(t)=f(\bm{z}(t),\bm{u}(t))dt,\ t_0\leq t\leq t_1\\
+\bm{z}(t_0)=\bm{z}_0,
+\end{cases}
+\label{Continuous_Dynamics}
+\end{equation}
+where
+\begin{enumerate}
+
+\item[$t$] is the time,
+
+\item[$\bm{z}(t)$] in $\R^n$ is the state vector at time $t$,
+
+\item[$\dot{\bm{z}}(t)$] in $\R^n$ is the vector of first order time derivatives 
+of the state at $t$,
+
+\item[$\bm{u}(t)$] in $U\subset\R^n$ is the control vector at time $t$ with 
+$U$ the control constraint set, and
+
+\item[$t_1$] the terminal time.
+
+\end{enumerate}
+We will assume that for any admissible control trajectory $\{\bm{u}(t):t\in[t_0,t_1]\}$, 
+the system of differential equations (\ref{Continuous_Dynamics}) has a unique solution 
+$\{\bm{z}(t):t\in[t_0,t_1]\}$, which is called the corresponding \textit{state trajectory}
+as explained in Section \ref{Section_SDE}. The idea is to find an admissible control 
+trajectory, which, together with its corresponding state trajectory, minimizes a 
+cost function of the form
+\begin{equation}
+J(t_1,\bm{z}_0,\bm{u})=g(\bm{z}(t_1))+\int_{t_0}^{t_1}h(\bm{z}(t),\bm{u}(t))dt,
+\label{CostToGo_Function}
+\end{equation}
+where the functions $h(\cdot)$ and $g(\cdot)$ are continuously differentiable w.r.t. 
+the state $\bm{z}$, and $h(\cdot)$ is continuous w.r.t. the control $\bm{u}$. We call $h(\cdot)$ the \textit{running cost} function and $g(\cdot)$ the \textit{terminal cost function}.
+
+\subsubsection{The Hamilton-Jacobi-Bellman Equation} \label{Subsection_HJB}
+
+We will derive informally a PDE, which is satisfied by the value function, 
+under certain assumptions. This equation is the continuous-time analog of the DP algorithm.\\
+
+Let us divide the time horizon $[t_0,t_1]$ into $N$ pieces using the discretization interval
+\begin{equation*}
+\delta=\frac{t_1-t_0}{N}.
+\end{equation*}
+For simplicity in notation, we assume $t_0=0$. We denote
+\begin{equation*}
+\bm{z}_k=\bm{z}(\delta k),\quad k=0,1,\dots,N,
+\end{equation*}
+\begin{equation*}
+\bm{u}_k=\bm{u}(\delta k),\quad k=0,1,\dots,N,
+\end{equation*}
+and we approximate the continuous-time system by
+\begin{equation*}
+\bm{z}_{k+1}=\bm{z}_k+\delta\bm{f}(\bm{z}_k,\bm{u}_k)
+\end{equation*}
+and the cost function by
+\begin{equation*}
+g(\bm{z}_N) + \delta\sum_{k=0}^{N-1}h(\bm{z}_k,u_k).
+\end{equation*}
+We now apply DP to the discrete-time approximation. Let
+\begin{enumerate}
+
+\item[$V(t,\bm{z})$] be the optimal cost-to-go at time $t$ and $\bm{z}$ for the continuous-time problem,
+
+\item[$\tilde{V}(t,\bm{z})$] be the optimal cost-to-go at time $t$ and 
+$\bm{z}$ for the discrete-time approximation.
+
+\end{enumerate}
+The DP equations are
+\begin{equation*}
+\tilde{V}(N\delta,\bm{z}) = g(\bm{z}),
+\end{equation*}
+\begin{equation*}
+\tilde{V}(k\delta,\bm{z}) = \min_{\bm{u}\in U(\bm{z})}\left[\delta h(\bm{z},\bm{u})+\tilde{V}\left(\delta(k+1),\bm{z}+\delta \bm{f}(\bm{z},\bm{u})\right)\right],\quad k=0,1,\dots,N-1.
+\end{equation*}
+Assuming that $\tilde{V}(\cdot)$ has the required differentiability properties, 
+we expand it into a first order Taylor series around $(k\delta,\bm{z})$, obtaining
+\begin{equation}
+\tilde{V}(\delta(k+1),\bm{z}+\delta\bm{f}(\bm{z},\bm{u}))=\tilde{V}(k\delta,\bm{z})+\delta\frac{\partial\tilde{V}}{\partial t}(k\delta,\bm{z})+\delta D_{\bm{z}}\tilde{V}(k\delta,\bm{z})^T\bm{f}(\bm{z},\bm{u})+o(\delta).
+\end{equation}
+Substituting in the DP equation, we obtain
+\begin{equation}
+\tilde{V}(k\delta,\bm{z})=\min_{\bm{u}\in U(\bm{z})}\ \left[\delta h(\bm{z},\bm{u})+\tilde{V}(k\delta,\bm{z})+\delta\frac{\partial\tilde{V}}{\partial t}(k\delta,\bm{z})\\
++\delta D_{\bm{z}}\tilde{V}(k\delta,\bm{z})^T\bm{f}(\bm{z},\bm{u})+o(\delta)\right].
+\end{equation}
+Canceling $\tilde{V}(k\delta,\bm{z})$ from both sides, dividing by $\delta$, and 
+taking the limit as $\delta\to0$, while assuming that in the limit the discrete-time
+ cost-to-go function tends to  its continuous-time counterpart,
+\begin{equation*}
+\lim_{k\to\infty,\delta\to0,k\delta=t}\tilde{V}(k\delta,\bm{z})=V(t,\bm{z}),\quad\text{for all}\ t\in[t_0,t_1],\bm{z}\in\R^n,
+\end{equation*}
+we obtain the \textit{following first-order terminal value problem Hamilton-Jacobi} (HJ) for the value function $V(t,\bm{z})$:
+\begin{equation}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\bm{z},D_{\bm{z}}V)=0\\
+V(t_1,\bm{z})=g(\bm{z})
+\end{cases}
+\label{The_HJB_1}
+\end{equation}
+where
+\begin{equation}
+H(t,\bm{z},D_{\bm{z}}V)=\min_{\bm{u}\in U(t,\bm{z})}\ \left[\sum_{i=1}^nf_i(\bm{z},\bm{u})\frac{\partial V}{\partial z_i}+h(\bm{z},\bm{u})\right].
+\label{Hamiltonian_0}
+\end{equation}
+This is the \textit{Hamilton-Jacobi-Bellman} (HJB) \textit{equation}. It is a 
+partial differential equation, which should be satisfied for all time-state 
+pairs $(t,\bm{z})\in[t_0,t_1]\times\R^n$\ by the value function $V(t,\bm{z})$, 
+based on the preceding informal derivation, which assumed among other things, 
+the differentiability of $V(t,\bm{z})$. In fact we do not know a priori that 
+$V(t,\bm{z})$ is differentiable, so we do not know if $V(t,\bm{z})$ solves 
+this equation. However, it turns out that if we can solve the HJB equation 
+analytically or computationally, then we can obtain an optimal control 
+policy by minimizing (\ref{Hamiltonian_0}), which is the aim of this thesis.
+
+%\begin{proposition}[Sufficiency Theorem]
+%Suppose $V(t,\bm{z})$ is a solution to the HJB equation, i.e., $V(\cdot)$ is continuously differentiable on $t$ and $\bm{z}$, and is such that
+%\begin{equation}
+%\frac{\partial V}{\partial t}+H(t,\bm{z},DV)=0\\\label{Sol_HJB}
+%\end{equation}
+%\begin{equation}
+%V(t_1,\bm{z})=h(\bm{z}).
+%\label{IC_HJB}
+%\end{equation}
+%Suppose also that $\mu^*(t,\bm{z})$ attains the minimum in Eq. (\ref{Sol_HJB}) for all $t$ and $\bm{z}$. Let $\{\bm{z}^*(t):t\in[t_0,t_1]\}$ be the state trajectory obtained from the given initial condition $\bm{z}(0)$ when the control trajectory $\bm{u}^*(t)=\mu^*(t,\bm{z}^*(t))$, $t\in[t_0,t_1]$ is used (i.e., $\bm{x}^*(0)=\bm{z}(0)$ and for all $t\in[t_0,t_1]$, $\dot{\bm{x}}^*(t)=f\left(\bm{z}^*(t),\mu^*(t,\bm{z}^*(t))\right)$; we assume that this differential equation has a unique solutions starting at any pair $(t,\bm{z})$ and that the control trajectory $\{\mu^*(t,\bm{z}^*(t)):t\in[t_0,t_1]\}$ is piece-wise continuous as a function of $t$). Then $V(\cdot)$ is equal to the optimal cost-to-go function, i.e.,
+%\begin{equation*}
+%V(t,\bm{z})=J^*(t,\bm{z}),\quad \text{for all}\quad t,\bm{z}.
+%\end{equation*}
+%Furthermore, the control trajectory $\{\bm{u}^*(t):t\in[t_0,t_1]\}$ is optimal.
+%\end{proposition}
+%\subsubsection{The Pontryagin Minimum Principle}
+%
+%For more details see \cite{karlsson2015error}.
+%Given initial state $\bm{z}(0)$, the control trajectory $\{\bm{u}^*(t):t\in[t_0,t_1]\}$ is optimal with corresponding state trajectory $\{\bm{z}^*(t):t\in[t_0,t_1]\}$, then for all $t\in[t_0,t_1]$,
+%\begin{equation}
+%\bm{u}^*(t)=\arg\min_{\bm{u}\in U}\left[g(\bm{z}^*(t),u)+\nabla_{\bm{z}}J^*(t,\bm{z}^*(t))'f(\bm{z}^*(t),\bm{u})\right].
+%\label{MP}
+%\end{equation}
+%Note that to obtain the optimal control trajectory via this equation, we do not need to know $\nabla_{\bm{z}}J^*$ at all values of $\bm{z}$ and $t$; it is sufficient to know $\nabla_xJ^*$ at only one value of $x$ for each $t$, i.e., to know only $\nabla_{\bm{z}}J^*(t,\bm{z}^*(t))$.\\
+%The Minimum Principle is the preceding Eq. (\ref{MP}). It turns out that we can often calculate $\nabla_{\bm{z}}J^*(t,\bm{z}^*(t))$ along the optimal state trajectory far more easily than we can solve the HJB equation. However, in this Thesis, we are interested in finding the optimal control policy for all the state space.
+
+\subsection{Continuous-Time Stochastic Optimal Control} \label{Subsecion_CTSOC}
+
+In this Subsection, we follow the notes of AMCS 336 \cite{carlsson2010stochastic}. Given 
+a system of SDE as (\ref{System_3}) where the matrix $\bm{A}(\cdot)$ is diagonal (this implies no correlation between the equations in the system), the 
+cost-to-go function becomes (recall the continuous-time deterministic cost-to-go 
+function (\ref{CostToGo_Function}))
+\begin{equation}
+J(t_1,\bm{x},\bm{u})=\E\left\{g(\bm{x}(t_1))+\int_{t}^{t_1}h(\bm{x}(s),\bm{u}(s))ds\right\},
+\label{CostToGo_Function_2}
+\end{equation}
+and the value function
+\begin{equation}
+V(t,\bm{x})=\min_{\bm{u}\in \mathcal{U}(t,\bm{x})}\ J(t_1,\bm{x},\bm{u}),
+\label{The_Value_Function}
+\end{equation}
+then (Theorem 57 in \cite{carlsson2010stochastic}) the value function $V(t,\bm{x})$ satisfies 
+the second-order terminate value problem Hamilton-Jacobi (HJ) equation
+\begin{equation}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\bm{x},D_{\bm{x}}V,D_{\bm{x}}^2V)=0,\\
+V(t_1,\bm{x})=g(\bm{x}),
+\end{cases}
+\label{The_HJB_Equation}
+\end{equation}
+with the Hamiltonian function
+\begin{multline}
+H(t,\bm{x},D_{\bm{x}}V,D_{\bm{x}}^2V)=\\
+\min_{\bm{u}\in U(t,\bm{x})}\ \left[\sum_{i=1}^n\left(f_i(\bm{x},\bm{u})\frac{\partial V}{\partial x_i}(t,\bm{x})+\frac{A_{ii}^2(\bm{x},\bm{u})}{2}\frac{\partial^2V}{\partial x_i^2}(t,\bm{x})\right)+h(\bm{x},\bm{u})\right].
+\end{multline}
+Notice that the main change concerning the continuous-time deterministic case (\ref{The_HJB_1}), is the addition of the second derivatives in the Hamiltonian. This diffusive component is the consequence of having stochastic differentials in the dynamics.\\
+We will use this formulation to solve the example in subsection \ref{Third_Subproblem}.\\
+\\
+
+\textbf{Section summary and discussion}: We introduced the DP principle and algorithm for discrete-time stochastic case in a way to give intuition. After, we presented the continuous deterministic and stochastic cases, which are the main ones in this thesis.\\
+From a numerical perspective, we will concentrate on approximating the value function and corresponding optimal policy. To find the value function, we need to solve a discretized version of the (first or second order) terminal value problem HJB. \\
+Observe that the Hamiltonian is not given explicitly and we need to compute it numerically.  This embarrassingly parallelizable computation entails the solution to a small continuous optimization problem at each point of the (discretized) state space.\\
+Finally, by constructing an approximate value function solution to this problem for all the state space, we obtain our optimal policy as a function of the gradient of the value function.
+
+\section{Relevant Results in Optimization}
+
+This section introduces some basic (and sometimes more advanced) optimization principles. We discuss and motivate the use of a Lagrangian Relaxation to make our system Markovian, and we show some properties of the dual function.\\
+We present the algorithm used to find the Hamiltonian of the terminal value problem (\ref{The_HJB_Equation}), and we show the pseudocode to solve the dual problem once we apply the relaxation.
+
+\subsection{Lagrangian Relaxation}
+
+In this subsection, we follow the introduction presented in \cite{berkovitz2013optimal}. 
+In the dual function properties, we follow \cite{bazaraa2013nonlinear}.\\
+
+We consider an optimization problem of the form
+\begin{equation}
+\min f(\bm{x})\quad\text{s.t.}\quad \bm{x}\in X\subseteq\R^n,\quad h_i(\bm{x})=0,\quad i=1,\dots,m.
+\label{PP}
+\end{equation}
+We assume that $f:\R^n\to\R$ and $h_i:\R^n\to\R$, $i=1,\dots,m$, are smooth 
+functions. The basic theorem states 
+that, under appropriate assumptions, for a given local minimum $\bm{x}^*$, 
+there exist scalars $\lambda_1^*,\dots,\lambda_m^*$, called Lagrangian 
+multipliers, such that
+\begin{equation*}
+D_{\bm{x}}f(\bm{x}^*)+\sum_{i=1}^m\lambda_i^*D_{\bm{x}}h_i(\bm{x}^*)=0.
+\end{equation*}
+For this \textit{primal problem} in Eq. (\ref{PP}) we introduce the 
+\textit{Lagrangian function}
+\begin{equation}
+\mathcal{L}(\bm{x},\bm{\lambda})=f(\bm{x})+\bm{\lambda}^T\bm{h}(\bm{x}),\quad(\bm{x},\bm{\lambda})\in X\times\R^m,
+\label{LF}
+\end{equation}
+where $\bm{\lambda}=\left(\lambda_1,\dots,\lambda_m\right)^T$ and $\bm{h}(\bm{x})=\left(h_1(\bm{x}),\dots,h_m(\bm{x})\right)^T$. 
+The \textit{dual function} associated to the problem (\ref{PP}) and the 
+function (\ref{LF}) is
+\begin{equation}
+\theta(\bm{\lambda})=\min_{\bm{x}\in X}\ \mathcal{L}(\bm{x},\bm{\lambda})
+\label{Dual_Function}
+\end{equation}
+and the \textit{dual problem} is
+\begin{equation}
+\max_{\bm{\lambda}\in\R^m}\ \theta(\bm{\lambda}).
+\label{DP}
+\end{equation}
+There are important reasons to study the dual problem (\ref{DP}):
+\begin{enumerate}
+
+\item It may be easier than the primal problem.
+
+\item It is always convex in $\bm{\lambda}$ (potentially non-smooth), which encourages the previous point.\label{Point_2}
+
+\item The \textit{weak duality} relation
+\begin{equation}
+\theta(\bm{\lambda})\leq f(\bm{x})
+\end{equation}
+holds for all feasible $\bm{x}$ and all $\bm{\lambda}\in\R^m$. This 
+guarantees that $\theta(\bm{\lambda})$ bounds $f(\bm{x})$ from below. 
+By solving the dual problem, we can find the best possible such bound.
+
+\end{enumerate}
+
+In solving of the dual function, it 
+is essential to know all the properties that can be exploited to solve this 
+problem. This motivates the next subsection.
+
+\subsubsection{Properties of the Dual Function} \label{Properties_DF}
+
+Here (with more formalism), we will see three fundamental theorems which will be helpful in the implementation of an algorithm to solve the dual problem. 
+We start with the theorem related to the point (\ref{Point_2}) in the previous 
+enumeration:
+\begin{theorem}{(Theorem 6.3.1 in \cite{bazaraa2013nonlinear})}
+Let $X$ be a nonempty compact set in $\R^n$, and let $f:\R^n\to\R$ and $\bm{h}:\R^n\to\R^m$ 
+be continuous. Then $\theta$, defined by
+\begin{equation}
+\theta(\bm{\lambda})=\max_{\bm{x}\in X}\ \left[f(\bm{x})+\bm{\lambda}^T\bm{h}(\bm{x})\right]
+\label{GenDual}
+\end{equation}
+is concave over $\R^m$.
+\end{theorem}
+This generalization of the dual function is still concave over $\R^m$. The 
+concavity property makes any maximum of this function a global maximum. 
+Then, the maximization of $\theta$ is an attractive proposition. However, it is not always possible to have an explicit expression for the dual 
+function.\\
+The next two theorems are related to the gradient and subgradient 
+defined below of the dual function and are essential for
+an algorithm that converges to the optimal value of the dual function. 
+
+\begin{definition} \label{Def_Subgradient}
+Let $S\subset\R^m$ be a convex set and $\theta:S\to\R$ be a convex function. 
+Then $\bm{\xi}$ is called a \textit{subgradient} of $\theta$ at $\overline{\bm{x}}\in S$ if
+\begin{equation}
+\theta(\bm{x})\geq\theta(\overline{\bm{x}})+\bm{\xi}^T(\bm{x}-\overline{\bm{x}})\quad\text{for all}\quad\bm{x}\in S.
+\end{equation}
+Similarly, let $\theta:S\to\R$ be a concave function. Then $\bm{\xi}$ is called
+ a \textit{subgradient} of $\theta$ at $\overline{\bm{x}}\in S$ if
+\begin{equation}
+\theta(\bm{x})\leq\theta(\overline{\bm{x}})+\bm{\xi}^T(\bm{x}-\overline{\bm{x}})\quad\text{for all}\quad\bm{x}\in S.
+\end{equation}
+\end{definition}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.4\textwidth]{Figures/Subgradient.eps}
+\caption{Geometric interpretation of subgradient for a convex function.}
+\label{Subgradient}
+\end{figure}
+
+The subgradient is a generalization of the gradient (see Fig. (\ref{Subgradient})), 
+it exists even in points where the function $\theta(\cdot)$ is non-differentiable. 
+To motivate this analogy, we will introduce a definition and present the remaining 
+two theorems.
+
+\begin{definition}
+A set $X\subset\R^n$ is a \textit{singleton} if it contains only one element 
+(e.g., $X=\{\bm{x}\}$).
+\end{definition}
+Usually, we do not have an explicit expression for the dual function or 
+its gradient (or subgradient). However, it is still possible to compute given 
+a point in the domain. We will define:
+\begin{definition}
+Given some $\bm{\lambda}$ and $\theta(\bm{\lambda})$, we define the set of minimizers of the dual function
+\begin{equation}
+X(\bm{\lambda})=\{\bm{y}:\bm{y}\ \text{minimizes}\ f(\bm{x})+\bm{\lambda}^T\bm{h}(\bm{x})\ \text{over}\ \bm{x}\in X\}.
+\end{equation}
+\end{definition}
+
+The differentiability of $\theta(\cdot)$ at any given point $\overline{\bm{\lambda}}$ 
+depends on the elements of $X(\overline{\bm{\lambda}})$.
+
+\begin{theorem}{(Theorem 6.3.3 in \cite{bazaraa2013nonlinear})} \label{Theorem_Gradient}
+Let $X$ be a nonempty compact set in $\R^n$, and let $f:\R^n\to\R$ and 
+$\bm{h}:\R^n\to\R^{m}$ be continuous. Let $\overline{\bm{\lambda}}\in\R^{m}$ and 
+suppose that $X(\overline{\bm{\lambda}})$ is the singleton $\{\overline{\bm{x}}\}$. 
+Then $\theta(\cdot)$ (defined as in (\ref{GenDual})) is differentiable at 
+$\overline{\bm{\lambda}}$ with gradient $D_{\bm{x}}\theta(\overline{\bm{\lambda}})=\bm{h}(\overline{\bm{x}})$.
+\end{theorem}
+
+In a point of non-differentiability, we can compute the subgradient using:
+
+\begin{theorem}{(Theorem 6.3.4 in \cite{bazaraa2013nonlinear})} \label{Theorem_SubGradient}
+Let $X$ be a nonempty compact set in $\R^n$, and let $f:\R^n\to\R$ and 
+$h:\R^n\to\R^{m}$ be continuous so that for any 
+$\overline{\bm{\lambda}}\in\R^{m}$, $X(\overline{\bm{\lambda}})$ is not empty. 
+If $\overline{\bm{x}}\in X(\overline{\bm{\lambda}})$, then $\bm{h}(\overline{\bm{x}})$ 
+is a subgradient of $\theta(\cdot)$ at $\overline{\bm{\lambda}}$.
+\end{theorem}
+
+Theorem (\ref{Theorem_SubGradient}) gives us an expression to compute the subgradient of the dual function once we found a minimizer. Also, this subgradient is equal to the gradient when the dual function is differentiable (Theorem (\ref{Theorem_Gradient})).
+
+\subsubsection{Continuous-Time Lagrangian Relaxation} \label{CTLR}
+
+As we explained in Section \ref{Section_DP}, one fundamental condition to apply 
+the dynamic programming algorithm is Markovianity in the state transitions. There 
+are some ways to transform a non-Markovian problem into the basic problem as we 
+also explained in Subsection \ref{Subsection_SA}. However, sometimes that options 
+are not suitable for many reasons (e.g., Curse of Dimensionality: The dimension 
+of the state-space can increase in a way that, it is not possible to solve 
+the problem numerically in a reasonable time).\\
+
+We propose to use a Lagrangian Relaxation over continuous-time 
+constraint, which link states over different times. A detailed explanation will 
+be presented in subsection \ref{Subsection_LinkDams}. First we consider 
+a motivating example:
+
+\begin{example} \label{ex:quadr_prob}
+
+Given an electric grid system with two dams, a wind power farm, and a fossil fuel 
+station (FFS), governed by the dynamics
+
+\begin{equation} \label{eq:dyn_coupled_dams}
+\begin{aligned}
+&dv^{(1)} = -\phi^{(1)}(t) dt,\ \text{for the first dam's volume} \\
+&dv^{(2)}=(\phi^{(1)}(t-\tau)-\phi^{(2)}(t)) dt,\ \text{for the downstream dam's volume} \\
+&dw =f(w(t)) dt + \sigma(w(t)) dB(t),\ \text{for the wind power}
+\end{aligned}
+\end{equation}
+and the demand constraint
+\[
+D(t) -w(t) = g_1\phi^{(1)}(t) + g_2\phi^{(2)}(t) + \phi_F(t),
+\]
+where $\phi_F(t)$ is the fuel generated power and $\phi^{(1)}$ and $\phi^{(2)}$ are the flow by the turbines of the first and second dam, respectively. The constants $g_1$ and $g_1$ are efficiency factors that are the relation between the power and the flow of the dams. We have box constraints of positivity and maximum values on the controls.
+The running cost is, for $c_i>0$,
+\[
+h = c_1 \phi^{(1)} + c_2 \phi^{(2)} + c_3 \phi_F,
+\]
+which $c_i$ the cost factors associated to the controls, Since we have a non-Markovian effect, we need to first do a Lagrange Relaxation
+ of the problem writing
+\begin{equation}
+\begin{aligned}
+&dv^{(1)} = -\phi^{(1)}(t) dt,\ \text{for the first dam's volume} \\
+&dv^{(2)} = (\mu(t)-\phi^{(2)}(t)) dt,\ \text{for  the downstream dam's volume} \\
+&dw =f(w(t)) dt + \sigma(w(t)) dB(t),\ \text{for the wind power}\\
+&\mu(t) =\phi^{(1)}(t-\tau),\ \text{the constraint to relax}.
+\end{aligned}
+\end{equation}
+We now introduce a Lagrange Multiplier process, $\lambda_t$, which adds 
+to the value function the term
+\[
+\E\left\{\int_\tau^{t_1} \lambda(t-\tau) (\mu(t) -\phi^{(1)}(t-\tau)) dt\right\}.
+\]
+In other words,  given $\lambda$, we now need to solve
+\[
+\min_{\bm{u} \in \mathcal{U}(t,\bm{x})}\left[ \E\left\{\int_{t_0}^{t_1} h(\bm{x}(s),\bm{u}(s) ) ds + g(\bm{x}(T))\right\} + \E\left\{\int_\tau^{t_1} \lambda(t-\tau) \left(\mu(t) -\phi^{(1)}(t-\tau)\right) dt\right\}\right].
+\]
+Now, given $\lambda$, the last problem is no longer coupled in time and the DP 
+principle applies.
+\end{example}
+
+In the previous example (\ref{eq:dyn_coupled_dams}) we have an stochastic differential (recall subsection \ref{Subsection_SDE}) in the dynamics of the wind power, which makes $\lambda_t$ to be a stochastic process which at time $t\in[\tau,t_1]$ depends of all the previous wind power $w(s)$ for $s\in[t_0,t]$.\\
+In the next example, we will consider a deterministic system where $\lambda(\cdot)$ is a function only depending on time.\\
+In this thesis, we will show more examples where we have or relaxation or a stochastic differential in the dynamics, but to have both simultaneously is considered a future research work.
+
+\begin{example} \label{eq2}
+Given the non-Markovian version of the minimization problem described in 
+subsection \ref{Subsection_CTOP}
+\begin{equation}
+\min_{\bm{u}\in\mathcal{U}(t,\bm{x})}\ J(t_1,\bm{x}_0,\bm{u})
+\label{NonMark_Problem}
+\end{equation}
+where the dynamics (\ref{Continuous_Dynamics}) and control-space $U$ 
+depend not only of the state $\bm{x}$ and time $t$, but also of 
+a past control $u_i(t-\tau)$ for a fixed $\tau\in[t_0,t_1]$. We can define the virtual 
+control
+\begin{equation}
+\psi(t)=u_i(t-\tau)
+\label{TC_Constrain}
+\end{equation}
+and then the dynamics and control-space can be written as
+\begin{equation}
+\begin{cases}
+\dot{\bm{x}}(t)=\bm{f}(t,\bm{x}(t),\bm{u}(t),\psi(t)),\ t_0\leq t\leq t_1\\
+\bm{x}(t_0)=\bm{x}_0,
+\end{cases}
+\end{equation}
+and
+\begin{equation}
+U=U(t,\bm{x},\psi(t)).
+\end{equation}
+Recall the definition of the cost-to-go function presented in  (\ref{NonMark_Problem}) 
+and defined as (\ref{CostToGo_Function}). We will introduce the function 
+$\lambda:[\tau,t_1]\to\R$ as the continuous-time Lagrangian Relaxation associated 
+to the relaxation of the continuous-time constraint (\ref{TC_Constrain}). In this 
+way, we break the constraint and redefine $\psi(t)$ as a new and independent control.\\
+Then we can define the extended control $\overline{\bm{u}}=(\bm{u}^T,\psi)^T$ which 
+takes values at time $t$ in the extended control-space $\overline{U}(t,\bm{x})$. 
+The dynamics do not suffer any change but we can define $\overline{\bm{f}}(t,\bm{x}(t),\overline{\bm{u}}(t))=\bm{f}(t,\bm{x}(t),\bm{u}(t),\psi(t))$ for $t\in[\tau,t_1]$. 
+Under this set-up, the Markovian dual problem associated with the non-Markovian 
+primal problem is given by
+\begin{equation}
+\min_{\lambda\in\mathcal{L}^2}\ -\theta(\lambda)
+\label{Eg2DP}
+\end{equation}
+where the dual function is
+\begin{equation}
+\theta(\lambda)=\min_{\overline{\bm{u}}\in\overline{\mathcal{U}}(t,\bm{x})}\ \left[J(t_1,\bm{x}_0,\overline{\bm{u}})+\int_{\tau}^{t_1}\lambda(t)\left(\psi(t)-u_i(t-\tau)\right)dt\right].
+\label{Eg2DF}
+\end{equation}
+Notice that the dual function is equivalent to a cost-to-go function. Then, we can formulate a first-order terminal value problem HJ equation:
+\begin{equation}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\bm{x},\lambda,D_{\bm{x}}V)=0\\
+V(t_1,\bm{x})=0,
+\end{cases}
+\label{Eg2HJB}
+\end{equation}
+associated to this evaluation of the dual function
+where
+\begin{multline}
+H(t,\bm{x},\lambda,D_{\bm{x}}V)=\\
+\min_{\bm{\overline{u}}\in \overline{U}(t,\bm{x})}\ \left[\sum_{i=1}^nf_i(\bm{x},\bm{u})\frac{\partial V}{\partial x_i}+h(\bm{x},\bm{u})+\lambda(t)\psi(t)-\lambda(t+\tau)u_i(t)\right].
+\end{multline}
+Hence, given $\lambda\in\mathcal{L}^2$, we use continuous-time DP in find the evaluation of the dual function.
+\end{example}
+
+We will apply this relaxation in the examples presented in subsections \ref{Fourth_Subproblem}, \ref{Sixth_Subproblem} 
+and \ref{Seventh_Subproblem}.\\
+\\
+
+\textbf{Subsection summary and discussion}: We introduced a continuous time Lagrangian relaxation to approximate a non-Markovian system featuring a time delay in its dynamics.  This approach yields a convex, non-differentiable optimization problem to define the optimal  (infinite dimensional) dual variables, cf. (\ref{Eg2DP}).\\
+The dual problem is solved iteratively, see section \ref{NM_DP}. At each iteration, to evaluate the dual function and its subgradient, we solve an HJB nonlinear PDE.
+%We formulated a tool to impose Markovianity in a system with a time delay. However, the consequence is the need to afford a new minimization problem (\ref{Eg2DP}) over a space of infinite dimensionality (over $\mathcal{L}^2$). To solve the dual problem, it is necessary the use of an algorithm which utilizes the mentioned properties of the dual function. \\
+%Notice that if we want to solve the dual problem (\ref{Eg2DP}) doing iterations $\lambda_k(\cdot)\in\mathcal{L}^2$, to evaluate the dual function, it is necessary to solve its associated continuous-time DP problem. 
+
+\subsection{Sequential Quadratic Programming}
+
+In this subsection we will follow \cite{nocedal2006numerical} chapter 18. During this thesis, we have to solve two main optimization problems. The one needed to compute the Hamiltonian, and the minimization of the dual function. We will use Sequential Quadratic Programming (SQP) to compute the Hamiltonian at each point in space and time.
+
+\subsubsection{Local SQP Method}
+
+We consider the equality-constrained problem of the form
+\begin{equation}
+\min_{\bm{x}}\ f(\bm{x})\quad\text{s.t.}\quad \bm{c}(\bm{x})=\bm{0}
+\label{SQP}
+\end{equation}
+where $f:\R^n\to\R$ and $c_i:\R^n\to\R$ with $i\in\{1,\dots,m\}$ are (at least) $C^2$ functions. The idea is to solve (\ref{SQP}) iterating where, at each iteration $\bm{x}_k$, we approximate (\ref{SQP}) by a quadratic programming subproblem. Using the minimizer of this subproblem, we define the next iterate $\bm{x}_{k+1}$. Now we are going to design the quadratic subproblem so that it yields a good step for the nonlinear optimization problem (\ref{SQP}).\\
+From the first-order KKT conditions (stationary and primal feasibility), the equality-constrained problem (\ref{SQP}) can be written the system of $n+m$ equations with $n+m$ unknowns $\bm{x}$ and $\bm{\lambda}$
+\begin{equation}
+\bm{F}(\bm{x},\bm{\lambda})=\begin{bmatrix}
+D_{\bm{x}} f(\bm{x})-\bm{A}(\bm{x})^T\bm{\lambda}\\
+\bm{c}(\bm{x})
+\end{bmatrix}=0,
+\label{LSQP}
+\end{equation}
+where $\bm{A}(\bm{x})^T=\left[D_{\bm{x}} c_1(\bm{x}),\dots,D_{\bm{x}} c_m(\bm{x})\right]$ is the Jacobian matrix of the constraints.\\
+Now we would like to solve (\ref{LSQP}) using Newton's method. The Jacobian of $\bm{F}(\bm{x},\bm{\lambda})$ is
+\begin{equation}
+\bm{J}_{\bm{F}}(\bm{x},\bm{\lambda})=\begin{bmatrix}
+D_{\bm{x}}^2\mathcal{L}(\bm{x},\bm{\lambda}) & -\bm{A}(\bm{x})^T \\
+\bm{A}(\bm{x}) & \bm{0}
+\end{bmatrix}.
+\end{equation}
+The Newton step from the iterate $(\bm{x}_k,\bm{\lambda}_k)$ is given by
+\begin{equation}
+\begin{bmatrix}
+\bm{x}_{k+1}\\
+\bm{\lambda}_{k+1}
+\end{bmatrix}=\begin{bmatrix}
+\bm{x}_{k}\\
+\bm{\lambda}_{k}
+\end{bmatrix}+\begin{bmatrix}
+\bm{p}_{k}\\
+\bm{p}_{\lambda}
+\end{bmatrix},
+\end{equation}
+where $\bm{p}_k$ and $\bm{p}_{\lambda}$ solve the Newton-KKT system
+\begin{equation}
+\bm{J}_{\bm{F}}(\bm{x}_k,\bm{\lambda}_k)\begin{bmatrix}
+\bm{p}_{k}\\
+\bm{p}_{\lambda}
+\end{bmatrix}=-\bm{F}(\bm{x}_k,\bm{\lambda}_k).
+\label{NM}
+\end{equation}
+The Newton iteration is well define when the KKT matrix in (\ref{NM}) is non-singular. We have to satisfy the next two sufficient conditions for $(\bm{x},\bm{\lambda})=(\bm{x}_k,\bm{\lambda}_k)$:
+\begin{enumerate}
+
+\item[$\bullet$] The constraint Jacobian $\bm{A}(\bm{x})$ has full row rank, or equivalently, linear independence constraint qualification. Recall example (\ref{eq:dyn_coupled_dams}) where we have box constraint that, trivially satisfies this condition.
+
+\item[$\bullet$] The matrix $D^2_{\bm{x}}\mathcal{L}(\bm{x},\bm{\lambda})$ is positive define on the tangent space of the constraints, that is, $\bm{d}^T D^2_{\bm{x}}\mathcal{L}(\bm{x},\bm{\lambda})\bm{d}>0$ for all $\bm{d}\neq\bm{0}$ such that $\bm{A}\bm{d}=\bm{0}$.\\
+This condition holds if $(\bm{x},\bm{\lambda})$ is close enough to the optimum $(\bm{x}^*,\bm{\lambda}^*)$. To ensure this, we choose a initial points which is very close using warm start.
+
+\end{enumerate}
+
+\subsubsection{SQP Framework}
+
+At the iteration $(\bm{x}_k,\bm{\lambda}_k)$ we propose the model
+\begin{equation}
+\min_{\bm{p}}\ f_k+D_{\bm{x}} f_k^T\bm{p}+\frac{1}{2}\bm{p}^T D_{\bm{x}}^2\mathcal{L}_k\bm{p}\quad\text{s.t.}\quad\bm{A}_k\bm{p}+\bm{c}_k=\bm{0},
+\label{SQPAP}
+\end{equation}
+if the two previous assumptions hold, then (\ref{SQPAP}) has a unique solution $(\bm{p}_k,\bm{l}_k)$ that satisfies
+\begin{equation}
+D^2_{\bm{x}}\mathcal{L}_k\bm{p}_k+D_{\bm{x}}f_k-\bm{A}^T_k\bm{l}_k=\bm{0},\quad\bm{A}_k\bm{p}_k+\bm{c}_k=\bm{0}.
+\end{equation}
+We can identify the vectors $\bm{p}_k$ and $\bm{l}_k$ with the solution of the Newton equation (\ref{NM}). If we subtract $\bm{A}^T_k\bm{\lambda}_k$ from both sides of the first equation in $\ref{NM}$, we obtain
+\begin{equation}
+\begin{bmatrix}
+D^2_{\bm{x}}\mathcal{L}_k & -\bm{A}^T_k\\
+\bm{A}_k & \bm{0}
+\end{bmatrix}\begin{bmatrix}
+\bm{p}_{k}\\
+\bm{\lambda}_{k+1}
+\end{bmatrix}=\begin{bmatrix}
+-D_{\bm{x}} f_k\\
+-\bm{c}_k
+\end{bmatrix}.
+\end{equation}
+Finally, by non-singularity of the coefficient matrix, we have that $\bm{\lambda}_{k+1}=\bm{l}_k$ and that $\bm{p}_k$ solves (\ref{NM}) and (\ref{SQPAP}).\\
+\\
+
+\textbf{Subsection summary and discussion}: We showed that solving a sequence of quadratic approximations, under some assumptions, we can converge to the minimizer of the objective function.\\
+During this thesis, it is necessary to solve a minimization problem to compute the value of a Hamiltonian. Given our model, this minimization is over a linear objective with quadratic constraints, which is under the conditions of SQP.
+
+\subsection{Solving the Dual Problem}
+
+Recall example (\ref{eq2}) where we start with a minimization problem that, due to non-Markovianity in the dynamics, it is not possible to apply continuous-time DP. However, using a Lagrangian relaxation on the delay constraint, we formulate the dual problem (\ref{Eg2DP}).\\
+Given $\lambda_k(\cdot)\in\mathcal{L}^2$, we can evaluate the dual function (\ref{Eg2DF}) solving numerically the associated HJB equation (\ref{Eg2HJB}). Also, once we find optimal controls in all the space and, by theorem (\ref{Theorem_SubGradient}), we can compute a subgradient $\bm{\xi}_{\lambda}\theta(\lambda_k)$ for the dual function at $\lambda_k(\cdot)$. This methodology suggest that, if we have some update rule $\lambda_{k+1}=\mathfrak{P}(\theta(\lambda_k),\bm{\xi}_{\lambda}\theta(\lambda_k))$ that converges to the optimal $\lambda^*$, then we can solve numerically the dual problem. The pseudocode associated with the previous description is:
+\begin{center}
+\begin{algorithm}[H]
+\SetAlgoLined
+ initialization: $\lambda\leftarrow\lambda_0$\;
+ \While{Not converge}{
+  Evaluate $\theta(\lambda)$\tcp*{Solving the HJB equation}
+  Compute $\bm{\xi}_{\lambda}\theta(\lambda)$\tcp*{Using Theorem (\ref{Theorem_SubGradient})}
+  Update $\lambda\leftarrow\mathfrak{P}(\theta(\lambda),\bm{\xi}_{\lambda}\theta(\lambda))$\tcp*{Updating rule}
+ }
+ \caption{Non-smooth optimization for the dual problem.}
+\end{algorithm}
+\end{center}
+
+\section{Relevant Results for HJB Equations}
+
+Our reference book in this section is a fantastic self-contained collection with most of the results we need, also with their corresponding references. For this reason, it is not necessary to cite other references more than \cite{fleming2006controlled} during this section.\\
+A particular fascinating analogy is given between the dynamic programming principle and a semigroup structure for the cost-to-go function. This analogy offers advantages at the time to prove relations between the value function and the HJB equation. However, in this section, we will show only the results that we need to validate the work in this thesis.\\
+
+Recall the HJB equation (\ref{The_HJB_1}) but using a more general notation
+\begin{equation}
+\frac{\partial}{\partial t}V(t,\bm{x})+H(t,\bm{x},D_{\bm{x}}V)=0,
+\label{TheHJB}
+\end{equation}
+with $V(t_1,\bm{x})=g(\bm{x})$, where for $(t,\bm{x},\bm{p})\in\overline{Q}_0\times\R^n$
+\begin{equation}
+H(t,\bm{x},\bm{p})=\min_{\bm{u}\in U(t,\bm{x})}\ \{\bm{p}^T\bm{f}(t,\bm{x},\bm{u})+g(t,\bm{x},\bm{u})\}.
+\end{equation}
+Here $\overline{Q}_0=[t_0,t_1]\times \R^n$. We recall the value function
+\begin{equation}
+V(t,\bm{x})=\min_{\bm{u}(\cdot)\in\mathcal{U}(t,\bm{x})}\ J(t_1,\bm{x},\bm{u})
+\label{VF}
+\end{equation}
+for the cost-to-go function
+\begin{equation}
+J(t_1,\bm{x},\bm{u})=\int_t^{t_1}h(s,\bm{x}(s),\bm{u}(s))ds+g(\bm{x}(t_1)),
+\end{equation}
+where $h\in C(\overline{Q}_0\times U)$ (continuous functions).\\
+We will present results that link the value function, optimal controls, and the HJB equation formally.
+
+\subsection{Existence of the Optimal Controls}
+
+Our first step is to ensure the existence of the optimal controls $\bm{u}^*(\cdot)$ which minimizes $J(t_1,\bm{x},\bm{u})$. We will consider the controls in the time interval $[t,t_1]\subseteq[t_0,t_1]$. However, in this thesis we are looking for the optimal controls in $[t_0,t_1)\subset[t_0,t_1]$. We consider the assumptions:
+\begin{enumerate}
+
+\item $U$ is compact and convex,
+
+\item $f(t,\bm{x},\bm{u})=f_1(t,\bm{x})+f_2(t,\bm{x})\bm{u}$, where $f_i\in C^1(\overline{Q}_0\times U)$ for $i=1,2$ and ${f_1}_{\bm{x}},f_2,{f_2}_{\bm{x}}$ are bounded,
+
+\item $h\in C^1(\overline{Q}_0\times U)$ and $h(t,\bm{x},\cdot)$ is a convex function on $U$ for each $(t,\bm{x})\in\overline{Q}_0$,
+
+\item $g(\cdot)$ is continuous on $\R^n$.
+
+\end{enumerate}
+\begin{theorem}[Theorem 11.1 in Section I.11 of \cite{fleming2006controlled}] \label{Existence_Theorem}
+Under the previous assumptions, an optimal control $\bm{u}^*(\cdot)$ exists.
+\end{theorem}
+We can verify that we are under the previous conditions.
+
+\subsection{Viscosity Solution}
+
+In this subsection, we want to show most of the technical results needed to guarantee the existence and uniqueness of a solution for (\ref{TheHJB}). Most are presented for an open (and possibility unbounded set) $O\subseteq\R^n$ which represents the space state. We start the subsection defining a very relevant class of solutions:
+
+\begin{definition}[Viscosity Solution]
+Let $O$ be an open subset of $\R^n$, $Q=[t_0,t_1)\times O$, $V\in C(\overline{O})$ and $F$ be a continuous function satisfying the ellipticity condition
+\begin{equation}
+F(t,\bm{x},\bm{p},\bm{A}+\bm{B},V)\leq F(t,\bm{x},\bm{p},\bm{A},V)
+\label{EllCon}
+\end{equation}
+for $(t,\bm{x})\in Q$, $\bm{p}\in\R^n$, $V\in\R$ and symmetric matrices $\bm{A},\bm{B}$ with $\bm{B}\geq0$.
+For $(t,\bm{x})\in Q$ consider the equation
+\begin{equation}
+-\frac{\partial}{\partial t}V(t,\bm{x})+F\left(t,\bm{x},D_{\bm{x}}V(t,\bm{x}),D^2_{\bm{x}}V(t,\bm{x}),V(t,\bm{x})\right)=0.
+\label{DiffEq}
+\end{equation}
+\begin{enumerate}
+\item[(a)] $V$ is a viscosity sub-solution of (\ref{DiffEq}) in $Q$ if for each $v\in C^{\infty}(Q)$,
+\begin{equation}
+-\frac{\partial}{\partial t}v(\overline{t},\overline{\bm{x}})+F(\overline{t},\overline{\bm{x}},D_{\bm{x}}v(\overline{t},\overline{\bm{x}}),D^2_{\bm{x}}v(\overline{t},\overline{\bm{x}}),v(\bm{t},\bm{\overline{x}}))\leq0
+\end{equation}
+at every $(\overline{t},\overline{\bm{x}})\in Q$ which is a local maximum of $V-v$ on $\overline{Q}$, with $V(\overline{t},\overline{\bm{x}})=v(\overline{t},\overline{\bm{x}})$.
+\item[(b)] $V$ is a viscosity super-solution of (\ref{DiffEq}) in $Q$ if for each $v\in C^{\infty}(Q)$,
+\begin{equation}
+-\frac{\partial}{\partial t}v(\overline{t},\overline{\bm{x}})+F(\overline{t},\overline{\bm{x}},D_{\bm{x}}v(\overline{t},\overline{\bm{x}}),D^2_{\bm{x}}v(\overline{t},\overline{\bm{x}}),v(\bm{t},\bm{\overline{x}}))\geq0
+\end{equation}
+at every $(\overline{t},\overline{\bm{x}})\in Q$ which is a local minimum of $V-v$ on $\overline{Q}$, with $V(\overline{t},\overline{\bm{x}})=v(\overline{t},\overline{\bm{x}})$.
+\item[(c)] $V$ is a viscosity solution of (\ref{DiffEq}) in $Q$ if it is both a viscosity sub-solution and a viscosity super-solution of (\ref{DiffEq}) in $Q$.
+\end{enumerate}
+\end{definition}
+
+Viscosity solutions are of particular interest in the analysis of Hamilton-Jacobi (HJ) partial differential equations. The next theorem assures our informal deduction in subsection \ref{Subsection_HJB}, but from the theory of the viscosity solutions:
+
+\begin{theorem}[Theorem 7.2 in Subsection II.7 of \cite{fleming2006controlled}] \label{Theo_VFVS}
+Assume that an optimal control $\bm{u}^*(\cdot)\in\mathcal{U}(t,\bm{x})$ exists (see Theorem (\ref{Existence_Theorem})), for each $(t,\bm{x})\in Q$. Then the value function (\ref{VF}) is a viscosity solution of the dynamic programming equation (\ref{TheHJB}) in $Q$ provided that $V\in C(\overline{Q})$.
+\end{theorem}
+
+From theorem (\ref{Theo_VFVS}), we can see the connection between the HJB equation and the value function. We are asked by continuity in the value function, which is reasonable given that the running cost and terminal costs are reasonably well behaved.\\
+
+Until now, we have seen that the value function, under certain conditions, is the viscosity solution of the HJB equation (Theorem (\ref{Theo_VFVS})). However, we want to know the exact solution of the HJB equation to solve the associated DP problem to our system. The following corollary is of particular interest given our objective but before recall the consider the first-order terminal value problem (\ref{TheHJB}), where we ask for the condition: $H(\cdot)$ is a continuous function of $\overline{Q}\times\R^n$.
+
+\begin{corollary} [Corollary 8.1 in Subsection II.8 of \cite{fleming2006controlled}] \label{Corollary_1}
+Let $V\in C(\overline{Q})$ be a viscosity solution of (\ref{TheHJB}) in $Q$ with the continuity condition in $H(\cdot)$. Then $V(\cdot)$ satisfies (\ref{TheHJB}), classically, at every point of differentiability $(t,\bm{x})\in(t_0,t_1)\times O$.
+\end{corollary}
+
+Then, corollary \ref{Corollary_1} reinforces the relationship between the value function and the HJB equation. The last two results, stability and uniqueness, are relevant to ensure that we are solving a well-posed problem.
+
+\begin{lemma}[Stability: Lemma 6.2 in Subsection II.6 of \cite{fleming2006controlled}]
+Let $V^{\epsilon}$ be a viscosity sub-solution (or a super-solution) of
+\begin{equation}
+-\frac{\partial}{\partial t}V^{\epsilon}(t,\bm{x})+F^{\epsilon}(t,\bm{x},D_{\bm{x}}V^{\epsilon}(t,\bm{x}),D^2_{\bm{x}}V^{\epsilon}(t,\bm{x}),V^{\epsilon}(t,\bm{x}))=0
+\end{equation}
+in $Q$, with some continuous function $F^{\epsilon}$ satisfying the ellipticity condition (\ref{EllCon}). Suppose that $F^{\epsilon}$ converges to $F$, uniformly on every compact subset of its domain, and $V^{\epsilon}$ converges to $V$, uniformly on compacts subsets of $\overline{Q}$. Then $V$ is a viscosity sub-solution (or a super-solution, respectively) of the limiting equation.
+\end{lemma}
+\begin{corollary}[Uniqueness: Corollary 9.1 in Subsection II.9 of \cite{fleming2006controlled}]
+There is at most one viscosity solution of (\ref{TheHJB}) which is bounded and uniformly continuous on $\overline{Q}$, and satisfies the corresponding boundary conditions of the set.
+\end{corollary}
+
+\textbf{Section summary and discussion}: With these last two results, we close this section. For more details about any content, we may refer to \cite{fleming2006controlled}.\\
+We have shown the results that ensure the existence and uniqueness of the viscosity solution for the terminal value problem HJ, and that it is the value function for HJB problems. Also, we showed that the value function solves the HJB equation classically almost everywhere and that under some conditions, optimal control exist.

@@ -1,0 +1,101 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Admissible Solution}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Procedure:}
+Before having an optimum Lagrange Multiplier ($\lambda^*$), we have prepared a code that finds the optimal path and the optimal admissible controls for some reasonable $\lambda\neq\lambda^*$.\\
+We precede in the next way:
+\begin{enumerate}
+\item For a reasonable $\lambda$ (this means comparable with the water's costs) we solve the HJB equation associated to our optimal control problem, and then we find the optimal cost $U$.
+\item Starting in the initial point and using the derivatives of the already computed optimal cost $U$, we advance forward in time always choosing the optimal path.
+\end{enumerate}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{System:}
+We work in a totally deterministec system where our demand is given by $D(t)=\overline{D}\times(0.6-0.2\sin(\frac{3\pi}{t}))$ and $t\in[0,1]$.\\
+We have four dams where three of them are connected one in front of the other with a delay between them of some hours, the last dam is isolated.\\
+Finally, we have a single and entirely controllable fuel station.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Solution of the HJB equation:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.45]{1.eps}}
+\subfigure{\includegraphics[scale=.45]{2.eps}}
+\caption{On the left we have the final solution of the HJB equation as a function of the initial volume of the dams, each layer corresponds to a different initial volume of Salto Grande ({\color[rgb]{1,0,0} We had an oscillation in one of the time steps, the monotonicity condition failed in that step}). On the right, we can see the Demand used and the time discretisation.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Optimal Admissible Controls Plot:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.45]{4.eps}}
+\subfigure{\includegraphics[scale=.45]{3.eps}}
+\caption{On the left, we can see the plot of the optimal controls over the time, notice that Baygorria's turbine flow is always equal to 1. On the right, we can see the power balance, notice that we only use fuel when all the dams are working at their maximum power.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Costs Comparison:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.45]{5.eps}}
+\caption{Comparison of the cost given by the solution of the HJB equation and the accumulated cost over the optimal path. The final relative error is 2 \%. As the fuel gives most of the cost, most of the error also is produced during the interpolations in the space while using fuel.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Conclusion:}
+We have an admissible solution!\\
+Points that must be improved until now:
+\begin{enumerate}
+\item The speed of the optimisation of the Hamiltonian (almost 99 \% of the total time). As a solution, we can try to parallelise this computation.\\
+\item Find $\lambda^*$. We already have a code running to find it but is slow due to the previous point (we approximate lambda using simple functions).
+\item To have a monotonous code for every possible demand function (in our actual case it was not totally monotonous in one of the time steps).
+\end{enumerate}
+\end{frame}
+
+\end{document}

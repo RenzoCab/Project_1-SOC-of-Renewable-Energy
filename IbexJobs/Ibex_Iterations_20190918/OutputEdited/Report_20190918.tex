@@ -1,0 +1,192 @@
+\let\mypdfximage\pdfximage
+\def\pdfximage{\immediate\mypdfximage}
+
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fmtcount}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage[maxfloats=256]{morefloats}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\usepackage{geometry}
+\geometry{a4paper,
+          left=            5mm,
+          right=           5mm,
+          top=             15mm,
+          bottom=          25mm,
+          heightrounded}
+
+\maxdeadcycles=10000
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\Date}{This text will change :D}
+\newcommand{\DateDay}{This text will change :(}
+\newcommand{\DateMonth}{This text will change :)}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Uruguayan Historicals of Production\\
+and Simulations}
+\author{Renzo Caballero\\
+Ra\'ul Tempone} 
+\date{18 of September 2019}
+\maketitle
+
+In this preliminary results, we find the optimal electric energy dispatch. The criteria are to find feasible controls (the demand must be satisfied for all times) and minimize the total cost. All the data is from official sources (ADME, UTE and SimSEE) and it includes:
+\begin{enumerate}
+
+\item[$\bullet$] Maximum available power of each generator during the day. Using historical data, we take into account whether any of the generators are being repaired.
+
+\item[$\bullet$] Cost of producing energy. We include the water and fuel value for each day.
+
+\item[$\bullet$] Initial level and natural inflows for the dams.
+
+\end{enumerate}
+We run our simulation over a total of 44 days from January and February 2019, saving a total of \textbf{850 thousand USD} as can be seen in Figure (\ref{F1}).
+
+\begin{figure}[ht!]
+\centering
+\subfigure
+{\includegraphics[scale=.4]{dailyCostComparison.eps}}\quad
+{\includegraphics[scale=.4]{accumulatedCostComparison.eps}}
+\caption{(a) Difference between the historical cost and the simulated cost for each day. (b) Accumulated differences.}
+\label{F1}
+\end{figure}
+
+To compute the power of the dams over the time, we consider the difference in height between the outlet and inlet, and also consider the no-linearity introduced by the flow (the increment in the level down as a function of the used water). We also consider the connection between Bonete, Baygorria, and Palmar, where the water from the first dam reach the second one after 6 hours, and from the second one to the third one after 10 hours.\\
+In this preliminary version, we are not considering the technical minimum of the fossil fuel stations (Motores Batlle, PTA, PTB and CTR).
+
+%\section*{Plots references:}
+%
+%In this document, we are showing three pages for each day. The first two pages correspond to historical data, while the third one is our simulation.
+
+%\subsection*{First page:}
+%
+%\begin{enumerate}
+%
+%\item[$\bullet$] \textbf{Historical Production}: The first four plots are the historical power balance (all titled \emph{Historical Production}), on the right, we can see the ones with uncontrollable sources like wind and solar, while on the right the balance with only controllable sources. The differences between the first row and the second row are that in the first one we use historical data from ADME, while in the second one, we use the same data but for the fuel stations, we use historical data from UTE. This difference is essential because ADME does not do distinguish between fuel generators.
+%
+%\item[$\bullet$] \textbf{Accumulated Historical Cost}: Accumulated cost over the historical path of decisions (the decisions correspond to the controls).
+%
+%\item[$\bullet$] \textbf{Historical Dams Controls}: Historical controls related to the Dams.
+%
+%\item[$\bullet$] \textbf{Historical Fossil Fuel Stations Controls}: Historical controls related to the fuel stations.
+%
+%\item[$\bullet$] \textbf{Costs over Historical Path}: Value of the water over the time, at the final time it is equal to the ones used in SimSEE. However, using our system, we can see how they change concerning the time and the level in the dams.
+%
+%\item[$\bullet$] \textbf{Volume Palmar over Historical Path}: Normalized historical volume of Palmar over time.
+%
+%\item[$\bullet$] \textbf{Volume Bonete over Historical Path}: Normalized historical volume of Bonete over time.
+%
+%\item[$\bullet$] \textbf{Volume Salto Grande over Historical Path}: Normalized historical volume of Salto Grande over time.
+%
+%\item[$\bullet$] \textbf{Volume Baygorria over Historical Path}: Normalized historical volume of Baygorria over time.
+%
+%\item[$\bullet$] \textbf{Cost of using Spillage}: Value of the water over the time, at the final time it is equal to the ones used in SimSEE. However, using our system, we can see how they change over the time and the level in the dams.
+%
+%\item[$\bullet$] \textbf{Historical Hydro-Fuel Ratio}: Here we can see, from the controllable sources, which percentage of the total cost corresponds to hydropower and fossil fuel power.
+%
+%\item[$\bullet$] \textbf{Costs over Historical Path (Fuel)}: Value of producing energy using the fuel power stations. Notice that their values are constant in one day.
+%
+%\end{enumerate}
+%
+%\subsection*{Second page:}
+%
+%\begin{enumerate}
+%
+%\item[$\bullet$] \textbf{Historical Energy Distribution}: Historical distribution of energy at the end of the day.
+%
+%\item[$\bullet$] \textbf{Controllable Historical Costs Distribution (first one)}: Here we can see, from the total cost of the day, the corresponding percentage to each one of the controllable sources of power.
+%
+%\item[$\bullet$] \textbf{Historical Controllable Accumulated Cost}: Accumulated cost of each one of the controllable sources over time.
+%
+%\item[$\bullet$] \textbf{Historical Controllable Costs Distribution (second one)}: Here we can see, from the total cost of the day, the corresponding percentage to each one of the controllable sources of power.
+%
+%\end{enumerate}
+%
+%\subsection*{Third page:}
+%
+%In this page we include all our simulations, we repeat most of the plot but with the difference that now we add the simulated spot price over time.\\
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2020}{
+\forloop{j}{1}{\value{j} < 3}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+%I check the file in folder Simulation_20190216_ZeroLambdas, because it is the last created, and its existence ensures that the other two folders also exist.
+
+\IfFileExists{Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}_ZeroLambdas/120.eps} % DO:
+{{\graphicspath{{Simulations/Simulation_\arabic{i}\arabic{j}\arabic{k}_OptimalLambdas/}}
+\include{Report_Auxiliary_1}}
+{\graphicspath{{Simulations/Real_\arabic{i}\arabic{j}\arabic{k}_ZeroLambdas/}}
+\include{Report_Auxiliary_2}}}
+{}
+
+\IfFileExists{Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}_ZeroLambdas/120.eps} % DO:
+{{\graphicspath{{Simulations/Simulation_\arabic{i}0\arabic{j}\arabic{k}_OptimalLambdas/}}
+\include{Report_Auxiliary_1}}
+{\graphicspath{{Simulations/Real_\arabic{i}0\arabic{j}\arabic{k}_ZeroLambdas/}}
+\include{Report_Auxiliary_2}}}
+{}
+
+\IfFileExists{Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}_ZeroLambdas/120.eps} % DO:
+{{\graphicspath{{Simulations/Simulation_\arabic{i}\arabic{j}0\arabic{k}_OptimalLambdas/}}
+\include{Report_Auxiliary_1}}
+{\graphicspath{{Simulations/Real_\arabic{i}\arabic{j}0\arabic{k}_ZeroLambdas/}}
+\include{Report_Auxiliary_2}}}
+{}
+
+\IfFileExists{Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}_ZeroLambdas/120.eps} % DO:
+{{\graphicspath{{Simulations/Simulation_\arabic{i}0\arabic{j}0\arabic{k}_OptimalLambdas/}}
+\include{Report_Auxiliary_1}}
+{\graphicspath{{Simulations/Real_\arabic{i}0\arabic{j}0\arabic{k}_ZeroLambdas/}}
+\include{Report_Auxiliary_2}}}
+{}
+
+}
+}
+}
+
+\end{document}

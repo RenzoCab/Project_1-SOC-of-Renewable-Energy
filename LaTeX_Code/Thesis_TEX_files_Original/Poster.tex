@@ -1,0 +1,308 @@
+\documentclass[ima, 20pt, portrait, plainboxedsections]{sciposter}
+
+% Packages
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{wasysym}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[ruled,vlined,algo2e]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{breqn}
+
+% Commands
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\eg}{\textit{e.g.}}
+\newcommand{\cf}{\textit{cf.}}
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\prob}{\mathrm{P}}
+\newcommand{\expt}{\mathrm{E}}
+\newcommand{\var}{\mathrm{Var}}
+\newcommand{\rset}{\mathbb{R}}
+\newcommand{\nset}{\mathbb{N}}
+\newcommand{\zset}{\mathbb{Z}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\poisson}{\mathcal{P}}
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\binomial}{\mathcal{B}}
+\newcommand{\Ordo}[1]{{\mathcal{O}}\left(#1\right)}
+\newcommand{\ordo}[1]{{o}\left(#1\right)}
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\green}[1]{{\color{green}#1}}
+\renewcommand{\emph}{\red}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\bibliographystyle{elsarticle-num}
+
+% Theorems
+\newtheorem{Def}{Definition}
+\newtheorem{Lem}{Lemma}
+\newtheorem{Thm}{Theorem}
+
+% Layout parameters
+\newcommand{\imsize}{0.49\columnwidth}
+%\definecolor{BoxCol}{rgb}{0,0,1}
+\definecolor{BoxCol}{rgb}{0.4,0.4,0.4}
+\definecolor{SectionCol}{rgb}{1,1,1}
+\renewcommand{\titlesize}{\Huge}
+\renewcommand{\sectionsize}{\Large}
+\setmargins[2cm]
+
+
+\leftlogo[1.3]{Figures/KAUST_Logo}  % KAUST LOGO
+\rightlogo[1]{Figures/fwdaachenlogo/rwth_cmyk.pdf} 
+
+% Overrides commands in sciposter.cls
+%\setlength{\columnsep}{0.02\textheight}
+%\setlength{\columnseprule}{0.001\textheight}
+\setlength{\parskip}{0.002\textheight}
+
+% Author info
+\title{Stochastic Optimal Control of Renewable Energy}
+\author{Renzo Caballero$^*$ \qquad Ra\'ul Tempone${^*}{^\dagger}$}
+\institute{$^*$CEMSE Division, King Abdullah University of Science and Technology, Thuwal, Saudi Arabia\\
+$^\dagger$Alexander von Humboldt Professor in Mathematics of Uncertainty Quantification, RWTH Aachen University, Germany}
+
+\begin{document}
+\newcommand{\ddd}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{\ddd{#1}}
+\maketitle
+
+%%% Begin of Multicols-Enviroment
+\begin{multicols}{3}
+
+\section*{Abstract}
+
+Uruguay is a pioneer in the use of renewable sources of energy and can usually satisfy its total demand from renewable sources. Control and optimization of the system is complicated by half of the installed power - wind and solar sources - being non-controllable with high uncertainty and variability. In this work, we present a novel optimization technique for efficient use of the production facilities. The dynamical system is stochastic, and we deal with its non-Markovian dynamics through a Lagrangian relaxation. Continuous-time optimal control and value function are found from the solution of a sequence of Hamilton-Jacobi-Bellman partial differential equations associated with the system. We introduce a monotone scheme to avoid spurious oscillations in the numerical solution and apply the technique to a number of examples taken from the Uruguayan grid. We use parallelization and change of variables to reduce the computational times. Finally, we study the usefulness of extra system storage capacity offered by batteries.
+  
+\section*{Introduction}
+
+Nowadays, Uruguay can supply all its electric demand from renewable sources and even export its excess \cite{Risso}.
+\begin{center}
+\begin{minipage}{0.26\textwidth}
+\begin{table}
+\begin{tabular}{|l|ccccc|}
+ \toprule
+ & Hydro & Fossil Fuel & Wind & Solar & Biomass \\
+ \midrule
+Installed Power (MW) & 2566 & 972 & 1383 & 238 & 68 \\
+Is it controllable? & $\checked$ & $\checked$ & X & X & X \\
+Proportion & 49\% & 19\% & 26\% & 5\% & 1\% \\
+Notation & $P_H$ & $P_F$ & $P_W$ & $P_Y$ & $P_B$ \\
+\bottomrule
+\end{tabular}
+\caption{Characteristics of Uruguayan generators. The proportion is over the total installed power.}
+\end{table}
+\end{minipage}
+\end{center} 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.85\textwidth]{Figures/Uruguay.png}
+\caption{Geographical distribution of generators in Uruguay.}
+\label{Map_Uy}
+\end{figure}\\
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.85\textwidth]{Figures/RENZO.png}
+\caption{The electric grid in Uruguay. We assume all the electrical grid is a single node.}
+\label{Grid_Uy}
+\end{figure}\\
+Given the large amount of non-controllable and highly unpredictable renewable sources, it is useful to develop stochastic optimal control techniques to construct contingent policies for optimal electric energy dispatch.\\
+
+\subsection*{{\color{red}Goals:}}
+
+\begin{enumerate}
+
+\item[{\color{red}(1)}] Find the optimal electric energy dispatch that satisfies the needs and minimizes the cost.
+
+\item[{\color{red}(2)}] Study the advantages of adding a battery (storage system) to the Uruguayan electrical grid.
+
+\end{enumerate}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\columnwidth]{Figures/Poster/C_17.eps}\\
+\quad\\
+\includegraphics[width=0.95\columnwidth]{Figures/Poster/D_17.eps}
+\caption{Uruguayan historical production corresponding to 17/01/2017.}
+\end{figure}\\
+The main constraint is the Power Balance, which must be satisfied for all times. It is given by
+\begin{equation*}
+D(t)+E(t)=\sum_{i=1}^4P_F^{(i)}(t)+\sum_{i=1}^4P_H^{(i)}(t)+P_W(t)+P_Y(t)+P_B(t).
+\end{equation*}
+Here we assume the demand $D(t)$, the exports $E(t)$ and the biomass power station $P_B(t)$ deterministic.
+
+\section*{Mathematical Formulation}
+The following well-know result is useful for Markovian stochastic optimal control problems.
+\begin{Thm}[See \cite{fleming2006controlled}] \label{T1}
+Let  $\bm{\phi}$ be a given Markovian control function. For   $t_0<t$,  $\bm{x}_{[\bm{x}_0;\bm{\phi}]} $ solves the dynamical system
+\begin{equation*}
+\begin{cases}d\bm{x}(t) = \bm{f}(t,\bm{x}(t),\bm{\phi}(t,\bm{x}(t)))dt+\bm{D}(t,\bm{x}(t))d\bm{B}\\
+\bm{x}(t_0)=\bm{x}_0,
+\end{cases}
+\end{equation*}
+with $\bm{D}_{ij}=0$ for $i\neq j$. Let us define the cost-to-go function
+\begin{equation*}
+J(t, t_1,\bm{x}_0,\bm{\phi})=\E\left\{g\left(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(t_1)\right)+\int_{t}^{t_1}h(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s),\bm{\phi}(s,\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s)))ds\right\},
+\end{equation*}
+and the value function
+\begin{equation*}
+V(t,\bm{x})=\min_{\bm{\phi}\in\bm{\Phi}(t,\bm{x})}\ J(t,t_1,\bm{x}_0,\bm{\phi}),
+\end{equation*}
+where $\bm{\Phi}(t,\bm{x})$ is the space of admissible controls. Then, for $t<t_1$, the value function is the weak solution of a Hamilton Jacobi Bellman PDE,
+\begin{equation*}
+\begin{cases}
+\frac{\partial V}{\partial t}+\min_{\bm{a}\in \mathcal{A}(t,\bm{x})}\ \left[\sum_{i=1}^n\left(f_i(t,\bm{x},\bm{a})\frac{\partial V}{\partial x_i}(t,\bm{x})+\frac{D_{ii}^2(t,\bm{x})}{2}\frac{\partial^2V}{\partial x_i^2}(t,\bm{x})\right)+h(\bm{x},\bm{a})\right]=0\\
+V(t_1,\bm{x})=g(\bm{x}).
+\end{cases}
+\end{equation*}
+\end{Thm}
+
+\subsection*{Lagrangian relaxation: Deterministic case}
+
+Our problem of interest, the \textbf{primal problem}
+\begin{equation*}
+Z(t_0,t_1,\bm{x}_0)=\min_{\bm{\phi}\in \Phi(t_0,\bm{x}_0)}\ \left[g(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(t_1))+\int_{t_0}^{t_1}h(\bm{x}_{[\bm{x}_0;\bm{\phi}]}(s),\bm{\phi}(s))ds\right],
+\end{equation*}
+has deterministic non-Markovian dynamics
+\begin{equation*}
+\begin{cases}
+\dots\\
+dv^{(i)}&=\left(I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)\right)dt\\
+dv^{(i+1)}&=\Big(I^{(i+1)}(t)-\phi_T^{(i+1)}(t)-\phi_S^{(i+1)}(t)\\
+&+{\color{violet}\phi_T^{(i)}(t-\tau)}+{\color{violet}\phi_S^{(i)}(t-\tau)}\Big)dt,
+\end{cases}
+\end{equation*}
+and we cannot apply Theorem 1. To overcome this issue, we use a Lagrangian relaxation which can be applied in deterministic and stochastic configurations.\\
+We define an auxiliary control, ${\color{blue}\psi(t)}={\color{violet}\phi_T^{(i)}(t-\tau)}+{\color{violet}\phi_S^{(i)}(t-\tau)}$ and the extended controls vector $\overline{\bm{\phi}}=(\bm{\phi},\psi)\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)$. Notice that the space of admissible controls contains the restrictions associated with each control and the power balance.
+ 
+The new dynamics are
+\begin{equation*}
+\begin{cases}
+\dots\\
+dv^{(i)}&=\left(I^{(i)}(t)-\phi_T^{(i)}(t)-\phi_S^{(i)}(t)\right)dt\\
+dv^{(i+1)}&=\Big(I^{(i+1)}(t)-\phi_T^{(i+1)}(t)-\phi_S^{(i+1)}(t)+{\color{blue}\psi(t)}\Big)dt,
+\end{cases}
+\end{equation*}
+with the constraint ${\color{blue}\psi(t)}-{\color{violet}\phi_T^{(i)}(t-\tau)}-{\color{violet}\phi_S^{(i)}(t-\tau)}=0$. We relax this constraint with the Lagrange multiplier ${\color{red}\lambda}:[\tau,t_1]\to\R$. Then, the \textbf{Lagrangian function} is
+\begin{multline*}
+\mathcal{L}\left(t_0,\bm{x}_0,{\color{red}\lambda},\overline{\bm{\phi}}\right)=g\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(t_1)\right)+\int_{t_0}^{t_1}h\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(s),\bm{\phi}(s)\right)ds\\
++\int_{\tau}^{t_1}{\color{red}\lambda}(s)\left({\color{blue}\psi(s)}-{\color{violet}\phi_T^{(i)}(s-\tau)}-{\color{violet}\phi_S^{(i)}(s-\tau)}\right)ds,
+\end{multline*}
+
+and ${\color{red}\lambda}$ is a bounded piece-wise smooth function.\\
+We approximate ${\color{red}\lambda}\in\Lambda=\{\text{bounded piece-wise constant functions on a grid}\}$.\\
+The \textbf{dual function} is
+\begin{equation*}
+{\color{orange}\theta}({\color{red}\lambda})=\min_{\overline{\bm{\phi}}\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)}\mathcal{L}(t_0,\bm{x}_0,{\color{red}\lambda},\overline{\bm{\phi}}),
+\end{equation*}
+and the approximate \textbf{dual problem} is
+\begin{equation*}
+\min_{\lambda\in\Lambda}-{\color{orange}\theta}(\lambda).
+\end{equation*}
+Observe that the dual function is concave, possibly non-smooth and it is a lower bound for the primal problem. We define $\bm{\xi}_{\color{red}\lambda}{\color{orange}\theta}({\color{red}\lambda})$ a subgradient of ${\color{orange}\theta}$ in ${\color{red}\lambda}$.
+
+Given ${\color{red}\lambda}$, that the dynamics are Markovian and the dual function is:
+\begin{multline*}
+{\color{orange}\theta}\left({\color{red}\lambda}\right)=\min_{\overline{\bm{\phi}}\in\overline{\bm{\Phi}}(t_0,\bm{x}_0)}\Bigg[g\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(t_1)\right)+\int_{t_0}^{t_1}h\left(\bm{x}_{\left[\bm{x}_0;\overline{\bm{\phi}}\right]}(s),\bm{\phi}(s)\right)ds\\
++\int_{\tau}^{t_1}{\color{red}\lambda}(s)\left({\color{blue}\psi(s)}-{\color{violet}\phi_T^{(i)}(s-\tau)}-{\color{violet}\phi_S^{(i)}(s-\tau)}\right)ds\Bigg].
+\end{multline*}
+Then, ${\color{orange}\theta}({\color{red}\lambda})$ is equal to the value function at $(t_0,\bm{x}_0)$ (i.e., $V(t_0,\bm{x}_0,{\color{red}\lambda})={\color{orange}\theta}({\color{red}\lambda})$) that, by Theorem 1, $V(\cdot,\cdot,{\color{red}\lambda})$ in the weak sense the HJB PDE
+\begin{equation*}
+\begin{cases}
+\frac{\partial V}{\partial t}+H(t,\bm{x},{\color{red}\lambda},D_{\bm{x}}V)=0\\
+V(t_1,\bm{x},{\color{red}\lambda})=0,
+\end{cases}
+\end{equation*}
+where the running cost (in the Hamiltonian) is ${\color{red}\lambda}$ dependent. Solving numerically this PDE, we can evaluate the dual function ${\color{orange}\theta}({\color{red}\lambda})=V(t_0,\bm{x}_0,{\color{red}\lambda})$.
+ 
+\section*{Numerical Methods}
+ 
+\begin{Thm}[See \cite{bazaraa2013nonlinear}] \label{theo_subgradient}
+Given a problem $\min_{\bm{x}\in X}f(\bm{x})$ where $X$ is compact, subject to the $n$-dimensional equality constraint $\bm{h}(\bm{x})=0$, its Lagrangian function $\mathcal{L}(\bm{x},\bm{\lambda})=f(\bm{x})+\bm{\lambda}^T\bm{h}(\bm{x})$ and its dual function $\theta(\bm{\lambda})=\min_{\bm{x}\in X}\mathcal{L}(\bm{x},\bm{\lambda})$, if for $\hat{\bm{\lambda}}\in\R^n$ we have $\hat{\bm{x}}=\arg\min_{\bm{x}\in X}\mathcal{L}(\bm{x},\hat{\bm{\lambda}})$, then $\bm{h}(\hat{\bm{x}})$ is a subgradient of $\theta$ in $\hat{\bm{\lambda}}$.
+\end{Thm} 
+ 
+\begin{center}
+\begin{minipage}{0.3\textwidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+initialization: $\lambda\leftarrow\lambda_0$\;\\
+\While{Not converge}{
+Evaluate $\theta(\lambda)$\tcp*{Solving the HJB equation}
+Compute $\bm{\xi}_{\lambda}\theta(\lambda)$\tcp*{Using Theorem 2}
+Update $\lambda\leftarrow\mathfrak{P}(\theta(\lambda),\bm{\xi}_{\lambda}\theta(\lambda))$\tcp*{Updating rule $\mathfrak{P}(\cdot,\cdot)$}
+ }
+ \caption{Non-smooth optimization for the dual problem.}
+\end{algorithm}
+\end{minipage}
+\end{center} 
+
+To reduce computational work associated with the numerical solution of the HJB equation (evaluation of the dual function), the main tools we use are:
+\begin{itemize}
+\item {\color{red} Change of Variables}: We want to solve the HJB equation only in attainable state domains.
+\item {\color{red} Parallelization}: The computation of the Hamiltonian in trivially parallelizable for different states at each time-step.
+\item {\color{red} Warm start}: In consecutive time steps, we use as the initial guess for the optimal controls, the optimal ones in the previous time step.
+\end{itemize}
+ 
+\section*{Results} 
+We show results for a deterministic non-Markovian system using data from 17/01/2019. We consider this case with and without battery.\\
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\textwidth]{Figures/Poster_2/101.eps}
+\caption{Simulated dispatch with battery. We can see all power sources.}
+\end{figure} 
+ 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\textwidth]{Figures/Poster_2/120.eps}
+\caption{Simulated dispatch with battery but only including the controllable sources.}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.7\textwidth]{Figures/Poster_2/128.eps}
+\caption{Battery capacity over time. It gets charged from cheaper sources and discharged to substitute expensive fossil fuel.}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+{\includegraphics[width=0.31\columnwidth]{Figures/Poster_2/121.eps}}\quad\quad\quad
+{\includegraphics[width=0.31\columnwidth]{Figures/Poster_2/NB_121.eps}}
+\caption{Cost distribution with (left) and without (right) battery.}
+\end{figure}
+
+%\begin{figure}[ht!]
+%\centering
+%\includegraphics[width=0.8\textwidth]{Figures/For_Slides_17/120.eps}
+%\caption{Simulated dispatch without battery but only including the controllable sources.}
+%\end{figure} 
+ 
+\section*{Conclusions}
+  
+\begin{itemize}
+
+\item We were able to simulate and control a simplified version of the short term Uruguayan electricity dispatch system using stochastic optimal control.
+\item We included non-linearities in our model, for instance, those arising in the hydropower generators. The computation of the Hamiltonian function in the HJB equations is carried out numerically using continuous optimization tools.
+\item Our methodology allows to model and to quantify the benefit of adding an energy storage device. The additional storage seems to be particularly important in the presence of the high variability introduced by renewable sources.
+
+\end{itemize}  
+  
+\section*{Acknowledgements}
+
+We would like to thank ADME \cite{ADME} and UTE \cite{UTE} for supplying the needed data for this work. We thank C. Risso, M. Scavino, J. Oppelstrup and S. Wolfers for all the useful discussions.
+
+\bibliographystyle{IEEEtran}
+\bibliography{Bibliography}
+
+\end{multicols}
+\end{document}

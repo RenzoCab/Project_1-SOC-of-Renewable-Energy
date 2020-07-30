@@ -1,0 +1,111 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+\newcommand{\mysize}{1}
+\newcommand{\capt}{{\color{red} Admissible solution (we impose the delay condition) for the primal problem. Still with no derivatives penalization. It is an upper bound for the real optimal primal solution.}\\
+{\color{blue} Dual cost-to-go (evaluated along the dual optimal path). It is an upper bound for the dual value function. We use it to compute the subgradient. Notice that we do not impose the delay constraint (as the relaxed problem does not have that constraint), neither the derivatives penalization.}\\
+Dual value function (HJB for the relaxed problem).}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{1 week Simulation:\\
+With and without battery}
+\subtitle{Renzo Caballero\\
+Ra\'ul Tempone}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\graphicspath{{../../../All/Simulation_1W/}}
+
+\begin{frame}
+\frametitle{Historical Vs. Simulated:}
+
+{\includegraphics[width=1\textwidth]{A_1.eps}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Historical Vs. Simulated:}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.9\textwidth]{A_1.eps}}
+
+\column{.5\textwidth}
+Accumulated daily cost for the {\color{blue}historical data} and {\color{orange}simulated data}.\\
+\quad\\
+Improvements:
+\begin{enumerate}
+
+\item It may be a good idea to remove from the cost-to-go the natural inflow for the dams, as it has the same value in both ({\color{blue}historical} and {\color{orange}simulated}), and creates negative cost.
+
+\item I still need to add the historical spillage to the system.
+
+\item I need to check how we save that amount of money.
+
+\end{enumerate}
+
+\end{columns} 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{What am I doing now?}
+
+\begin{enumerate}
+
+\item Simulating the avobe information for the rest of the days (abour 500 more days).
+
+\item Finding a good derivative penalization.
+
+\item Creating a single PDF that contains: Dual HJB value, dual cost-to-go plots, admissible (with no derivatives penalization) cost-to-to plots, admissible (with derivatives penalization) cost-to-go plots, and historical generation plots.
+
+\item \textbf{FUNDAMENTAL}: Add the spillage to the historical cost. This will reduce the historical cost a lot, as the value of Palmar is very high during 2018.
+
+\end{enumerate}
+
+Outside the project:
+
+\begin{enumerate}
+
+\item Conditioning all out workstations (UPS, installing Linux, admin rights, etc.). I am asking IT for a multiplexor to use a single screen, mouse, and keyboard to control all the workstations. Also, I am asking IT again for the switch to save internet ports. We will have 100\% of the WK operative before I go to Uruguay.
+
+\end{enumerate}
+
+\end{frame}
+
+\end{document}

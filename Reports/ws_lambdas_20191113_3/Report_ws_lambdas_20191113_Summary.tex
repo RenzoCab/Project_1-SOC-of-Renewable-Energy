@@ -1,0 +1,193 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+\newcommand{\mysize}{1}
+\newcommand{\capt}{{\color{red} Admissible solution (we impose the delay condition) for the primal problem. Still with no derivatives penalization. It is an upper bound for the real optimal primal solution.}\\
+{\color{blue} Dual cost-to-go (evaluated along the dual optimal path). It is an upper bound for the dual value function. We use it to compute the subgradient. Notice that we do not impose the delay constraint (as the relaxed problem does not have that constraint), neither the derivatives penalization.}\\
+Dual value function (HJB for the relaxed problem).}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Solving the Dual problem:\\
+Preliminary Results}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\graphicspath{{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/}}
+
+\setbeamercolor{background canvas}{bg=red!20}
+\begin{frame}\frametitle{About the Dual Gap (DG):}
+
+We have three values: DHJB (dual HJB), DOP (dual optimal path) and OP (primal optimal path). The {\color{blue}theoretical values are in blue} and the {\color{red}computational ones in red}. We have:
+\begin{enumerate}
+
+\item ${\color{blue}DHJB} = {\color{blue}DOP}\leq{\color{blue}OP}$. However, the numerical solutions show ${\color{red}DHJB}<{\color{red}DOP}$ for most cases. We believe that the interpolation in the partial derivatives makes the system to take 'worse decisions'.
+
+\item ${\color{blue}DG}={\color{blue}OP}-{\color{blue}DOP}$. We have that ${\color{blue}OP}<{\color{red}OP}$, because the path we compute is sub-optimal. The reason of this sub-optimality is that we are not using the exact optimal LM, and we force the constraint to hold. Then, the duality gap that we compute in an upper bound for the real duality gap. The question is the next: What is a better approximation for the duality gap? ${\color{red}OP}-{\color{red}DOP}$, or ${\color{red}OP}-{\color{red}DHJB}$?\\
+We have to remember that ${\color{red}DHJB}$ is computed solving a PDE, while ${\color{red}DOP}$ and ${\color{red}OP}$ are computed solving ODEs. Then, ${\color{red}OP}-{\color{red}DOP}$ may be more consistent.
+
+\item The difference between ${\color{red}OP}$ and ${\color{red}DOP}$ is that: We compute ${\color{red}OP}$ in the same way than we do for ${\color{red}DOP}$, but we fix the constraint and add a penalization in the derivative.
+
+\end{enumerate}
+
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!20}
+\begin{frame}
+\frametitle{Upper bound for the duality gap (\textbf{OP-DHJB}):}
+
+We compute the duality gap using the solution of the dual HJB (DJHB) equation and the admissible primal optimal path (OP) with no derivatives penalization.\\
+\quad\\
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{relativeDG.eps}}
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{absoluteDG.eps}}
+
+\end{columns}  
+ 
+\end{frame}
+
+\begin{frame}
+\frametitle{Upper bound for the duality gap (\textbf{OP-DOP}):}
+
+We compute the duality gap using the solution of the dual optimal path (DOP) and the admissible primal optimal path (OP) with no derivatives penalization. We achieve better results w.r.t. the previous slide.\\
+\quad\\ 
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{relativeDualDG.eps}}
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{absoluteDualDG.eps}}
+
+\end{columns} 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Upper bound for the duality gap (\textbf{OP-DOP}):}
+
+We compute the duality gap using the solution of the dual optimal path (DOP) and the admissible primal optimal path (OP) with no derivatives penalization. We achieve better results w.r.t. the previous slide. It seems more reasonable to compare the cost-to-go in the optimal paths.\\
+\quad\\ 
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{relativeDualDG.eps}}
+
+\column{.5\textwidth}
+{\includegraphics[width=0.8\textwidth]{absoluteDualDG.eps}}
+
+\end{columns} 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Historical Vs. Simulated:}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.9\textwidth]{allCostsComparison.eps}}
+
+\column{.5\textwidth}
+\noindent\fcolorbox{black}{gray}{%
+\begin{minipage}{\dimexpr1\textwidth-0\fboxrule-2\fboxsep\relax}
+{\color{blue} Historical Cost: We use the historical power generation, and the historical value of the resources to compute the historical cost.}\\
+{\color{orange} Admissible Primal Solution: We use the partial derivatives of the DHJB, and \textbf{our} optimal Lagrange multipliers to compute an admissible solution. We still are not including the derivatives penalization.}\\
+{\color{yellow} Dual Cost-to-Go: Accumulated cost along the dual optimal path. We use the partial derivatives of the DHJB (no delay constraint or derivative penalization).}\\
+{\color{violet} Dual HJB: Evaluation of the HJB equation for the dual problem.}
+\end{minipage}}
+
+\end{columns} 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Historical Vs. Simulated:}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+{\includegraphics[width=0.9\textwidth]{allAccumulatedCosts.eps}}
+
+\column{.5\textwidth}
+Accumulated daily cost for the {\color{blue}historical data} and {\color{orange}simulated data}.\\
+\quad\\
+Improvements:
+\begin{enumerate}
+
+\item It may be a good idea to remove from the cost-to-go the natural inflow for the dams, as it has the same value in both ({\color{blue}historical} and {\color{orange}simulated}), and creates negative cost.
+
+\item I still need to add the historical spillage to the system.
+
+\item I need to check how we save that amount of money.
+
+\end{enumerate}
+
+\end{columns} 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{What am I doing now?}
+
+\begin{enumerate}
+
+\item Simulating the avobe information for the rest of the days (abour 500 more days).
+
+\item Finding a good derivative penalization.
+
+\item Creating a single PDF that contains: Dual HJB value, dual cost-to-go plots, admissible (with no derivatives penalization) cost-to-to plots, admissible (with derivatives penalization) cost-to-go plots, and historical generation plots.
+
+\item \textbf{FUNDAMENTAL}: Add the spillage to the historical cost. This will reduce the historical cost a lot, as the value of Palmar is very high during 2018.
+
+\end{enumerate}
+
+Outside the project:
+
+\begin{enumerate}
+
+\item Conditioning all out workstations (UPS, installing Linux, admin rights, etc.). I am asking IT for a multiplexor to use a single screen, mouse, and keyboard to control all the workstations. Also, I am asking IT again for the switch to save internet ports. We will have 100\% of the WK operative before I go to Uruguay.
+
+\end{enumerate}
+
+\end{frame}
+
+\end{document}

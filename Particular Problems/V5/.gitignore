@@ -1,0 +1,14 @@
+*.pdf
+*.eps
+*.mat
+*.synctex
+*.log
+*.aux
+*.bbl
+*.nav
+*.out
+*.synctex.gz
+*.tex
+*.toc
+*.m~
+*.snm

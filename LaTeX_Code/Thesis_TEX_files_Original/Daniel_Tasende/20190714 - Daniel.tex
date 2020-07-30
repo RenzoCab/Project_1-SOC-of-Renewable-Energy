@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Daniel Email Response}
+\author{Ra\'ul Tempone\\
+Renzo Caballero (Author)}
+\date{14 July, 2019}
+\maketitle
+
+\section*{Stochastic Optimal Control of Renewable Energy}
+
+\begin{enumerate}
+
+\item[(1)] Cambiar\'ia "battery" por "storage". No es purismo: Hay alternativas de almacenamiento de calor en piedra, o ciclos t\'ermicos con aire l\'iquido, que son "storage" y no se parecen a las "batteries". Además, si te recostás sobre las bater\'ias vas a tener que resolver la disposici\'on final del litio.
+
+\item[(1)-R] Gracias por este comentario, lo vamos a tener en cuenta. Es bueno tener a disposici\'on mas ejemplos de almacenamiento y ser capaces de modelarlos con todas sus ventajas y desventajas. No tenemos planeado resolver la disposici\'on final, solo nos interesa el despacho \'optimo y posibles planes de inversi\'on o reestructura.
+
+\item[(2)] En "production" yo agregar\'ia la importaci\'on: Con el sistema como est\'a ahora es infrecuente, pero puede ser de potencia importante.
+
+\item[(2)-R] Nos interesa un modelo para las importaciones que involucre tiempos de reaccionen, potencia firme y precio. Sabemos que su variabilidad, al depender del precio spot de m\'ultiples pa\'ises, es alta y dif\'icil de estimar. Estamos intentando recopilar datos relacionados a las importaciones y exportaciones para poder completar los modelos.
+
+\item[(3)] Me llama la atenci\'on que la demanda local es super suave, y se presenta un pico en unas horas que parece estar determinado por la exportaci\'on: Es as\'i que se ha encendido t\'ermico para dar un pico de exportaci\'on? Lo veo raro, por favor chequeen.
+
+\item[(3)-R] Los datos que usamos provienen de ADME y tienen una frecuencia de un dato cada 10 minutos. Hemos visto que las exportaciones var\'ian mucho mas r\'apido que la demanda. Por lo que sabemos, Uruguay ofrece potencia firme, y tanto Argentina como Brasil pueden usarla a discreci\'on, por lo que seria razonable el tener que prender t\'ermicas en ausencia en viento y m\'axima exportaci\'on.
+
+\item[(4)] En Fig. 10 la bater\'ia se carga intensamente entre 0.2 y 0.4, pero luego en la Fig. 8 no se ve una diferencia importante entre demanda con y sin bater\'ia en ese intervalo de tiempo. No se por que pasa eso. En cambio en la Fig. 8 aparece una diferencia en el intervalo 0,85 - 1 que no se observa en la Fig. 10.
+
+\item[(4)-R] En las Fig. 5 y 8 se puede ver la potencia controlable sin y con bater\'ia respectivamente. Entre 0.2 y 0.4, mientras la bater\'ia se carga, podemos ver en Fig. 8 como las represas estan trabajando a pleno produciendo esa potencia que carga la bater\'ia (en Fig. 5 se puede ver que las represas no est\'an a su m\'axima capacidad). Con respecto al intervalo entre 0.85 y 1, no somos capaces de notar ninguna diferencia en Fig. 5 y 8.
+
+\item[(5)] La descripci\'on de la Fig. 11 est\'a al rev\'es (a la izquierda es sin bater\'ia).
+
+\item[(5)-R] La descripci\'on es correcta, pero la imagen es confusa porque estamos mostrando la distribuci\'on de costos, pero no el costo acumulado total. Cuando agregamos la bater\'ia, el costo total se reduce bastante y en porcentaje, la cantidad correspondiente al hydropower aumenta.
+
+\end{enumerate}
+
+\end{document}

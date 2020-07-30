@@ -1,0 +1,97 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction: Connected Dams + Battery}
+In this report we will see the principal differences between the system when we use the approximation $\hat{\lambda}(t)$ and when we use $\lambda(t)=0$. Recall that $\hat{\lambda}(t)$ is our approximation of the optimal $\lambda^*(t)$, and in this case we will use the approximation that we computed without the battery.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Using $\lambda(t)=0$ and $\hat{\lambda}(t)$: Battery State}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F1.eps}}
+\subfigure{\includegraphics[scale=0.45]{F5.eps}}
+\caption{Energy in the battery over time.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Using $\lambda(t)=0$ and $\hat{\lambda}(t)$: Accumulated Cost}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F2.eps}}
+\subfigure{\includegraphics[scale=0.45]{F7.eps}}
+\caption{The solution of the HJB equation shows more cost when we use $\hat{\lambda(t)}$ (0.8\% more); this has sense because we are more away from the optimum $\lambda(t)$. However, $\hat{\lambda(t)}$ also shows more cost during the optimal path (0.6\% more). We can not conclude due to the minimal relative differences.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Using $\lambda(t)=0$ and $\hat{\lambda}(t)$: Controls}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F3.eps}}
+\subfigure{\includegraphics[scale=0.45]{F6.eps}}
+\caption{We can see how Bonete uses spillage in the case with $\hat{\lambda}(t)$.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Using $\lambda(t)=0$ and $\hat{\lambda}(t)$: Power Balance}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F4.eps}}
+\subfigure{\includegraphics[scale=0.45]{F8.eps}}
+\caption{We can see how in both cases, the battery gets charged while we are not using fuel, and after it uses all its energy while we use fuel. Also, it is slightly clear the reduction in the efficiency of Bonete during the spillage in the second plot.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F9.eps}}
+\end{figure}
+\end{frame}
+
+\end{document}

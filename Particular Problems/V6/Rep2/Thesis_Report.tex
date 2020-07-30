@@ -1,0 +1,94 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction: Connected Dams + Battery}
+In this report we will use $\lambda(t)=0$ but a better model for the battery. We will see the effect of having a battery with a very small penalization.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Battery Control:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F3.eps}}
+\caption{Now that we have the CFL condition working, we can use a better model for the battery.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Usage of the battery}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F1.eps}}
+\subfigure{\includegraphics[scale=0.45]{F2.eps}}
+\caption{We can see the oscillations produced for not having a correct penalization.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Costs and Power}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{F4.eps}}
+\subfigure{\includegraphics[scale=0.45]{F5.eps}}
+\caption{On the left, we can see the instant costs of each control, the ones that the Hamiltonian optimizes. On the right the power balance, as we have a quadratic penalization in the battery, it prefers to use small power.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.3]{F6.eps}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.3]{F7.eps}}
+\end{figure}
+\end{frame}
+
+\end{document}

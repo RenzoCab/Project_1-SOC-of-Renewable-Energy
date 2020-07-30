@@ -1,0 +1,100 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Claudio Email}
+\author{Ra\'ul Tempone\\
+Renzo Caballero (Author)}
+\date{15 July, 2019}
+\maketitle
+
+\section*{Stochastic Optimal Control of Renewable Energy}
+
+\begin{enumerate}
+
+\item[(1)] Cambiar\'ia "battery" por "storage". No es purismo: Hay alternativas de almacenamiento de calor en piedra, o ciclos t\'ermicos con aire l\'iquido, que son "storage" y no se parecen a las "batteries". Además, si te recostás sobre las bater\'ias vas a tener que resolver la disposici\'on final del litio.
+
+\item[(1)-R] Gracias por este comentario, lo vamos a tener en cuenta. Es bueno tener a disposici\'on mas ejemplos de almacenamiento y ser capaces de modelarlos con todas sus ventajas y desventajas. No tenemos planeado resolver la disposici\'on final, solo nos interesa el despacho \'optimo y posibles planes de inversi\'on o reestructura. Cada sistema de storage tiene su propio modelo y en este caso nosotros nos centramos en baterias. Creo que es un punto muy importante el que mencionas, vamos a tener que trabajarlo y ampliar el trabajo en este sentido.
+
+\item[(2)] En "production" yo agregar\'ia la importaci\'on: Con el sistema como est\'a ahora es infrecuente, pero puede ser de potencia importante.
+
+\item[(2)-R] Nos interesa un modelo para las importaciones que involucre tiempos de reaccionen, potencia firme y precio. Sabemos que su variabilidad, al depender del precio spot de m\'ultiples pa\'ises, es alta y dif\'icil de estimar. Estamos intentando recopilar datos relacionados a las importaciones y exportaciones para poder completar los modelos. Si tenes ganas y tiempo, podemos hacer cosas juntos en ese sentido.
+
+\item[(3)] Me llama la atenci\'on que la demanda local es super suave, y se presenta un pico en unas horas que parece estar determinado por la exportaci\'on: Es as\'i que se ha encendido t\'ermico para dar un pico de exportaci\'on? Lo veo raro, por favor chequeen.
+
+\item[(3)-R] Los datos que usamos estan verificados, provienen de ADME y tienen una frecuencia de un dato cada 10 minutos. Hemos visto que las exportaciones var\'ian mucho mas r\'apido que la demanda. Por lo que sabemos, Uruguay ofrece potencia firme, y tanto Argentina como Brasil pueden usarla a discreci\'on, por lo que seria razonable el tener que prender t\'ermicas en ausencia de viento y sujetos a una exportaci\'on alta.
+
+\item[(4)] En Fig. 10 la bater\'ia se carga intensamente entre 0.2 y 0.4, pero luego en la Fig. 8 no se ve una diferencia importante entre demanda con y sin bater\'ia en ese intervalo de tiempo. No se por que pasa eso. En cambio en la Fig. 8 aparece una diferencia en el intervalo 0,85 - 1 que no se observa en la Fig. 10.
+
+\item[(4)-R] En las Fig. 5 y 8 se puede ver la potencia controlable sin y con bater\'ia respectivamente. Entre 0.2 y 0.4, mientras la bater\'ia se carga, podemos ver en Fig. 8 como las represas estan trabajando a pleno produciendo la potencia que carga la bater\'ia (en Fig. 5 se puede ver que las represas no est\'an a su m\'axima capacidad). Con respecto al intervalo entre 0.85 y 1, no somos capaces de notar ninguna diferencia en Fig. 5 y 8.
+
+\item[(5)] La descripci\'on de la Fig. 11 est\'a al rev\'es (a la izquierda es sin bater\'ia).
+
+\item[(5)-R]  La descripci\'on es correcta, pero la imagen es confusa porque estamos mostrando la distribuci\'on de costos, y no el costo acumulado total. Cuando agregamos la bater\'ia, el costo total se reduce bastante y en porcentaje, la cantidad correspondiente a la componente hidro aumenta.
+
+\item[(6)] Por tratarse de un modelo de corto plazo y con un paso de discretizaci\'on pequeño, las restricciones de tiempo de arranque y parada de las máquinas no son despreciables, empezando por las t\'ermicas e incluso las hidro (si mal no recuerdo, eso depende mucho de la tecnolog\'ia instalada, el tiempo de respuesta en las hidro era de algunos minutos). Otra restricci\'on importante es la rampa de generaci\'on de acuerdo a la etapa de arranque en que se est\'e. En fin creo que si se afina la discretizaci\'on habr\'ia que introducir más detalles de modelado de las máquinas.
+
+\item[(6)-R] Estamos trabajando en una modificaci\'on que nos permite introducir los costos de arranque y tiempos de arranque para las t\'ermicas. En el caso de las hidráulicas lo tenemos controlado, podemos limitar la velocidad con la que accionan.
+
+\item[(7)] Creo que habr\'ia que considerar un margen de reserva en algunas máquinas, con lo cual algunos  ahorros  no son tales, en otras palabras: A veces se deben despachar algunas máquinas con criterio no econ\'omico, sobre todo en el corto plazo.
+
+\item[(7)-R] No estamos seguros de lo que esto significa. Pero si esto significara una restricci\'on extra, podemos agregarla y satisfacerla de forma \'optima.
+
+\item[(8)] Un tema que desconozco es si la tecnolog\'ia de las bater\'ias permite disponer de potencia y energ\'ia en forma instantánea o si tiene rampas que merezcan considerar seg\'un el intervalo de discretizaci\'on que se considere.
+
+\item[(8)-R] Las bater\'ias son muy rápidas. Al punto que podemos considerarlas instantáneas en nuestro sistema. De todas maneras, tenemos programada una opci\'on que permite limitar la velocidad de acci\'on de todos los generadores (incluido la bater\'ia).
+
+\item[(9)] Otro tema que tal vez se interesante introducir en el corto plazo, en alguna versi\'on futura del modelo, es el tema de la distribuci\'on espacial, o sea la red el\'ectrica y la conveniencia o no de ubicar estrat\'egicamente las bater\'ias. Esto me parece que está ligado a varios temas: p\'erdidas en la red, mejora de la seguridad de la red y calidad del servicio, funcionamiento en islas (desconexiones) etc. A veces las p\'erdidas no son nada despreciables (claro, depende si estas en la red de alta o de más baja tensi\'on).
+
+\item[(9)-R] Este es un feature que estamos pensando introducir tanto en el optimal control como en el probabilistic wind power forecast. Nos gustar\'ia, en primer lugar, modelar generaci\'on distribuida (usando una descripci\'on de grafo para la red) para poder elegir la mejor disposici\'on de las bater\'ias y reducir todos los efectos negativos que mencionaste.\\
+En un futuro cuando sectoricemos la generaci\'on y el consumo, vamos a poder optimizar tomando en cuenta las perdidas y priorizando la seguridad en la red.
+
+\item[(10)] Hace un tiempo alg\'un generador e\'olico estuvo interesado en estimar la conveniencia o no de adquirir bater\'ias, el laburo al final no sali\'o, pero me hab\'ia planteado unas cuantas dudas que ahora me vuelven a la memoria al leer estos documentos. 
+
+\item[(10)-R] Una ventaja importante de nuestro sistema es la capacidad de evaluar el ahorro introducido por bater\'ias. Otro es el hecho de que Podemos tomar en cuenta la estocasticidad de las renovables, generando una soluci\'on que se adapta a la curva de generaci\'on de potencia renovable, que no se conoce a priori.
+
+\end{enumerate}
+
+\end{document}

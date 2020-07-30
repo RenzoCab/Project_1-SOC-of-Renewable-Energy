@@ -1,0 +1,81 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Idead and Notes}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\subsection*{Comparing Costs (Real Vs. Simulated) [16/12/2019]}
+
+Remember, we have to compare the cost-to-go. There are obvious costs as the water and fuel we use, but there are also less obvious costs as the natural inflow of the water that comes from upstream dams.\\
+The virtual flow also appears in the dual cost-to-go as an independent control with an associated cost. Also, in the dual problem, the dams are disconnected, so the virtual flows take the upstream water place.\\
+The natural inflow always has the same associated cost (in primal, dual, and historical data). For this reason, it is reasonable to ignore it in the cost-to-go (but it must appear in the dynamics).\\
+\textbf{Summering up}: When we want to compare simulated against historical, we consider in the cost-to-go: turbine flow, spillage, fossil fuel, and the water from upstream dams. No more, no less. In the code, we fix the virtual flow value to the water from upstream dams when we are computing the primal cost-to-go. For this reason, the same computation is valid in primal and dual prepossessing.
+
+\subsection*{About our Model [16/12/2019]}
+
+It seems that the opportunity cost for the dams almost does not change the actual decisions corresponding to the dams. Also, a single day is not enough to change the water level dramatically. As a consequence, the daily power almost depends on the flow and not in the water level variations.\\
+Clearly, in the battery case, the opportunity cost is absolutely fundamental. Otherwise, there would not be decisions associated with the battery.\\
+\textbf{Summering up}: It may be reasonable to remove the dams' states, and leave only wind, power and battery in our model. I believe that this may be the ultimate model in terms of speed and modeling. The only exception can be Salto Grande.\\
+A very strong advantage of this decision (ignoring the dramatic speed boost) is the fact that the system would be Markovian.\\
+\quad\\
+In case that we do long term optimizations, the model would be totally the opposite. The only state that matters would be the dams' ones.
+\quad\\
+\textbf{More summering up}:  In my opinion, the ultimate system would be: Wind, solar and battery with states; and cost for switching controls active. I believe that in a short term optimization if we are able to implement that, the results would be stunning.\\
+\quad\\
+Why ignore the non-Markovianity? When we consider the non-Markovian model, the decisions about spillage and turbine are based not only on the waters' values but on the opportunity costs. This is something very good; however, in a single day optimization, the opportunity cost changes few (excluding Salto Grande). The second important effect is the conservation of water, but again, as the level changes few in a day, ignoring it adds very few errors to the solution. In conclusion, non-Markovianity can be ignored in the presence of a lot of wind power and short term optimization.\\
+I strongly suggest publishing our relaxation, which can be fundamental in other systems or other optimization windows, and change the model to this one with no dams' states.\\
+\quad\\
+How can you check if all this is correct? We can compute an admissible solution where all opportunity costs are equal to the water values; if the cost-to-go changes few, then it would motivate this new model.\\
+\quad\\
+\textbf{Ultimate model}: Stochastic and battery with states, dams with no state, a fossil fuel with the cost for switching controls, and super fast Hamiltonian (NN or OSQP).\\
+Also, we need our own water values. In this case, only the dams would have associated states, and we need rain inference using all our data. From this, we can have daily water values, which will make reasonable the decision of ignoring the water conservation and changes in the levels.
+
+\subsection*{I need help for the optimization [14/01/2020]}
+
+To solve the non-smooth convex high-dimensional function is not an easy task. It would be great to have some help.
+
+\end{document}

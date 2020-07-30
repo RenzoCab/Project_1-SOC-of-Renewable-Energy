@@ -1,0 +1,109 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Lagrangian Multipliers in HJB}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+Given chained dams $i$ and $i-1$, we call $Z_{i,i-1}$ to the time that takes to the water from the dam $i-1$ to reach the reservoir of the dam $i$. Then the dynamics of the dam $i$ are
+\begin{equation*}
+\begin{split}
+d\hat{V}^{(i)}&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\phi_{T}^{(i-1)}(t-Z_{i,i-1})-\phi_T^{(i)}(t)\right)dt\\
+&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\overline{\phi}_{T}^{(i-1)}\hat{\phi}_{T}^{(i-1)}(t-Z_{i,i-1})-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)dt\\
+&=\frac{\overline{T}}{\overline{V}^{(i)}}\left(I_T^{(i)}(t)+\overline{\phi}_{VT}^{(i)}\hat{\phi}_{VT}^{(i)}(t)-\overline{\phi}_T^{(i)}\hat{\phi}_T^{(i)}(t)\right)dt,
+\end{split}
+\end{equation*}
+where we have defined $\phi_{VT}^{(i)}(t)=\phi_{T}^{(i-1)}(t-Z_{i,i-1})$ (we call to $\phi_{VT}^{(i)}(t)$ the virtual input flow of the dam $i$). 
+Using a Lagrangian Relaxation over the virtual controls, we have that for $\lambda:t\subset[0,1]\to\R^n$ with $n$ the number of chains between the dams ($|J|=n$), the relaxed cost function is
+\begin{equation*}
+C(T)=\E\left[C_F(T)+C_H(T)+\sum_{j\in J}\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\left(\hat{\phi}_{VT}^{(j)}(s)-\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})\right)ds\right],
+\end{equation*}
+expanding
+\begin{multline*}
+\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\left(\hat{\phi}_{VT}^{(j)}(s)-\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})\right)ds=\\
+=\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{T}^{(j-1)}(s-Z_{j,j-1})ds\\
+=\int_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int_0^{T-Z_{j,j-1}}\{\lambda\}_j(y+Z_{j,j-1})\hat{\phi}_{T}^{(j-1)}(y)dy,
+\end{multline*}
+and defining $\lambda(t)=0$ for every $t\in(-\infty,Z_{j,j-1})\cup(T,+\infty)$, we have that
+\begin{multline*}
+C(T,\lambda)=\\
+\E\left[C_F(T)+C_H(T)+\sum_{j\in J}\left[\int\limits_{Z_{j,j-1}}^T\{\lambda\}_j(s)\hat{\phi}_{VT}^{(j)}(s)ds-\int\limits_0^{T-Z_{j,j-1}}\{\lambda\}_j(y+Z_{j,j-1})\hat{\phi}_{T}^{(j-1)}(y)dy\right]\right]
+\end{multline*}
+where is equivalent to define all the integrals from $0$ to $T$. Finally, the changes in the Hamiltonian are the ones in red
+\begin{multline*}
+H(\cdot)=\min_\Phi\left[\dots+\sum_{j\in J}\frac{\partial u}{\partial\hat{V}^{(j)}}\frac{\overline{T}}{\overline{V}^{(j)}}\left[I_T^{(j)}(t)\color{red}+\overline{\phi}_{VT}^{(j)}\hat{\phi}_{VT}^{(j)}\color{black}-\overline{\phi}_T^{(j)}\hat{\phi}_T^{(j)}\right]+\dots\right.\\
+\left.\color{red}+\sum_{j\in J}\{\lambda\}_j(t)\hat{\phi}_{VT}^{(j)}-\sum_{j\in J}\{{\lambda}\}_j(t+Z_{j,j-1})\hat{\phi}_T^{(j-1)}\color{black}\right]+\dots.
+\end{multline*}
+The control $\hat{\phi}_{VT}^{(j)}(t)$ from $t=0$ to $t=Z_{j,j-1}$ is a deterministic input to out system, in $(Z_{j,j-1},T]$ it is part of the optimization.
+
+\subsection{Particular case Bonere - Salto Grande}
+
+In the case with Bonete and Salto Grande and a fuel station, we generate a virtual connection from Bonete to Salto Grande with a delay of 8 hrs. Then we have the next modifications in the Hamiltonian
+\begin{multline*}
+H(\cdot)=\\
+\min_\Phi\left[\dots+\frac{\partial u}{\partial\hat{V}^{(4)}}\frac{\overline{T}}{\overline{V}^{(4)}}\left[I_T^{(4)}(t)\color{red}+\overline{\phi}_T^{(1)}\hat{\phi}_{VT}^{(4)}\color{black}-\overline{\phi}_T^{(4)}\hat{\phi}_T^{(4)}\right]\color{red}+\lambda(t)\hat{\phi}_{VT}^{(4)}-{\lambda}(t+Z_{4,1})\hat{\phi}_T^{(1)}\color{black}\right]+\dots.
+\end{multline*}
+Then the term in $\hat{\phi}^{(4)}_{TV}$ over the time is
+\begin{equation*}
+\color{red}\frac{\partial u}{\partial\hat{V}^{(4)}}\frac{\overline{T}\overline{\phi}^{(1)}_T}{\overline{V}^{(4)}}+\lambda(t)
+\end{equation*}
+and the new one in $\hat{\phi}_T^{(1)}$ over the time is
+\begin{equation*}
+\overline{T}\overline{\phi}_T^{(1)}\left(K_H^{(1)}-\frac{\partial u}{\partial\hat{V}^{(1)}}\frac{1}{\overline{V}^{(1)}}\right)\color{red}-{\lambda}(t+Z_{4,1})\color{black}.
+\end{equation*}
+The reduction in the cost function is due to the increse in the efficiency of Salto Grande when its reservoir has more volume of water.\\
+From the mathematical and physical point of view, if we consider $\epsilon(t)=\phi_{VT}^{(4)}(t)-\phi_{T}^{(1)}(t-Z_{4,1})$, and for
+\begin{equation*}
+\psi=\min_{\Phi(t)}C(T),
+\end{equation*}
+we have that
+\begin{equation*}
+\frac{\partial\psi}{\partial\epsilon(t)}=\lambda(t)\leq0
+\end{equation*}
+because, at any time, both to increase a bit $\phi_{VT}^{(4)}(t)$ or to reduce a bit $\phi_{T}^{(1)}(t-Z_{4,1})$, reduce the final cost.
+
+\end{document}

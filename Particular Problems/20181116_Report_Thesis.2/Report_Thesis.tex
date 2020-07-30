@@ -1,0 +1,131 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report:\\
+System with two connected dams and one fuel station}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{System:}
+We have Bonete and Salto Grande, where all the water from Bonete reachs Salto Grande after 8 hrs. We use a Lagrangian relaxation to avoid the no markovianity relation on the system. As important values we have the cost for using the normalized controls:
+\begin{enumerate}
+\item Bonete in Cost function: $\num{9.5096e-4}$.
+\item Salto Grande in Cost function: $\num{6.25e-4}$.
+\item Fuel Station in Cost function: $6.24$.
+\end{enumerate}
+And the costs of the energies:
+\begin{enumerate}
+\item Bonete power cost: $\SI{3e-07}{MUSD/MWh}$.
+\item Salto Grande power cost: $\SI{3e-08}{MUSD/MWh}$.
+\item Fuel Station power cost: $\SI{3.12e-3}{MUSD/MWh}$.
+\end{enumerate}
+We set Salto Grande as the cheaper generator, to simulate the case between Bonete and Baygorria.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: With $\lambda(t)=A$}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{Cost_Lambda_0.eps}
+\caption{Solution without the relaxation is 1.3225 MUSD while the maximum with relaxation is 1.4709 MUSD. The maximum is over the red line and is for a negative value of $\lambda(t)$.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: With $\lambda(t)=A+B\sin(3\pi t)$}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{Cost_Lambda_1.eps}
+\caption{Solution without the relaxation is 1.3225 MUSD while the maximum with relaxation is 1.4256 MUSD.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: With $\lambda(t)=A_0+\sum_{i=1}^{10}\left[A_i\sin(2\pi i t)+B_i\cos(2\pi it)\right]$}
+\begin{figure}[ht!]
+\centering
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_2.eps}}
+\qquad
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_2_OP.eps}}
+\caption
+{(a) Optimal $\lambda(t)$ function, it takes positive and negative values over the time. (b) Convergence to the minimum using \emph{fminsearch}, the minimum without relaxation is -1.2808 MUSD.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: With $\lambda(t)=\sum_{i=0}^{20}A_it^i$}
+\begin{figure}[ht!]
+\centering
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_3.eps}}
+\qquad
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_3_OP.eps}}
+\caption
+{(a) Optimal $\lambda(t)$ function, it takes positive and negative values over the time. (b) Convergence to the minimum using \emph{fminsearch}, the minimum without relaxation is -1.2808 MUSD.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: With $\lambda(t)=\sum A_i\delta(t-i)$}
+\begin{figure}[ht!]
+\centering
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_4.eps}}
+\qquad
+\subfigure
+{\includegraphics[scale=.4]{Cost_Lambda_4_OP.eps}}
+\caption
+{(a) Optimal $\lambda(t)$ function, it takes positive and negative values over the time. (b) Convergence to the minimum using \emph{fminsearch}, the minimum without relaxation is -1.2808 MUSD.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results: Conclusions}
+\begin{enumerate}
+\item It is not possible to know with accuracy the value of the $\lambda(t)$ function because it has mixed effects over the system. This mixed effects can be seen with more detail in the Lagrangian Multipliers file.
+\item Also to add an extra control not always results into a reduction of the final cost, this is again by the mixed effects.
+\end{enumerate}
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,14 @@
+# Add any directories, files, or patterns you don't want to be tracked by versi$
+*
+!.gitattributes
+!.gitignore
+!.gitkeep
+!readme.md
+!*.m
+!*.tex
+!*.py
+!*.ipynb
+!*.sh
+!*.xlsx
+!*/
+

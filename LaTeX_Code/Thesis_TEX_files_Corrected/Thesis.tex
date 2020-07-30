@@ -1,0 +1,309 @@
+% Main Thesis File: This is the main file and it connects all the different parts of the thesis and compiles it into a single outcome file.
+
+\documentclass[onecolumn, 12 pt, doublespace, fullpage, letterpaper]{report}
+\renewcommand{\baselinestretch}{1.75}
+
+%Setting the document's font (use XeLatex or Lualatex to compile!!)
+%\usepackage{fontspec}
+%\setmainfont{Times New Roman}
+
+% Packages
+\usepackage{textcomp}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{epsfig}
+\usepackage{epstopdf}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{color}
+\usepackage[cmex10]{amsmath}
+\usepackage{latexsym,amsfonts}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{url}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{longtable}
+\usepackage[figuresright]{rotating}
+\usepackage{listings}
+\usepackage{etoolbox}
+\usepackage{sectsty}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{blkarray}
+
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\supp}{supp}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\M}{\mathbb{M}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+\bibliographystyle{elsarticle-num}
+
+% Changing chapters' headings and subheadings to size 14
+\chapterfont{\fontsize{14}{15}\selectfont}
+\sectionfont{\fontsize{14}{15}\selectfont}
+\subsectionfont{\fontsize{14}{15}\selectfont}
+\subsubsectionfont{\fontsize{14}{15}\selectfont}
+
+\usepackage{fancyhdr}       
+\pagestyle{fancy} 
+\fancyhead{} \fancyfoot{} 
+\fancyhead[CO,CE]{\thepage}    
+%centering the page numbers with text body
+\fancyheadoffset[L]{0.25in}
+
+\renewcommand{\headrulewidth}{0pt}
+
+%The following code changes the empty vertical space above a new chapter title. It sets it from 50pt to 20pt
+\makeatletter
+\patchcmd{\@makechapterhead}{50\p@}{20pt}{}{}
+\patchcmd{\@makeschapterhead}{50\p@}{20pt}{}{}
+\makeatother
+%end of modification
+
+% The following code redefines the plain pagestyle with the objective of moving the page number from the bottom to the top of the page. This only affects new chapter pages.
+\fancypagestyle{plain}{
+\fancyhf{} %clear all header and footer fields
+\fancyhead[C]{\thepage} %puts number on top center of the page
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+%ending of plain pagestyle modification.
+
+\usepackage{setspace}
+\usepackage{subfig}
+
+% ### Nomenclature, List of Abbreviations and List of Symbols 
+\usepackage{ifthen,xkeyval,xfor,amsgen}
+\usepackage[acronym,toc, nogroupskip]{glossaries}
+\newglossary[slg]{symbols}{syi}{sbl}{List of Symbols}
+ 
+\makeglossaries
+   
+\include{Lists}
+% Run the following three lines in the command line to get the lists
+%makeindex -s Thesis.ist -t Thesis.alg -o Thesis.acr Thesis.acn
+%makeindex -s Thesis.ist -t Thesis.slg -o Thesis.syi Thesis.sbl
+%makeindex -s Thesis.ist -t Thesis.glg -o Thesis.gls Thesis.glo
+
+% ### End of addition
+
+\usepackage{hyperref} 
+
+% Modified commands
+\newcommand{\Tab}{\hspace{2ex}}
+\usepackage[lmargin=1.5in, rmargin=1in, vmargin=1in, headsep=0.083334in]{geometry}
+\newcommand{\mathsym}[1]{{}}
+\newcommand{\unicode}[1]{{}}
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand\bibname{\centering BIBLIOGRAPHY}
+
+\begin{document}
+
+%\raggedright %to make the text left aligned.
+
+\vspace{2pt}
+\thispagestyle{empty}
+\addvspace{10mm}
+
+\begin{center}
+
+{\textbf{{\large Stochastic Optimal Control of Renewable Energy}}}\vfill 
+{Thesis by}\\
+{Renzo Miguel Caballero Rosas}\vfill
+
+{ In Partial Fulfillment of the Requirements}\\[12pt]
+{ For the Degree of}\\[12pt]
+{Masters of Science} \vfill
+{King Abdullah University of Science and Technology }\\
+{Thuwal, Kingdom of Saudi Arabia}
+\vfill
+{June 2019}
+
+\end{center}
+
+\newpage
+
+% Do not remove centering environment below
+\begin{center}
+
+\end{center}
+
+\begin{center}
+
+{ \textbf{{\large EXAMINATION COMMITTEE PAGE}}}\\\vspace{1cm}
+
+\end{center}
+\noindent{The thesis of Renzo Miguel Caballero Rosas is approved by the following examination committee}
+\addcontentsline{toc}{chapter}{Examination Committee Page}
+
+\vspace{4\baselineskip}
+
+\begin{onehalfspacing}
+\noindent{Committee Chairperson: Ra\'ul Tempone}\\
+Committee Members: Bernard Ghanem, Matteo Parsani\vfill
+\end{onehalfspacing}
+
+\begin{center}
+{King Abdullah University of Science and Technology}\\
+{2019}
+\end{center}
+
+\newpage
+\addcontentsline{toc}{chapter}{Copyright}
+\vspace*{\fill}
+\begin{center}
+{ \copyright June, 2019}\\
+{Renzo Miguel Caballero Rosas}\\
+{All Rights Reserved}
+\end{center}
+
+\doublespacing
+\include{Abstract}
+
+\include{Acknowledgment}
+
+\begin{onehalfspacing}%To make the table of contents, figures, and tables single spaced, as required by the formatting guidelines, pg. 24.
+
+\renewcommand{\contentsname}{\centerline{\textbf{{\large TABLE OF CONTENTS}}}}
+\tableofcontents
+\cleardoublepage
+
+\printglossary[type=\acronymtype,style=long3col, title=\centerline{LIST OF ABBREVIATIONS}, toctitle=List of Abbreviations, nonumberlist=true] 
+
+\printglossary[type=symbols,style=long3col, title=\centerline{LIST OF SYMBOLS}, toctitle=List of Symbols, nonumberlist=true]
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\listfigurename} 
+\renewcommand*\listfigurename{\centerline{LIST OF FIGURES}} 
+\listoffigures
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\listtablename}
+\renewcommand*\listtablename{\centerline{LIST OF TABLES}} 
+\listoftables
+
+\end{onehalfspacing}
+% \printglossary[style=altlist,title=Nomenclature, toctitle=Nomenclature, nonumberlist=true]
+
+\include{Abstract}
+\include{Chapter_1}
+\include{Chapter_2}
+\include{Chapter_3}
+\include{Chapter_4}
+\include{Chapter_5}
+\include{Conclusion}
+
+\begin{onehalfspacing}
+\renewcommand*\bibname{\centerline{REFERENCES}} 
+\addcontentsline{toc}{chapter}{References}
+\newcommand{\BIBdecl}{\setlength{\itemsep}{0pt}}%To control space between bibliography entries
+\bibliographystyle{IEEEtran}
+\bibliography{Bibliography}
+\end{onehalfspacing}
+
+\appendix
+\begingroup
+\let\clearpage\relax
+\begin{center}
+\vspace*{2\baselineskip}
+{ \textbf{{\large APPENDICES}}} 
+\addcontentsline{toc}{chapter}{Appendices} 
+\end{center}
+
+\endgroup
+\include{Appendix_A}
+\include{Appendix_B}
+\include{Appendix_C}
+%\include{Papers}
+
+\end{document}
+
+% Copyright 2010 Imran Shafique Ansari
+% Contact Email: imran.ansari@kaust.edu.sa
+% Contact Number: +966 59 897 1005
+
+%=====================================================
+%	LIST OF UPDATES (July, 2012)
+%=====================================================
+
+% 1. Title page is now as indicated on pg. 8 of the formatting guidelines
+%
+% 2. Examination committee approvals page is now as indicated on pg.
+%     20 of the formatting guidelines
+%
+% 3. Table of contents, list of figures, and list of tables are now single 
+%     spaced. Titles of these sections are now centered and capitalized
+%
+% 4. Pagination changes:
+%		- Page number is now located 3/4 of an inch from the top of 
+%		the page
+%		- Plain page style was modified to move page number from 
+%		the bottom to the top of the page (on pages where a new 
+%		chapter starts)
+%
+% 6. Chapter and section numbers are now arabic instead of roman.
+%
+% 7. Bibliography changes:
+%		- It is now located before the appendices section
+%		- Title is now centered and capitalized
+%		- It is now single spaced
+%		- New line of code specifying separation between entries 
+%		to 12pt
+%
+% 8. Appendices:
+%		- The start of the section does not get its own page ( A full
+%		 page just with the "Appendices title in the center)
+%		- The title is on the same page as the first appendix, and is 
+%		centered and capitalized
+%		- "Appendices" entry added to table of contents
+%		- Specific appendices (A, B, and C) do not get an entry on the
+%		table of contents
+%
+% 9. Added entries to table of contents for:
+%		- Examination committee approvals page
+%		- Copyright page
+%		- Abstract
+%		- Acknowledgements
+%
+%	Updated to comply with KAUST Thesis Formatting guidelines on July
+% 	10th, 2012, by Said Ehrlich.
+%
+%=====================================================
+%	LIST OF UPDATES (Sept, 2016)
+%=====================================================
+
+% 1. Font my now be changed to Times New roman for the entire document (Students may uncommnet code to change font to thier taste, but font should remain consistent throughout)
+%
+% 2. Font size for all titles and header changeed to comply to new guidelines.
+%
+% 3. References entries are now single spaced
+
+% 4. Pagination changes: The page number is now centered with the text body. 
+%		
+% 5. Several editorials changes made on cover page, copyright page, etc to comply to new guidelines.
+
+%Updated to comply with KAUST Thesis Formatting guidelines on September
+% 	4th, 2016.
+%=====================================================

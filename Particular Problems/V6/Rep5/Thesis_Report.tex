@@ -1,0 +1,160 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Thesis Report}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction: Connected Dams + Battery}
+In this simulation we used $\lambda(t)=0$, $2^2$ discretizations for the dams, $2^5$ for the battery and $2^{11}$ for the time (total simulation time: 2 hrs.). For computing the optimal path, we do linear interpolation in space increasing the number of discretizations five times in each direction.\\
+We have four dams (with 3 of them connected), four fuel stations and a battery.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.3]{1.png}}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Interpolation in 2D:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{14.eps}}
+\subfigure{\includegraphics[scale=0.45]{15.eps}}
+\caption{To interpolate in the space, we use linear interpolation. In our algorithm we have 4 dimensions but here we can see an example in 2D. Basically we are interpolating inside the unitary square the function $f(x,t)$ given the information $f(0,0)=1,f(0,1)=2,f(1,0)=3$ and $f(1,1)=1$.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Interpolation in 3D:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{16.eps}}
+\subfigure{\includegraphics[scale=0.45]{17.eps}}
+\caption{Here we can see an example in 3D. We are interpolating the values in the vertices of the cube. It is no possible to represent the 4D case, which is the one in our algorithm.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Controls:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{7.eps}}
+\subfigure{\includegraphics[scale=0.45]{8.eps}}
+\caption{Here we can see all the controls but the battery one. Is important to notice that the total time is 24 hrs.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Battery controls:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{2.eps}}
+\subfigure{\includegraphics[scale=0.45]{13.eps}}
+\caption{To make smoother the control of the battery is possible. However, too many restrictions over this control limit the possibility of the battery to get totally charged and discharged.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Energy and Costs:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{4.eps}}
+\subfigure{\includegraphics[scale=0.45]{5.eps}}
+\caption{In the case of the energy, we only consider when the battery provides power (otherwise its total influence would be 0). For the costs, we avoid the battery.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Instant costs:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.32]{1.eps}}
+\subfigure{\includegraphics[scale=0.32]{9.eps}}
+\subfigure{\includegraphics[scale=0.32]{10.eps}}
+\caption{Here we can see the value of each source over the optimal path (and over time). The oscillations in the battery's control are produced by its instant costs (which has small oscillations). The battery showed fewer oscillations when we follow more strictly the CFL condition; this is the reason why we are using a very small $\Delta t$. Notice that for the turbine flow, the final value (at $t=1$) is the water's value.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Possible cause of oscillations:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{11.eps}}
+\subfigure{\includegraphics[scale=0.45]{12.eps}}
+\caption{During the resolution of the HJB equation, we must satisfy the monotonicity condition, which makes the algorithm to use for some points left-hand FD and in others right-hand FD. When this happens in some particular points, the derivatives shows the jumps of the right plot. This happens most of the time in the battery, and also most when it is totally charged or discharged.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Demand:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{3.eps}}
+\subfigure{\includegraphics[scale=0.45]{18.eps}}
+\caption{Again, tunning the penalization of the battery we can get smoother controls. However, we must check the specifications of the battery.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Demand:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=0.45]{19.eps}}
+\subfigure{\includegraphics[scale=0.45]{20.eps}}
+\caption{More views.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{I still need to:}
+\begin{enumerate}
+\item Be sure I am computing well the CFL condition; I have the feeling that I have a bug, but I still did not check it carefully.
+\item Be sure that the parameters of the dams are correct. I did not verify after adding a
+condition over the maximum turbine flow, and probably this is why the spillage of
+Bonete has few effects in Baygorria and all the system.
+\item Make the algorithm adaptative over the time (change $\Delta t$ depending on the CFL condition). Until now I am just using a small $\Delta t$.
+\item Find an analytic way to compute the interpolation (to sleep-up the algorithm and also have a better approximation).
+\item Find a real model for the control of the battery.
+\item Use sub-gradients to compute $\lambda^*(t)$.
+\item Make parallel the Finite Differences part.
+\end{enumerate}
+\end{frame}
+
+\end{document}

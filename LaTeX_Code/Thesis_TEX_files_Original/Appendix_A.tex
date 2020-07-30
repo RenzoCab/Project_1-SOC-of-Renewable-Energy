@@ -1,0 +1,92 @@
+% Appendix A File
+
+\refstepcounter{chapter}%
+\chapter*{\thechapter \quad Parameters Tables}
+\label{appendixA}
+
+In this appendix, we will show the real parameters of the system used to solve the examples. All the data correspond to the date 01/01/2019.
+
+\section{Parameter for the FFSs}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ccccc}
+\toprule
+Parameter & $i=1$ & $i=2$ & $i=3$ & $i=4$ \\
+\midrule
+Name & Motores Batlle & PTA & PTB & CTR \\
+$\overline{P}^{(i)}_F$ in $\SI{}{\mega\watt}$ & $\SI{80}{}$ & $\SI{332}{}$ & $\SI{360}{}$ & $\SI{200}{}$ \\
+$\underline{P}_F^{(i)}$ in $\SI{}{\mega\watt}$ & $\SI{0}{}$ & $\SI{0}{}$ & $\SI{0}{}$ & $\SI{0}{}$ \\
+$K_F^{(i)}$ in $\SI{}{USD/\mega\watt\hour}$ & $\SI{129}{}$ & $\SI{166}{}$ & $\SI{166}{}$ & $\SI{191}{}$ \\
+\bottomrule
+\end{tabular}
+\caption{Constant parameters for the FFSs corresponding to 01/01/2019.}
+\label{Table_FFSs_Real}
+\end{table}
+
+\section{Parameters Dams}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ccccc}
+\toprule
+Parameter & $i=1$ & $i=2$ & $i=3$ & $i=4$ \\
+\midrule
+$\overline{V}^{(i)}$ in $\SI{}{hm^3}$ & $\SI{10.7e3}{}$ & $\SI{6.78e2}{}$ & $\SI{3.53e3}{}$ & $\SI{5.18e3}{}$ \\
+$\underline{V}^{(i)}$ in $\SI{}{hm^3}$ & $\SI{1.85e3}{}$ & $\SI{4.70e2}{}$ & $\SI{1.36e3}{}$ & $\SI{3.65e3}{}$ \\
+$\sigma_H^{(i)}$ & $\SI{0}{}$ & $\SI{0}{}$ & $\SI{0}{}$ & $\SI{0}{}$ \\
+$\left[b_2^{(i)},b_1^{(i)},b_0^{(i)}\right]$ in $\SI{}{m}$ & $[-3.8,16,70]$ & $[-1.4,9.0,48]$ & $[-7.5,24,26]$ & $[-21,55,1.9]$ \\
+$d^{(i)}$ in $\SI{}{\second/\meter^2}$ & $\SI{6.8e-4}{}$ & $\SI{14e-4}{}$ & $\SI{13e-4}{}$ & $\SI{15e-4}{}$ \\
+\bottomrule
+\end{tabular}
+\caption{Constant parameters for the dams.}
+\label{Table_Dams}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ccccc}
+\toprule
+Parameter & $i=1$ & $i=2$ & $i=3$ & $i=4$ \\
+\midrule
+$I^{(i)}$ in $\SI{}{m^3/s}$ & $\SI{-219}{}$ & $\SI{-68}{}$ & $\SI{-36}{}$ & $\SI{6046}{}$ \\
+$K_H^{(i)}$ in $\SI{}{UDS/MWh}$ & $\SI{3.96}{}$ & $\SI{0}{}$ & $\SI{3.10}{}$ & $\SI{0}{}$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters for the dams corresponding to 01/01/2019.}
+\label{Table_Dams_2}
+\end{table}
+
+\section{Parameters Wind Power}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cc}
+\toprule
+$\theta_0$ & $\SI{0.2}{MW}$ \\
+$\theta_1$ & $\SI{3e-2}{USD/MWh}$ \\
+$\alpha$ & $\SI{0.14}{USD/MWh}$ \\
+$\overline{P}_W$ & $\SI{1383}{MW}$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters of the wind power SDE (\ref{Wind_SDE}) and wind real power (\ref{Wind_Power}).}
+\label{Table_Wind_Power}
+\end{table}
+
+\section{Parameters Battery}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cc}
+\toprule
+$\overline{A}$ & $\SI{140}{MWh}$ \\
+$\overline{P}_A$ & $\SI{100}{MW}$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters of the battery used in the Fifth and Seventh Subproblem presented in Subsections \ref{Fifth_Subproblem} and \ref{Seventh_Subproblem} respectively.}
+\label{Table_Battery}
+\end{table}
+
+% Copyright 2010 Imran Shafique Ansari
+% Contact Email: imran.ansari@kaust.edu.sa
+% Contact Number: +966 59 897 1005

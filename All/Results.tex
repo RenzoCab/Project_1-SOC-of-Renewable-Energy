@@ -1,0 +1,142 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage[maxfloats=256]{morefloats}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{forloop}
+
+\usepackage{geometry}
+\geometry{a4paper,
+          left=            5mm,
+          right=           5mm,
+          top=             15mm,
+          bottom=          15mm,
+          heightrounded}
+
+\maxdeadcycles=1000
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Uruguayan Historicals of Production\\
+and Simulations}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+\newcounter{i}
+\forloop{i}{1}{\value{i} < 60}{%60
+
+\newpage
+\graphicspath{{./Historical/}}
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cc}
+\toprule
+\includegraphics[scale=0.4]{C_\arabic{i}.eps} & \includegraphics[scale=0.4]{D_\arabic{i}.eps} \\
+\includegraphics[scale=0.4]{A_\arabic{i}.eps} & \includegraphics[scale=0.4]{B_\arabic{i}.eps} \\ \bottomrule
+\end{tabular}
+\end{table}
+\graphicspath{{./Simulation_Day_NB_\arabic{i}/}}
+\IfFileExists{./Simulation_Day_NB_\arabic{i}/120.eps}{
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{ccc}
+\toprule
+\includegraphics[scale=0.42]{R_102.eps} & \includegraphics[scale=0.42]{R_103.eps} & \includegraphics[scale=0.42]{R_104.eps}
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cc}
+\includegraphics[scale=0.45]{R_110.eps} & \includegraphics[scale=0.45]{R_112.eps} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{cc}
+\toprule
+\includegraphics[scale=0.45]{R_116.eps} & \includegraphics[scale=0.45]{R_117.eps} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+}
+{}
+
+\newpage
+\graphicspath{{./Simulation_Day_NB_\arabic{i}/}}
+\IfFileExists{./Simulation_Day_NB_\arabic{i}/120.eps}{
+	\begin{table}[ht!]
+	\centering
+	\begin{tabular}{cccc}
+	\toprule
+	\multicolumn{2}{c}{\includegraphics[scale=0.35]{101.eps}} & \multicolumn{2}{c}	{\includegraphics[scale=0.35]{120.eps}}\\
+	\includegraphics[scale=0.35]{102.eps} & 	\includegraphics[scale=0.35]{103.eps} & 	\includegraphics[scale=0.35]{104.eps} & 	\includegraphics[scale=0.35]{105.eps} \\
+	\includegraphics[scale=0.35]{109.eps} & 	\includegraphics[scale=0.35]{110.eps} & 	\includegraphics[scale=0.35]{111.eps} & 	\includegraphics[scale=0.35]{112.eps} \\
+	\includegraphics[scale=0.35]{113.eps} & 	\includegraphics[scale=0.35]{114.eps} & 	\includegraphics[scale=0.35]{115.eps} & 	\includegraphics[scale=0.35]{118.eps} \\
+	\multicolumn{2}{c}{\includegraphics[scale=0.45]	{116.eps}} & \multicolumn{2}{c}	{\includegraphics[scale=0.45]{117.eps}}\\ \bottomrule
+	\end{tabular}
+	\end{table}
+}
+{}
+
+\newpage
+\graphicspath{{./Simulation_Day_\arabic{i}/}}
+\IfFileExists{./Simulation_Day_\arabic{i}/120.eps}{
+	\begin{table}[ht!]
+	\centering
+	\begin{tabular}{cccc}
+	\toprule
+	\multicolumn{2}{c}{\includegraphics[scale=0.35]{101.eps}} & \multicolumn{2}{c}	{\includegraphics[scale=0.35]{120.eps}}\\
+	\includegraphics[scale=0.35]{102.eps} & 	\includegraphics[scale=0.35]{103.eps} & 	\includegraphics[scale=0.35]{104.eps} & 	\includegraphics[scale=0.35]{105.eps} \\
+	\includegraphics[scale=0.35]{109.eps} & 	\includegraphics[scale=0.35]{110.eps} & 	\includegraphics[scale=0.35]{111.eps} & 	\includegraphics[scale=0.35]{112.eps} \\
+	\includegraphics[scale=0.35]{113.eps} & 	\includegraphics[scale=0.35]{114.eps} & 	\includegraphics[scale=0.35]{115.eps} & 	\includegraphics[scale=0.35]{118.eps} \\
+	\multicolumn{2}{c}{\includegraphics[scale=0.45]	{116.eps}} & \multicolumn{2}{c}	{\includegraphics[scale=0.45]{117.eps}}\\ \bottomrule
+	\end{tabular}
+	\end{table}
+}
+{}
+}
+
+\end{document}

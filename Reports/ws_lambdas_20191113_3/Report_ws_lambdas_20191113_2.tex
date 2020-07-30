@@ -1,0 +1,157 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+\newcommand{\mysize}{1}
+\newcommand{\capt}{{\color{red} Admissible solution (we impose the delay condition) for the primal problem. Still with no derivatives penalization. It is an upper bound for the real optimal primal solution.}\\
+{\color{blue} Dual cost-to-go (evaluated along the dual optimal path). It is an upper bound for the dual value function. We use it to compute the subgradient. Notice that we do not impose the delay constraint (as the relaxed problem does not have that constraint), neither the derivatives penalization.}\\
+Dual value function (HJB for the relaxed problem).}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Solving the Dual problem:\\
+Preliminary Results}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}\frametitle{Framework:}
+
+Recall: We ensure that the HJB evaluation and the cost-to-do in the optimal path converge to the same value. Also, we verify that more than 95\% of the subgradients have an error smaller than 5\% concerning the analytic one (see {\color{blue}ws\_FD\_20191031/postProcessingFD.m}).\\
+\quad\\
+We construct a Blackbox in Matlab that maps the dual variables into the relaxed value function $V_{Rel}$, and its subgradient, i.e.,
+\begin{equation*}
+(\lambda_{21},\lambda_{32})\mapsto(V_{Rel},\xi_{\lambda_{21},\lambda_{32}}V_{Rel}).
+\end{equation*}
+The idea is to find the optimal pair $(\lambda_{21}^*,\lambda_{32}^*)=\arg\min\limits_{\lambda_{21},\lambda_{32}}\left[-V_{Rel}\right]$. As the value function is non-smooth, we use the Python package \textbf{nsopy} and the function \textbf{SubgradientMethod} (Standard Subgradient Method). See {\color{blue}\url{https://github.com/robin-vjc/nsopy}} and folder {\small{\color{blue}ws\_lambdas\_20191113/TEST\_Matlab-Python/Optimization\_OC\_Subgradient\_Method\_Automatic}}.\\
+\quad\\
+In this preliminary results, we refine more: $\lambda_{21},\lambda_{32}\in\R^4$, and we again complete five iterations.
+
+\end{frame}
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2020}{
+\forloop{j}{1}{\value{j} < 13}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+% I check the file table_YYYYMMDD.mat, because it is the last created, and its existence ensures that the other files exist also.
+% \arabic{i}\arabic{j}\arabic{k}
+
+\graphicspath{{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/}}
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/table_2_\arabic{i}\arabic{j}\arabic{k}.mat} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-\arabic{k}}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=\mysize\textwidth]{DG_2_\arabic{i}0\arabic{j}\arabic{k}.eps}
+
+\column{.5\textwidth}
+\capt
+
+\end{columns}
+
+\end{frame}
+}
+{}
+
+\ifnum \value{k}>9
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/table_2_\arabic{i}0\arabic{j}\arabic{k}.mat} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-\arabic{k}}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=\mysize\textwidth]{DG_2_\arabic{i}0\arabic{j}\arabic{k}.eps}
+
+\column{.5\textwidth}
+\capt
+
+\end{columns}
+
+\end{frame}
+}
+{}
+\fi
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/table_2_\arabic{i}\arabic{j}0\arabic{k}.mat} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-0\arabic{k}}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=\mysize\textwidth]{DG_2_\arabic{i}0\arabic{j}0\arabic{k}.eps}
+
+\column{.5\textwidth}
+\capt
+
+\end{columns}
+
+\end{frame}
+}
+{}
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/table_2_\arabic{i}0\arabic{j}0\arabic{k}.mat} % DO:
+{
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+
+\begin{columns}[c]
+
+\column{.5\textwidth}
+\includegraphics[width=\mysize\textwidth]{DG_2_\arabic{i}0\arabic{j}0\arabic{k}.eps}
+
+\column{.5\textwidth}
+\capt
+
+\end{columns}
+
+\end{frame}
+}
+{}
+
+}
+}
+}
+
+\include{lastSlides}
+
+\end{document}

@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+\usepackage[table]{xcolor}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[english]{babel}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{blkarray}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{proposition}
+\newtheorem{exmp}{Example}[section]\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Exercise}
+\theoremstyle{definition}
+\theoremstyle{remark}
+\bibliographystyle{elsarticle-num}
+
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\matindex}[1]{\mbox{\scriptsize#1}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\prob}{\mathbb{P}}
+
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt}
+
+\begin{document}
+\title{Summary Presentation}
+\author{Renzo Miguel Caballero Rosas} 
+\maketitle
+
+I will describe what they explained at each point. {\color{red}But just before: Hern\'an wants wind and solar forecasts and simulations (Waleed's project but also for solar power). He is also interested in a very refined power balance.}
+
+\section*{Introducci\'on:}
+El desaf\'io de la operación \'optima del Sistema Integrado Nacional (SIN).\\
+Variabilidad, Tendencias, Control \'Optimo Predictivo de un sistema din\'amico, en muy pocas palabras.\\
+\quad\\
+{\color{blue}In the long term optimization, the states are Bonete, and some climatologist situations. In the midterm, they add Palmar to the states. In the short term, they use Bonete, Palmar, and Salto Grande (and maybe some climatic variables, like temperature, but I am not sure).\\
+They simulated how much they have to install from each source of power when the demand increases, as a function of the oil or gas price. It is weird because I can not imagine how they fix those prices, as they depend on the oil price. However, they said that they could make a contract to have a fixed price for a few years, and based on that price, they simulate which source to install.\\
+They use time series regression to find correlations between different things (basically, whatever). They use some non-linear transformation to transform any process into a Gaussian process and use tools that works for Gaussian processes (at least, they do not assume directly Gaussianity).}
+
+\section*{Presentaci\'on de VATES:}
+VATES, que integra la informaci\'on de estado del SIN con los pron\'osticos de e\'olica, solar, aportes hidr\'aulicos y demanda para generar el despacho probabil\'istico \'optimo de las siguientes 168 horas en forma continua.\\
+\quad\\
+{\color{blue} They (somehow...) try to make all water values to have the same value. They claim that it makes easier the use of the dams, as the operation team can use the one they want. It is funny because, if all have the same value, I do not know what they are optimizing.}
+
+\section*{Pron\'osticos de aportes hidr\'aulicos a las represas:}
+Modelo de escurrimientos desarrollado por IMFIA, su aplicaci\'on a la generaci\'on de ensembles de pron\'osticos de aportes en la aplicaci\'on VATES.\\
+\quad\\
+{\color{blue} They try to do something like Waleed's project but for the rains. They showed that the total simulated water in the expected value was similar to the real one. However, they predict terrible the rains as a function of the time (same to what happens between power and energy, everyone does energy, but few people power).\\
+They told me that it is working. I asked if that improved the optimal costs; they did not know how to answer me.}
+
+\section*{Pron\'osticos de Demanda:}
+Modelo de Demanda sensible a la temperatura desarrollado en ADME, mejoras introducidas a partir de los resultados del proyecto ANII: FSDA\_1\_2017\_1\_143604: "Modelo de previsi\'on de Demanda de Energ\'ia El\'ectrica para la optimizaci\'on del despacho energ\'etico" (ejecutado por IIE-FING) y su integraci\'on a la aplicaci\'on VATES.\\
+\quad\\
+{\color{blue} First, they separate all the historical demands into 10 clusters, following $L^1$ similitude. Second, in each cluster, they try to see what is the associated temperature to that cluster. Finally, using that information, from the temperature, they try to predict demands.}
+
+\section*{Nuevo modelo horario de la nueva central de Ciclo Combinado:}
+Nuevo Modelo para SimSEE de la nueva central de ciclo combinado, detalles del modelado y primeros resultados de simulaciones en la aplicaci\'on VATES.\\
+\quad\\
+{\color{blue} They do a model very similar to Risso's one. They explained that if they want to use that model, the computational time will increase 144 times. They have problems with the integer variables and with the cost of switching controls.}
+
+\section*{SimSEE + Inteligencia Artificial contra La Maldici\'on de Bellman:}
+La incorporación de ERI en forma masiva y de Demandas con Respuesta en el futuro inmediato implica que las decisiones \'optimas de operaci\'on deben considerar cada vez m\'as variables con la consecuente explosi\'on combinatoria conocida como La Maldici\'on de la Dimensionalidad de Bellman. Se presentan los primeros resultados de proyecto ANII: FSE\_1\_2017\_1\_144926 “Planificación de inversiones con energ\'ias variables, restricciones de red y gesti\'on de demanda” en ejecuci\'on por IIE- FING y c\'omo se ha planificado incorporar en las herramientas de ADME durante 2020 los mismos.\\
+\quad\\
+{\color{blue} Here they try to use stochastic dynamic programming (discrete) and neural networks. They use SimSEE to create some policy from some final cost and the neural network to create the final cost from some policy. They solve that loop and find the optimal parameters for the neural network. Of course, in a toy example, because to do this in something a bit complex would imply infinite training time.}
+
+\end{document}

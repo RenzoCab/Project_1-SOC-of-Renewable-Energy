@@ -1,0 +1,99 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Optimal Lambda for the Coupled System}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Introduction:}
+The system consists of four dams and a fuel station. One of the dams is isolated, but the other three form a couples system where the water from the first one reaches the second one after some time and the same between the second and third one.
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.45]{Dams.pdf}}
+\caption{Coupled dams system.}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Lagrange Multiplier:}
+We use the method of Lagrange multipliers to avoid the non-Markovianity characteristic of the system. We define
+\begin{equation*}
+\begin{cases}
+\epsilon_1(t)=\phi_V^{(2)}(t)-\phi_R^{(1)}(t-\tau_{2,1})\\
+\epsilon_2(t)=\phi_V^{(3)}(t)-\phi_R^{(2)}(t-\tau_{3,2}),
+\end{cases}
+\end{equation*}
+where in both cases $\epsilon(t)$ refers to a fictional difference between the released water and the water that reaches the next dam after $\tau$ time.\\
+If we call $C(T)$ to the cost using some set of controls $\phi(t)\in\Phi=\{\text{all possible controls such that the demand is satisfied}\}$ and $\psi=\min_{\Phi}C(T)$, we define the next lambda functions
+\begin{equation*}
+\frac{\partial\psi}{\partial\epsilon_1(t)}=\lambda_1(t)\ \text{and}\ \frac{\partial\psi}{\partial\epsilon_2(t)}=\lambda_2(t).
+\end{equation*}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Numerical solution:}
+The numerical computation of both lambda functions is given by
+\begin{equation*}
+\lambda_i(t)=\arg\max_{\Lambda_i}\psi,
+\end{equation*}
+where $\Lambda_i=\{\text{set of all posible lambda functions}\}$.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Results:}
+\begin{figure}[ht!]
+\centering
+\subfigure{\includegraphics[scale=.45]{Lambda.eps}}
+\caption{The first section of the plot corresponds to $\lambda_1(t)$ (non-positive one) and the second to $\lambda_2(t)$ (non-negative one).}
+\end{figure}
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Interpretation: $\lambda_1(t)$}
+As Baygorria (second dam) is a pass dam, it turbines all the water it receives. The first lambda $\lambda_1(t)$ corresponds to differences between the released water from Bonete (first dam) and the water that Baygorria receives (and releases).\\
+Then, for a fixed $\phi_R^{(1)}(t-\tau_{2,1})=K(t)$, an infinitesimal increment in $\epsilon_1(t)$ implies and increment in $\phi_V^{(2)}(t)$, which increases the maximum released flow of Baygorria and reduces the cost of the system.
+\end{frame}
+
+\setbeamercolor{background canvas}{bg=white!10}
+\begin{frame}\frametitle{Interpretation: $\lambda_2(t)$}
+In the case of $\lambda_2(t)$ we have somehow the opposite effect, but, here to increase a bit $\epsilon_2(t)$ implies either reduce the released flow of Baygorria (which increases the total cost, given what Baygorria is free) or to increases slightly the level or Palmae, which increases its efficiency but reduces the one of Baygorra. For this reasons $\lambda_2(t)$ is non-negative.
+\end{frame}
+
+\end{document}

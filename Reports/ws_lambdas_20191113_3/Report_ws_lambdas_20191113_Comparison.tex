@@ -1,0 +1,175 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[aspectratio=169]{beamer}\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{color}
+\usepackage{amsmath,mathtools}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage[11pt]{moresize}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{subfigure}
+\usepackage{siunitx}
+\usepackage{forloop}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5mm,text margin right=5mm}
+\setbeamertemplate{caption}[numbered]
+\addtobeamertemplate{navigation symbols}{}{
+\usebeamerfont{footline}
+\usebeamercolor[fg]{footline}
+\hspace{1em}
+\insertframenumber/\inserttotalframenumber}
+
+\newcommand{\mysize}{0.485}
+\newcommand{\mysizee}{0.485}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\I}{\mathbb{I}}
+
+\title{Simulated Vs. Real:\\
+Most 2018}
+\subtitle{Renzo Miguel Caballero Rosas}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\graphicspath{{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/}}
+
+\newcounter{i}
+\newcounter{j}
+\newcounter{k}
+
+\forloop{i}{2018}{\value{i} < 2020}{
+\forloop{j}{1}{\value{j} < 13}{%13
+\forloop{k}{1}{\value{k} < 32}{%32
+
+% I check the file in folder Real_20190216, because it is the last created (we run 2, 4, 6 and 7; 7 = Real), and its existence ensures that the other four folders also exist.
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Real_\arabic{i}\arabic{j}\arabic{k}/101.eps} % DO:
+{
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}\arabic{k}/101.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}\arabic{k}/101.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}\arabic{k}/103.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}\arabic{k}/103.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}\arabic{k}/104.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}\arabic{k}/104.eps}
+\end{figure}
+\end{frame}
+
+}
+{}
+
+\ifnum \value{k}>9
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Real_\arabic{i}0\arabic{j}\arabic{k}/101.eps} % DO:
+{
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}\arabic{k}/101.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}\arabic{k}/101.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}\arabic{k}/103.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}\arabic{k}/103.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}\arabic{k}/104.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}\arabic{k}/104.eps}
+\end{figure}
+\end{frame}
+
+}
+{}
+\fi
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Real_\arabic{i}\arabic{j}0\arabic{k}/101.eps} % DO:
+{
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}0\arabic{k}/101.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}0\arabic{k}/101.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}0\arabic{k}/103.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}0\arabic{k}/103.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}\arabic{j}0\arabic{k}/104.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}\arabic{j}0\arabic{k}/104.eps}
+\end{figure}
+\end{frame}
+
+}
+{}
+
+\IfFileExists{../../wsJobs/ws_lambdas_20191113/TEST_Matlab-Python/Optimization_OC_Subgradient_Method_Automatic/Simulations/Real_\arabic{i}0\arabic{j}0\arabic{k}/101.eps} % DO:
+{
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}0\arabic{k}/101.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}0\arabic{k}/101.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}0\arabic{k}/103.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}0\arabic{k}/103.eps}
+\end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\arabic{i}-0\arabic{j}-0\arabic{k}}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=\mysize\textwidth]{Soft_\arabic{i}0\arabic{j}0\arabic{k}/104.eps}\quad \includegraphics[width=\mysize\textwidth]{Real_\arabic{i}0\arabic{j}0\arabic{k}/104.eps}
+\end{figure}
+\end{frame}
+
+}
+{}
+
+}
+}
+}
+
+\end{document}
