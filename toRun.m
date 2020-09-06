@@ -111,10 +111,10 @@ function [A] = toRun(option)
     if option == 2
 
 %         initilDate = '20180302';
-        initilDate = '20190101';
+        initilDate = '20200601';
         dateTime = datetime(initilDate,'InputFormat','yyyyMMdd');
 
-        finalVector = [2020,6,1,0,0,0]; % Final date as a array.
+        finalVector = [2020,10,1,0,0,0]; % Final date as a array.
 %         finalDate = datetime(finalVector);
         finalDate = datestr(today-3,'yyyymmdd');
         finalDate = datetime(finalDate,'InputFormat','yyyyMMdd');
@@ -124,7 +124,7 @@ function [A] = toRun(option)
             
             timeString = datestr(dateTime,'yyyymmdd');
             if 0 == exist(['Historical/dailyData/Day_',timeString,'.mat'])
-            
+                
                 try
                     date = datestr(dateTime,'yyyymmdd');
                     dateVec = datevec(dateTime);

@@ -13,13 +13,13 @@ function [] = dataMaker(initialVector,finalVector)
 
     while date <= finalDate
 
-%         try
+        try
             dateVector = datevec(date);
             New_Real_Data(dateVector);
             disp(['Day ',datestr(date,'dd/mm/yyyy'),' was successful.'])
-%         catch
-%             warning(['There is something wrong with the date ',datestr(date,'dd/mm/yyyy')]);
-%         end
+        catch
+            warning(['There is something wrong with the date ',datestr(date,'dd/mm/yyyy')]);
+        end
 
         date = date + days(1);
     
