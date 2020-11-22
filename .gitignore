@@ -5,6 +5,7 @@
 !.gitkeep
 !readme.md
 !*.m
+!*.md
 !*.tex
 !*.py
 !*.ipynb
